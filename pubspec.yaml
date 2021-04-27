@@ -1,4 +1,4 @@
-name: storage
+name: storage_client
 description: Dart client library to interact with Supabase Storage.
 version: 0.0.1-dev.1
 homepage: "https://supabase.io"

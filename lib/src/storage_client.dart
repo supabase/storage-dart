@@ -1,5 +1,5 @@
-import 'package:storage/src/storage_bucket_api.dart';
-import 'package:storage/src/storage_file_api.dart';
+import 'package:storage_client/src/storage_bucket_api.dart';
+import 'package:storage_client/src/storage_file_api.dart';
 
 class SupabaseStorageClient extends StorageBucketApi {
   SupabaseStorageClient(String url, Map<String, String> headers)

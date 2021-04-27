@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:mime/mime.dart';
-import 'package:storage/src/types.dart';
+import 'package:storage_client/src/types.dart';
 
 Fetch fetch = Fetch();
 

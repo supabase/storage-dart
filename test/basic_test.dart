@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:mocktail/mocktail.dart';
-import 'package:storage/src/fetch.dart';
-import 'package:storage/storage.dart';
+import 'package:storage_client/src/fetch.dart';
+import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
 
 const String supabaseUrl = 'SUPABASE_TEST_URL';

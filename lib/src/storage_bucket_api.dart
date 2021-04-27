@@ -44,7 +44,8 @@ class StorageBucketApi {
   /// Creates a new Storage bucket
   ///
   /// @param id A unique identifier for the bucket you are creating.
-  Future<StorageResponse<Bucket>> createBucket(String id) async {
+  /// @return created bucket id
+  Future<StorageResponse<String>> createBucket(String id) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
       final response = await fetch.post(
@@ -55,7 +56,8 @@ class StorageBucketApi {
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
-        return StorageResponse<Bucket>(data: Bucket.fromJson(response.data));
+        final bucketId = response.data['name'] as String;
+        return StorageResponse<String>(data: bucketId);
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));

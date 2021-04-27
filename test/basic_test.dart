@@ -73,13 +73,13 @@ void main() {
     const testBucketId = 'test_bucket';
     const requestBody = {'id': testBucketId, 'name': testBucketId};
     when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
-        .thenAnswer((_) => Future.value(StorageResponse(data: testBucketJson)));
+        .thenAnswer((_) =>
+            Future.value(StorageResponse(data: {'name': 'test_bucket'})));
 
     final response = await client.createBucket(testBucketId);
     expect(response.error, isNull);
-    expect(response.data, isA<Bucket>());
-    expect(response.data?.name, testBucketId);
-    expect(response.data?.id, testBucketId);
+    expect(response.data, isA<String>());
+    expect(response.data, 'test_bucket');
   });
 
   test('should get bucket', () async {

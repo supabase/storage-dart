@@ -2,6 +2,9 @@
 
 Dart client library to interact with Supabase Storage.
 
+[![pub package](https://img.shields.io/pub/v/storage_client.svg)](https://pub.dev/packages/storage_client)
+[![pub test](https://github.com/supabase/storage-dart/workflows/Test/badge.svg)](https://github.com/supabase/storage-dart/actions?query=workflow%3ATest)
+
 ## Contributing
 
 - Fork the repo on [GitHub](https://github.com/supabase/storage-dart)

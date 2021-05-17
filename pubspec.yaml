@@ -11,6 +11,8 @@ dependencies:
   http: ^0.13.0
   http_parser: ^4.0.0
   mime: ^1.0.0
+  universal_io: ^2.0.4
+
 
 dev_dependencies:
   lint: ^1.5.1

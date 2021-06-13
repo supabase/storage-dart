@@ -201,6 +201,12 @@ void main() {
     expect(String.fromCharCodes(response.data!), 'Updated content');
   });
 
+  test('should get public URL of a path', () {
+    final response = client.from('files').getPublicUrl('b.txt');
+    expect(response.error, isNull);
+    expect(response.data, '$objectUrl/public/files/b.txt');
+  });
+
   test('should remove file', () async {
     final requestBody = {
       'prefixes': ['a.txt', 'b.txt']

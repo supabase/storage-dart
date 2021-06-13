@@ -5,6 +5,7 @@ class Bucket {
     required this.owner,
     required this.createdAt,
     required this.updatedAt,
+    required this.public,
   });
 
   Bucket.fromJson(dynamic json)
@@ -13,13 +14,15 @@ class Bucket {
         name = json['name'] as String,
         owner = json['owner'] as String,
         createdAt = json['created_at'] as String,
-        updatedAt = json['updated_at'] as String;
+        updatedAt = json['updated_at'] as String,
+        public = json['public'] as bool;
 
   final String id;
   final String name;
   final String owner;
   final String createdAt;
   final String updatedAt;
+  final bool public;
 }
 
 class FileObject {
@@ -58,6 +61,12 @@ class FileObject {
   final String? lastAccessedAt;
   final Metadata? metadata;
   final Bucket? buckets;
+}
+
+class BucketOptions {
+  const BucketOptions({required this.public});
+
+  final bool public;
 }
 
 class FileOptions {

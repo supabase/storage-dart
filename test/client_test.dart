@@ -44,6 +44,14 @@ void main() {
     expect(response.data, newBucketName);
   });
 
+  test('Create new public bucket', () async {
+    const newPublicBucketName = 'my-new-public-bucket';
+    await client.createBucket(
+        newPublicBucketName, const BucketOptions(public: true));
+    final response = await client.getBucket(newPublicBucketName);
+    expect(response.data!.public, true);
+  });
+
   test('Empty bucket', () async {
     final response = await client.emptyBucket(newBucketName);
     expect(response.data, 'Successfully emptied');

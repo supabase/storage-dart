@@ -44,13 +44,16 @@ class StorageBucketApi {
   /// Creates a new Storage bucket
   ///
   /// @param id A unique identifier for the bucket you are creating.
+  /// @param bucketOptions A parameter to optionally make the bucket public.
   /// @return created bucket id
-  Future<StorageResponse<String>> createBucket(String id) async {
+  Future<StorageResponse<String>> createBucket(String id,
+      [BucketOptions bucketOptions =
+          const BucketOptions(public: false)]) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
       final response = await fetch.post(
         '$url/bucket',
-        {'id': id, 'name': id},
+        {'id': id, 'name': id, 'public': bucketOptions.public},
         options: options,
       );
       if (response.hasError) {

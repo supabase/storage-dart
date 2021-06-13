@@ -52,6 +52,15 @@ void main() {
     expect(response.data!.public, true);
   });
 
+  test('update bucket', () async {
+    final updateRes = await client.updateBucket(
+        newBucketName, const BucketOptions(public: true));
+    expect(updateRes.error, isNull);
+    expect(updateRes.data, isA<String>());
+    final getRes = await client.getBucket(newBucketName);
+    expect(getRes.data!.public, true);
+  });
+
   test('Empty bucket', () async {
     final response = await client.emptyBucket(newBucketName);
     expect(response.data, 'Successfully emptied');

@@ -67,6 +67,30 @@ class StorageBucketApi {
     }
   }
 
+  /// Updates a new Storage bucket
+  ///
+  /// @param id A unique identifier for the bucket you are creating.
+  /// @param bucketOptions A parameter to set the publicity of the bucket.
+  Future<StorageResponse<String>> updateBucket(
+      String id, BucketOptions bucketOptions) async {
+    try {
+      final FetchOptions options = FetchOptions(headers: headers);
+      final response = await fetch.put(
+        '$url/bucket',
+        {'id': id, 'name': id, 'public': bucketOptions.public},
+        options: options,
+      );
+      if (response.hasError) {
+        return StorageResponse(error: response.error);
+      } else {
+        final message = response.data['message'] as String;
+        return StorageResponse<String>(data: message);
+      }
+    } catch (e) {
+      return StorageResponse(error: StorageError(e.toString()));
+    }
+  }
+
   /// Removes all objects inside a single bucket.
   ///
   /// @param id The unique identifier of the bucket you would like to empty.

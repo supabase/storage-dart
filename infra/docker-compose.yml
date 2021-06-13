@@ -25,7 +25,7 @@ services:
       PGRST_DB_ANON_ROLE: postgres
       PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
   storage:
-    image: supabase/storage-api:v0.2.1
+    image: supabase/storage-api:v0.3.1
     ports:
       - '5000:5000'
     depends_on:
@@ -38,10 +38,10 @@ services:
       PROJECT_REF: bjwdssmqcnupljrqypxz # can be any random string
       REGION: us-east-1 # region where your bucket is located
       POSTGREST_URL: http://rest:3000
-      GLOBAL_S3_BUCKET: supa-storage-testing  # name of s3 bucket where you want to store objects
+      GLOBAL_S3_BUCKET: supa-storage-testing # name of s3 bucket where you want to store objects
       PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
       DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-      PGOPTIONS: "-c search_path=storage"
+      PGOPTIONS: '-c search_path=storage'
       AWS_ACCESS_KEY_ID: replace-with-your-aws-key
       AWS_SECRET_ACCESS_KEY: replace-with-your-aws-secret
       FILE_SIZE_LIMIT: 52428800

@@ -21,6 +21,7 @@ Map<String, dynamic> get testBucketJson => {
       'owner': 'owner_id',
       'created_at': '',
       'updated_at': '',
+      'public': false,
     };
 
 Map<String, dynamic> get testFileObjectJson => {
@@ -71,7 +72,11 @@ void main() {
 
   test('should create bucket', () async {
     const testBucketId = 'test_bucket';
-    const requestBody = {'id': testBucketId, 'name': testBucketId};
+    const requestBody = {
+      'id': testBucketId,
+      'name': testBucketId,
+      'public': false
+    };
     when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
         .thenAnswer((_) =>
             Future.value(StorageResponse(data: {'name': 'test_bucket'})));

@@ -76,8 +76,8 @@ class StorageBucketApi {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
       final response = await fetch.put(
-        '$url/bucket',
-        {'id': id, 'name': id, 'public': bucketOptions.public},
+        '$url/bucket/$id',
+        {'id': id, 'public': bucketOptions.public},
         options: options,
       );
       if (response.hasError) {

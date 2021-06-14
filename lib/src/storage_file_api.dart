@@ -152,6 +152,19 @@ class StorageFileApi {
     }
   }
 
+  /// Retrieve URLs for assets in public buckets
+  ///
+  /// @param path The file path to be downloaded, including the current file name. For example `folder/image.png`.
+  StorageResponse<String> getPublicUrl(String path) {
+    try {
+      final _path = _getFinalPath(path);
+      final publicUrl = '$url/object/public/$_path';
+      return StorageResponse<String>(data: publicUrl);
+    } catch (e) {
+      return StorageResponse(error: StorageError(e.toString()));
+    }
+  }
+
   /// Deletes files within the same bucket
   ///
   /// @param paths An array of files to be deletes, including the path and file name. For example [`folder/image.png`].

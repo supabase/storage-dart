@@ -44,13 +44,16 @@ class StorageBucketApi {
   /// Creates a new Storage bucket
   ///
   /// @param id A unique identifier for the bucket you are creating.
+  /// @param bucketOptions A parameter to optionally make the bucket public.
   /// @return created bucket id
-  Future<StorageResponse<String>> createBucket(String id) async {
+  Future<StorageResponse<String>> createBucket(String id,
+      [BucketOptions bucketOptions =
+          const BucketOptions(public: false)]) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
       final response = await fetch.post(
         '$url/bucket',
-        {'id': id, 'name': id},
+        {'id': id, 'name': id, 'public': bucketOptions.public},
         options: options,
       );
       if (response.hasError) {
@@ -58,6 +61,30 @@ class StorageBucketApi {
       } else {
         final bucketId = response.data['name'] as String;
         return StorageResponse<String>(data: bucketId);
+      }
+    } catch (e) {
+      return StorageResponse(error: StorageError(e.toString()));
+    }
+  }
+
+  /// Updates a new Storage bucket
+  ///
+  /// @param id A unique identifier for the bucket you are creating.
+  /// @param bucketOptions A parameter to set the publicity of the bucket.
+  Future<StorageResponse<String>> updateBucket(
+      String id, BucketOptions bucketOptions) async {
+    try {
+      final FetchOptions options = FetchOptions(headers: headers);
+      final response = await fetch.put(
+        '$url/bucket/$id',
+        {'id': id, 'public': bucketOptions.public},
+        options: options,
+      );
+      if (response.hasError) {
+        return StorageResponse(error: response.error);
+      } else {
+        final message = response.data['message'] as String;
+        return StorageResponse<String>(data: message);
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));

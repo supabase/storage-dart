@@ -70,9 +70,10 @@ class BucketOptions {
 }
 
 class FileOptions {
-  const FileOptions({required this.cacheControl});
+  const FileOptions({required this.cacheControl, this.upsert = false});
 
   final String cacheControl;
+  final bool upsert;
 }
 
 class SearchOptions {

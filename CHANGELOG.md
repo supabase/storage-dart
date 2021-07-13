@@ -1,3 +1,8 @@
+## [0.0.1]
+
+- feat: add upsert option to upload
+- Initial Release
+
 ## [0.0.1-dev.3]
 
 - feat: add public option for createBucket method, and add updateBucket

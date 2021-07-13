@@ -123,7 +123,8 @@ class Fetch {
       final request = http.MultipartRequest(method, Uri.parse(url))
         ..headers.addAll(headers)
         ..files.add(multipartFile)
-        ..fields['cacheControl'] = fileOptions.cacheControl;
+        ..fields['cacheControl'] = fileOptions.cacheControl
+        ..headers['x-upsert'] = fileOptions.upsert.toString();
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);

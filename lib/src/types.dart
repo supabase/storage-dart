@@ -1,5 +1,12 @@
 import 'package:http_parser/http_parser.dart';
 
+class FetchOptions {
+  final Map<String, String>? headers;
+  final bool? noResolveJson;
+
+  FetchOptions({this.headers, this.noResolveJson});
+}
+
 class Bucket {
   const Bucket({
     required this.id,

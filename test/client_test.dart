@@ -1,5 +1,4 @@
 import 'package:mocktail/mocktail.dart';
-import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
 
@@ -19,7 +18,7 @@ void main() {
         storageUrl, {'Authorization': 'Bearer $storageKey'});
 
     // Register default mock values (used by mocktail)
-    registerFallbackValue<FileOptions>(const FileOptions(cacheControl: '3600'));
+    registerFallbackValue<FileOptions>(const FileOptions());
     registerFallbackValue<FetchOptions>(FetchOptions());
   });
 

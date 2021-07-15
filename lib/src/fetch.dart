@@ -34,13 +34,6 @@ class StorageResponse<T> {
   bool get hasError => error != null;
 }
 
-class FetchOptions {
-  final Map<String, String>? headers;
-  final bool? noResolveJson;
-
-  FetchOptions({this.headers, this.noResolveJson});
-}
-
 class Fetch {
   bool _isSuccessStatusCode(int code) {
     return code >= 200 && code <= 299;

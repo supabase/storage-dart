@@ -51,7 +51,7 @@ void main() {
     fetch = MockFetch();
 
     // Register default mock values (used by mocktail)
-    registerFallbackValue<FileOptions>(const FileOptions(cacheControl: '3600'));
+    registerFallbackValue<FileOptions>(const FileOptions());
     registerFallbackValue<FetchOptions>(FetchOptions());
   });
 

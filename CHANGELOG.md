@@ -1,3 +1,9 @@
+## [0.0.2]
+
+- feat: support upload/update binary file
+- fix: docker-compose for unit test
+- fix: method comment format
+
 ## [0.0.1]
 
 - feat: add upsert option to upload

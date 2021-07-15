@@ -85,18 +85,7 @@ class Fetch {
         ..body = bodyStr;
 
       final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (_isSuccessStatusCode(response.statusCode)) {
-        if (options?.noResolveJson == true) {
-          return StorageResponse(data: response.bodyBytes);
-        } else {
-          final jsonBody = json.decode(response.body);
-          return StorageResponse(data: jsonBody);
-        }
-      } else {
-        throw response;
-      }
+      return _handleResponse(streamedResponse, options);
     } catch (e) {
       return StorageResponse(error: _handleError(e));
     }
@@ -111,9 +100,6 @@ class Fetch {
   ) async {
     try {
       final headers = options?.headers ?? {};
-      if (method != 'GET') {
-        headers['Content-Type'] = 'application/json';
-      }
       final multipartFile = http.MultipartFile.fromBytes(
         '',
         file.readAsBytesSync(),
@@ -127,6 +113,46 @@ class Fetch {
         ..headers['x-upsert'] = fileOptions.upsert.toString();
 
       final streamedResponse = await request.send();
+      return _handleResponse(streamedResponse, options);
+    } catch (e) {
+      return StorageResponse(error: _handleError(e));
+    }
+  }
+
+  Future<StorageResponse> _handleBinaryFileRequest(
+    String method,
+    String url,
+    BinaryFile file,
+    FileOptions fileOptions,
+    FetchOptions? options,
+  ) async {
+    try {
+      final headers = options?.headers ?? {};
+      final multipartFile = http.MultipartFile.fromBytes(
+        '',
+        file.bytes,
+        // request fails with null filename so set it empty instead.
+        filename: '',
+        contentType: file.mimeType,
+      );
+      final request = http.MultipartRequest(method, Uri.parse(url))
+        ..headers.addAll(headers)
+        ..files.add(multipartFile)
+        ..fields['cacheControl'] = fileOptions.cacheControl
+        ..headers['x-upsert'] = fileOptions.upsert.toString();
+
+      final streamedResponse = await request.send();
+      return _handleResponse(streamedResponse, options);
+    } catch (e) {
+      return StorageResponse(error: _handleError(e));
+    }
+  }
+
+  Future<StorageResponse> _handleResponse(
+    http.StreamedResponse streamedResponse,
+    FetchOptions? options,
+  ) async {
+    try {
       final response = await http.Response.fromStream(streamedResponse);
 
       if (_isSuccessStatusCode(response.statusCode)) {
@@ -173,5 +199,17 @@ class Fetch {
       String url, File file, FileOptions fileOptions,
       {FetchOptions? options}) async {
     return _handleMultipartRequest('PUT', url, file, fileOptions, options);
+  }
+
+  Future<StorageResponse> postBinaryFile(
+      String url, BinaryFile file, FileOptions fileOptions,
+      {FetchOptions? options}) async {
+    return _handleBinaryFileRequest('POST', url, file, fileOptions, options);
+  }
+
+  Future<StorageResponse> putBinaryFile(
+      String url, BinaryFile file, FileOptions fileOptions,
+      {FetchOptions? options}) async {
+    return _handleBinaryFileRequest('PUT', url, file, fileOptions, options);
   }
 }

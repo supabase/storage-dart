@@ -14,9 +14,7 @@ const defaultSearchOptions = SearchOptions(
   ),
 );
 
-const defaultFileOptions = FileOptions(
-  cacheControl: '3600',
-);
+const defaultFileOptions = FileOptions();
 
 class StorageFileApi {
   StorageFileApi(this.url, this.headers, this.bucketId);
@@ -56,6 +54,33 @@ class StorageFileApi {
     }
   }
 
+  /// Uploads a binary file to an existing bucket. Can be use with Flutter web.
+  ///
+  /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
+  /// [file] The BinaryFile object to be stored in the bucket.
+  /// [fileOptions] HTTP headers. For example `cacheControl`
+  Future<StorageResponse<String>> uploadBinary(String path, BinaryFile file,
+      {FileOptions? fileOptions}) async {
+    try {
+      final _path = _getFinalPath(path);
+      final response = await fetch.postBinaryFile(
+        '$url/object/$_path',
+        file,
+        fileOptions ?? defaultFileOptions,
+        options: FetchOptions(headers: headers),
+      );
+
+      if (response.hasError) {
+        return StorageResponse(error: response.error);
+      } else {
+        return StorageResponse<String>(
+            data: (response.data as Map)['Key'] as String);
+      }
+    } catch (e) {
+      return StorageResponse(error: StorageError(e.toString()));
+    }
+  }
+
   /// Replaces an existing file at the specified path with a new one.
   ///
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
@@ -76,6 +101,33 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(data: response.data['Key'] as String);
+      }
+    } catch (e) {
+      return StorageResponse(error: StorageError(e.toString()));
+    }
+  }
+
+  /// Replaces an existing file at the specified path with a new one.
+  ///
+  /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
+  /// [file] The BinaryFile object to be stored in the bucket.
+  /// [fileOptions] HTTP headers. For example `cacheControl`
+  Future<StorageResponse<String>> updateBinary(String path, BinaryFile file,
+      {FileOptions? fileOptions}) async {
+    try {
+      final _path = _getFinalPath(path);
+      final response = await fetch.putBinaryFile(
+        '$url/object/$_path',
+        file,
+        fileOptions ?? defaultFileOptions,
+        options: FetchOptions(headers: headers),
+      );
+
+      if (response.hasError) {
+        return StorageResponse(error: response.error);
+      } else {
+        return StorageResponse<String>(
+            data: (response.data as Map)['Key'] as String);
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));

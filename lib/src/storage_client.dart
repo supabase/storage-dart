@@ -7,7 +7,7 @@ class SupabaseStorageClient extends StorageBucketApi {
 
   /// Perform file operation in a bucket.
   ///
-  /// @param id The bucket id to operate on.
+  /// [id] The bucket id to operate on.
   StorageFileApi from(String id) {
     return StorageFileApi(url, headers, id);
   }

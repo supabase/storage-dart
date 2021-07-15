@@ -26,7 +26,7 @@ class StorageBucketApi {
 
   /// Retrieves the details of an existing Storage bucket.
   ///
-  /// @param id The unique identifier of the bucket you would like to retrieve.
+  /// [id] The unique identifier of the bucket you would like to retrieve.
   Future<StorageResponse<Bucket>> getBucket(String id) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
@@ -43,9 +43,8 @@ class StorageBucketApi {
 
   /// Creates a new Storage bucket
   ///
-  /// @param id A unique identifier for the bucket you are creating.
-  /// @param bucketOptions A parameter to optionally make the bucket public.
-  /// @return created bucket id
+  /// [id] A unique identifier for the bucket you are creating.
+  /// [bucketOptions] A parameter to optionally make the bucket public.
   Future<StorageResponse<String>> createBucket(String id,
       [BucketOptions bucketOptions =
           const BucketOptions(public: false)]) async {
@@ -69,8 +68,8 @@ class StorageBucketApi {
 
   /// Updates a new Storage bucket
   ///
-  /// @param id A unique identifier for the bucket you are creating.
-  /// @param bucketOptions A parameter to set the publicity of the bucket.
+  /// [id] A unique identifier for the bucket you are creating.
+  /// [bucketOptions] A parameter to set the publicity of the bucket.
   Future<StorageResponse<String>> updateBucket(
       String id, BucketOptions bucketOptions) async {
     try {
@@ -93,7 +92,7 @@ class StorageBucketApi {
 
   /// Removes all objects inside a single bucket.
   ///
-  /// @param id The unique identifier of the bucket you would like to empty.
+  /// [id] The unique identifier of the bucket you would like to empty.
   Future<StorageResponse<String>> emptyBucket(String id) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
@@ -113,7 +112,7 @@ class StorageBucketApi {
   /// Deletes an existing bucket. A bucket can't be deleted with existing objects inside it.
   /// You must first `emptyBucket()` the bucket.
   ///
-  /// @param id The unique identifier of the bucket you would like to delete.
+  /// [id] The unique identifier of the bucket you would like to delete.
   Future<StorageResponse<String>> deleteBucket(String id) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);

@@ -57,15 +57,15 @@ class StorageFileApi {
   /// Uploads a binary file to an existing bucket. Can be use with Flutter web.
   ///
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
-  /// [file] The BinaryFile object to be stored in the bucket.
+  /// [data] The binary file data to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> uploadBinary(String path, BinaryFile file,
+  Future<StorageResponse<String>> uploadBinary(String path, Uint8List data,
       {FileOptions? fileOptions}) async {
     try {
       final _path = _getFinalPath(path);
       final response = await fetch.postBinaryFile(
         '$url/object/$_path',
-        file,
+        data,
         fileOptions ?? defaultFileOptions,
         options: FetchOptions(headers: headers),
       );
@@ -110,15 +110,15 @@ class StorageFileApi {
   /// Replaces an existing file at the specified path with a new one.
   ///
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
-  /// [file] The BinaryFile object to be stored in the bucket.
+  /// [data] The binary file data to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> updateBinary(String path, BinaryFile file,
+  Future<StorageResponse<String>> updateBinary(String path, Uint8List data,
       {FileOptions? fileOptions}) async {
     try {
       final _path = _getFinalPath(path);
       final response = await fetch.putBinaryFile(
         '$url/object/$_path',
-        file,
+        data,
         fileOptions ?? defaultFileOptions,
         options: FetchOptions(headers: headers),
       );

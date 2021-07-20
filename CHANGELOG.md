@@ -1,3 +1,7 @@
+## [0.0.3]
+
+- BREAKING CHANGE: rework upload/update binary file methods by removing BinaryFile class and supporting Uint8List directly instead.
+
 ## [0.0.2]
 
 - feat: support upload/update binary file

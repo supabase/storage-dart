@@ -113,25 +113,3 @@ class Metadata {
 
   final String? name;
 }
-
-class BinaryFile {
-  const BinaryFile({
-    required this.bytes,
-    required this.mime,
-  });
-
-  final List<int> bytes;
-  final String mime;
-
-  MediaType get mimeType {
-    try {
-      return MediaType.parse(mime);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  int get size {
-    return bytes.length;
-  }
-}

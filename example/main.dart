@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:storage_client/storage_client.dart';
 
@@ -9,10 +10,10 @@ Future<void> main() async {
       '$supabaseUrl/storage/v1', {'Authorization': 'Bearer $supabaseKey'});
 
   // Upload binary file
-  final List<int> bytes = 'Hello world'.codeUnits;
-  final BinaryFile binaryFile = BinaryFile(bytes: bytes, mime: 'text/plain');
-  final uploadBinaryResponse = await client.from('public').uploadBinary(
-      'binaryExample.txt', binaryFile,
+  final List<int> listBytes = 'Hello world'.codeUnits;
+  final Uint8List fileData = Uint8List.fromList(listBytes);
+  final uploadBinaryResponse = await client.from('public-images').uploadBinary(
+      'binaryExample.txt', fileData,
       fileOptions: const FileOptions(upsert: true));
   print('upload binary response : ${uploadBinaryResponse.data}');
 

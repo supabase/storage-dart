@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' show MediaType;
@@ -44,7 +45,7 @@ class Fetch {
       final mime = lookupMimeType(path);
       return MediaType.parse(mime ?? '');
     } catch (error) {
-      return null;
+      rethrow;
     }
   }
 
@@ -115,7 +116,7 @@ class Fetch {
   Future<StorageResponse> _handleBinaryFileRequest(
     String method,
     String url,
-    BinaryFile file,
+    Uint8List data,
     FileOptions fileOptions,
     FetchOptions? options,
   ) async {
@@ -123,10 +124,10 @@ class Fetch {
       final headers = options?.headers ?? {};
       final multipartFile = http.MultipartFile.fromBytes(
         '',
-        file.bytes,
+        data,
         // request fails with null filename so set it empty instead.
         filename: '',
-        contentType: file.mimeType,
+        contentType: _parseMediaType(url),
       );
       final request = http.MultipartRequest(method, Uri.parse(url))
         ..headers.addAll(headers)
@@ -195,14 +196,14 @@ class Fetch {
   }
 
   Future<StorageResponse> postBinaryFile(
-      String url, BinaryFile file, FileOptions fileOptions,
+      String url, Uint8List data, FileOptions fileOptions,
       {FetchOptions? options}) async {
-    return _handleBinaryFileRequest('POST', url, file, fileOptions, options);
+    return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
   }
 
   Future<StorageResponse> putBinaryFile(
-      String url, BinaryFile file, FileOptions fileOptions,
+      String url, Uint8List data, FileOptions fileOptions,
       {FetchOptions? options}) async {
-    return _handleBinaryFileRequest('PUT', url, file, fileOptions, options);
+    return _handleBinaryFileRequest('PUT', url, data, fileOptions, options);
   }
 }

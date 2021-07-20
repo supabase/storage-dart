@@ -12,7 +12,7 @@ Future<void> main() async {
   // Upload binary file
   final List<int> listBytes = 'Hello world'.codeUnits;
   final Uint8List fileData = Uint8List.fromList(listBytes);
-  final uploadBinaryResponse = await client.from('public-images').uploadBinary(
+  final uploadBinaryResponse = await client.from('public').uploadBinary(
       'binaryExample.txt', fileData,
       fileOptions: const FileOptions(upsert: true));
   print('upload binary response : ${uploadBinaryResponse.data}');

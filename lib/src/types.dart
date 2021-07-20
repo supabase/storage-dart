@@ -1,5 +1,3 @@
-import 'package:http_parser/http_parser.dart';
-
 class FetchOptions {
   final Map<String, String>? headers;
   final bool? noResolveJson;

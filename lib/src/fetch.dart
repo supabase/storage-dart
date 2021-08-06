@@ -43,7 +43,7 @@ class Fetch {
   MediaType? _parseMediaType(String path) {
     try {
       final mime = lookupMimeType(path);
-      return MediaType.parse(mime ?? '');
+      return MediaType.parse(mime ?? 'application/octet-stream');
     } catch (error) {
       rethrow;
     }

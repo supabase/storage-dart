@@ -1,3 +1,7 @@
+## [0.0.4]
+
+- fix: Set default meme type to `application/octet-stream` when meme type not found.
+
 ## [0.0.3]
 
 - BREAKING CHANGE: rework upload/update binary file methods by removing BinaryFile class and supporting Uint8List directly instead.

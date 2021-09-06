@@ -42,188 +42,211 @@ String get objectUrl => '$supabaseUrl/storage/v1/object';
 void main() {
   late SupabaseStorageClient client;
 
-  setUp(() {
-    // init SupabaseClient with test url & test key
-    client = SupabaseStorageClient(
-        '$supabaseUrl/storage/v1', {'Authorization': 'Bearer $supabaseKey'});
+  group('client', () {
+    setUp(() {
+      // init SupabaseClient with test url & test key
+      client = SupabaseStorageClient(
+          '$supabaseUrl/storage/v1', {'Authorization': 'Bearer $supabaseKey'});
 
-    // Use mocked version for `fetch`, to prevent actual http calls.
-    fetch = MockFetch();
+      // Use mocked version for `fetch`, to prevent actual http calls.
+      fetch = MockFetch();
 
-    // Register default mock values (used by mocktail)
-    registerFallbackValue<FileOptions>(const FileOptions());
-    registerFallbackValue<FetchOptions>(FetchOptions());
+      // Register default mock values (used by mocktail)
+      registerFallbackValue<FileOptions>(const FileOptions());
+      registerFallbackValue<FetchOptions>(FetchOptions());
+    });
+
+    tearDown(() {
+      final file = File('a.txt');
+      if (file.existsSync()) file.deleteSync();
+    });
+
+    test('should list buckets', () async {
+      when(() => fetch.get(bucketUrl, options: mockFetchOptions)).thenAnswer(
+          (_) => Future.value(
+              StorageResponse(data: [testBucketJson, testBucketJson])));
+
+      final response = await client.listBuckets();
+      expect(response.error, isNull);
+      expect(response.data, isA<List<Bucket>>());
+    });
+
+    test('should create bucket', () async {
+      const testBucketId = 'test_bucket';
+      const requestBody = {
+        'id': testBucketId,
+        'name': testBucketId,
+        'public': false
+      };
+      when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
+          .thenAnswer((_) =>
+              Future.value(StorageResponse(data: {'name': 'test_bucket'})));
+
+      final response = await client.createBucket(testBucketId);
+      expect(response.error, isNull);
+      expect(response.data, isA<String>());
+      expect(response.data, 'test_bucket');
+    });
+
+    test('should get bucket', () async {
+      const testBucketId = 'test_bucket';
+      when(() =>
+              fetch.get('$bucketUrl/$testBucketId', options: mockFetchOptions))
+          .thenAnswer(
+              (_) => Future.value(StorageResponse(data: testBucketJson)));
+
+      final response = await client.getBucket(testBucketId);
+      expect(response.error, isNull);
+      expect(response.data, isA<Bucket>());
+      expect(response.data?.id, testBucketId);
+      expect(response.data?.name, testBucketId);
+    });
+
+    test('should empty bucket', () async {
+      const testBucketId = 'test_bucket';
+      when(() =>
+          fetch.post('$bucketUrl/$testBucketId/empty', {},
+              options: mockFetchOptions)).thenAnswer(
+          (_) => Future.value(StorageResponse(data: {'message': 'Emptied'})));
+
+      final response = await client.emptyBucket(testBucketId);
+      expect(response.error, isNull);
+      expect(response.data, 'Emptied');
+    });
+
+    test('should delete bucket', () async {
+      const testBucketId = 'test_bucket';
+      when(() =>
+          fetch.delete('$bucketUrl/$testBucketId', {},
+              options: mockFetchOptions)).thenAnswer(
+          (_) => Future.value(StorageResponse(data: {'message': 'Deleted'})));
+
+      final response = await client.deleteBucket(testBucketId);
+      expect(response.error, isNull);
+      expect(response.data, 'Deleted');
+    });
+
+    test('should upload file', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      when(() =>
+          fetch.postFile('$objectUrl/public/a.txt', file, mockFileOptions,
+              options: mockFetchOptions)).thenAnswer(
+          (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})));
+
+      final response = await client.from('public').upload('a.txt', file);
+      expect(response.error, isNull);
+      expect(response.data, isA<String>());
+      expect(response.data?.endsWith('/a.txt'), isTrue);
+    });
+
+    test('should update file', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('Updated content');
+
+      when(() =>
+          fetch.putFile('$objectUrl/public/a.txt', file, mockFileOptions,
+              options: mockFetchOptions)).thenAnswer(
+          (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})));
+
+      final response = await client.from('public').update('a.txt', file);
+      expect(response.error, isNull);
+      expect(response.data, isA<String>());
+      expect(response.data?.endsWith('/a.txt'), isTrue);
+    });
+
+    test('should move file', () async {
+      const requestBody = {
+        'bucketName': 'public',
+        'sourceKey': 'a.txt',
+        'destinationKey': 'b.txt',
+      };
+      when(() => fetch.post('$objectUrl/move', requestBody,
+              options: mockFetchOptions))
+          .thenAnswer(
+              (_) => Future.value(StorageResponse(data: {'message': 'Move'})));
+
+      final response = await client.from('public').move('a.txt', 'b.txt');
+      expect(response.error, isNull);
+      expect(response.data, 'Move');
+    });
+
+    test('should createSignedUrl file', () async {
+      when(() => fetch.post('$objectUrl/sign/public/b.txt', {'expiresIn': 60},
+              options: mockFetchOptions))
+          .thenAnswer(
+              (_) => Future.value(StorageResponse(data: {'signedURL': 'url'})));
+
+      final response = await client.from('public').createSignedUrl('b.txt', 60);
+      expect(response.error, isNull);
+      expect(response.data, isA<String>());
+    });
+
+    test('should list files', () async {
+      when(() => fetch.post('$objectUrl/list/public', any(),
+              options: mockFetchOptions))
+          .thenAnswer((_) => Future.value(
+              StorageResponse(data: [testFileObjectJson, testFileObjectJson])));
+
+      final response = await client.from('public').list();
+      expect(response.error, isNull);
+      expect(response.data, isA<List<FileObject>>());
+      expect(response.data?.length, 2);
+    });
+
+    test('should download file', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('Updated content');
+
+      when(() =>
+              fetch.get('$objectUrl/public/b.txt', options: mockFetchOptions))
+          .thenAnswer((_) =>
+              Future.value(StorageResponse(data: file.readAsBytesSync())));
+
+      final response = await client.from('public').download('b.txt');
+      expect(response.error, isNull);
+      expect(response.data, isA<Uint8List>());
+      expect(String.fromCharCodes(response.data!), 'Updated content');
+    });
+
+    test('should get public URL of a path', () {
+      final response = client.from('files').getPublicUrl('b.txt');
+      expect(response.error, isNull);
+      expect(response.data, '$objectUrl/public/files/b.txt');
+    });
+
+    test('should remove file', () async {
+      final requestBody = {
+        'prefixes': ['a.txt', 'b.txt']
+      };
+      when(() => fetch.delete('$objectUrl/public', requestBody,
+              options: mockFetchOptions))
+          .thenAnswer((_) => Future.value(
+              StorageResponse(data: [testFileObjectJson, testFileObjectJson])));
+
+      final response = await client.from('public').remove(['a.txt', 'b.txt']);
+      expect(response.error, isNull);
+      expect(response.data, isA<List>());
+      expect(response.data?.length, 2);
+    });
   });
 
-  tearDown(() {
-    final file = File('a.txt');
-    if (file.existsSync()) file.deleteSync();
-  });
+  group('header', () {
+    test('X-Client-Info header is set', () {
+      client = SupabaseStorageClient(
+          '$supabaseUrl/storage/v1', {'Authorization': 'Bearer $supabaseKey'});
 
-  test('should list buckets', () async {
-    when(() => fetch.get(bucketUrl, options: mockFetchOptions)).thenAnswer(
-        (_) => Future.value(
-            StorageResponse(data: [testBucketJson, testBucketJson])));
+      expect(client.headers['X-Client-Info']!.split('/').first, 'storage-dart');
+    });
 
-    final response = await client.listBuckets();
-    expect(response.error, isNull);
-    expect(response.data, isA<List<Bucket>>());
-  });
+    test('X-Client-Info header can be overridden', () {
+      client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
+        'Authorization': 'Bearer $supabaseKey',
+        'X-Client-Info': 'supabase-dart/0.0.0'
+      });
 
-  test('should create bucket', () async {
-    const testBucketId = 'test_bucket';
-    const requestBody = {
-      'id': testBucketId,
-      'name': testBucketId,
-      'public': false
-    };
-    when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
-        .thenAnswer((_) =>
-            Future.value(StorageResponse(data: {'name': 'test_bucket'})));
-
-    final response = await client.createBucket(testBucketId);
-    expect(response.error, isNull);
-    expect(response.data, isA<String>());
-    expect(response.data, 'test_bucket');
-  });
-
-  test('should get bucket', () async {
-    const testBucketId = 'test_bucket';
-    when(() => fetch.get('$bucketUrl/$testBucketId', options: mockFetchOptions))
-        .thenAnswer((_) => Future.value(StorageResponse(data: testBucketJson)));
-
-    final response = await client.getBucket(testBucketId);
-    expect(response.error, isNull);
-    expect(response.data, isA<Bucket>());
-    expect(response.data?.id, testBucketId);
-    expect(response.data?.name, testBucketId);
-  });
-
-  test('should empty bucket', () async {
-    const testBucketId = 'test_bucket';
-    when(() => fetch.post('$bucketUrl/$testBucketId/empty', {},
-            options: mockFetchOptions))
-        .thenAnswer(
-            (_) => Future.value(StorageResponse(data: {'message': 'Emptied'})));
-
-    final response = await client.emptyBucket(testBucketId);
-    expect(response.error, isNull);
-    expect(response.data, 'Emptied');
-  });
-
-  test('should delete bucket', () async {
-    const testBucketId = 'test_bucket';
-    when(() => fetch.delete('$bucketUrl/$testBucketId', {},
-            options: mockFetchOptions))
-        .thenAnswer(
-            (_) => Future.value(StorageResponse(data: {'message': 'Deleted'})));
-
-    final response = await client.deleteBucket(testBucketId);
-    expect(response.error, isNull);
-    expect(response.data, 'Deleted');
-  });
-
-  test('should upload file', () async {
-    final file = File('a.txt');
-    file.writeAsStringSync('File content');
-
-    when(() =>
-        fetch.postFile('$objectUrl/public/a.txt', file, mockFileOptions,
-            options: mockFetchOptions)).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})));
-
-    final response = await client.from('public').upload('a.txt', file);
-    expect(response.error, isNull);
-    expect(response.data, isA<String>());
-    expect(response.data?.endsWith('/a.txt'), isTrue);
-  });
-
-  test('should update file', () async {
-    final file = File('a.txt');
-    file.writeAsStringSync('Updated content');
-
-    when(() =>
-        fetch.putFile('$objectUrl/public/a.txt', file, mockFileOptions,
-            options: mockFetchOptions)).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})));
-
-    final response = await client.from('public').update('a.txt', file);
-    expect(response.error, isNull);
-    expect(response.data, isA<String>());
-    expect(response.data?.endsWith('/a.txt'), isTrue);
-  });
-
-  test('should move file', () async {
-    const requestBody = {
-      'bucketName': 'public',
-      'sourceKey': 'a.txt',
-      'destinationKey': 'b.txt',
-    };
-    when(() => fetch.post('$objectUrl/move', requestBody,
-            options: mockFetchOptions))
-        .thenAnswer(
-            (_) => Future.value(StorageResponse(data: {'message': 'Move'})));
-
-    final response = await client.from('public').move('a.txt', 'b.txt');
-    expect(response.error, isNull);
-    expect(response.data, 'Move');
-  });
-
-  test('should createSignedUrl file', () async {
-    when(() => fetch.post('$objectUrl/sign/public/b.txt', {'expiresIn': 60},
-            options: mockFetchOptions))
-        .thenAnswer(
-            (_) => Future.value(StorageResponse(data: {'signedURL': 'url'})));
-
-    final response = await client.from('public').createSignedUrl('b.txt', 60);
-    expect(response.error, isNull);
-    expect(response.data, isA<String>());
-  });
-
-  test('should list files', () async {
-    when(() => fetch.post('$objectUrl/list/public', any(),
-            options: mockFetchOptions))
-        .thenAnswer((_) => Future.value(
-            StorageResponse(data: [testFileObjectJson, testFileObjectJson])));
-
-    final response = await client.from('public').list();
-    expect(response.error, isNull);
-    expect(response.data, isA<List<FileObject>>());
-    expect(response.data?.length, 2);
-  });
-
-  test('should download file', () async {
-    final file = File('a.txt');
-    file.writeAsStringSync('Updated content');
-
-    when(() => fetch.get('$objectUrl/public/b.txt', options: mockFetchOptions))
-        .thenAnswer(
-            (_) => Future.value(StorageResponse(data: file.readAsBytesSync())));
-
-    final response = await client.from('public').download('b.txt');
-    expect(response.error, isNull);
-    expect(response.data, isA<Uint8List>());
-    expect(String.fromCharCodes(response.data!), 'Updated content');
-  });
-
-  test('should get public URL of a path', () {
-    final response = client.from('files').getPublicUrl('b.txt');
-    expect(response.error, isNull);
-    expect(response.data, '$objectUrl/public/files/b.txt');
-  });
-
-  test('should remove file', () async {
-    final requestBody = {
-      'prefixes': ['a.txt', 'b.txt']
-    };
-    when(() => fetch.delete('$objectUrl/public', requestBody,
-            options: mockFetchOptions))
-        .thenAnswer((_) => Future.value(
-            StorageResponse(data: [testFileObjectJson, testFileObjectJson])));
-
-    final response = await client.from('public').remove(['a.txt', 'b.txt']);
-    expect(response.error, isNull);
-    expect(response.data, isA<List>());
-    expect(response.data?.length, 2);
+      expect(client.headers['X-Client-Info'], 'supabase-dart/0.0.0');
+    });
   });
 }

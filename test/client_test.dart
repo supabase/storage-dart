@@ -14,8 +14,9 @@ void main() {
 
   setUp(() {
     // init SupabaseClient with test url & test key
-    client = SupabaseStorageClient(
-        storageUrl, {'Authorization': 'Bearer $storageKey'});
+    client = SupabaseStorageClient(storageUrl, {
+      'Authorization': 'Bearer $storageKey',
+    });
 
     // Register default mock values (used by mocktail)
     registerFallbackValue<FileOptions>(const FileOptions());
@@ -46,14 +47,18 @@ void main() {
   test('Create new public bucket', () async {
     const newPublicBucketName = 'my-new-public-bucket';
     await client.createBucket(
-        newPublicBucketName, const BucketOptions(public: true));
+      newPublicBucketName,
+      const BucketOptions(public: true),
+    );
     final response = await client.getBucket(newPublicBucketName);
     expect(response.data!.public, true);
   });
 
   test('update bucket', () async {
     final updateRes = await client.updateBucket(
-        newBucketName, const BucketOptions(public: true));
+      newBucketName,
+      const BucketOptions(public: true),
+    );
     expect(updateRes.error, isNull);
     expect(updateRes.data, isA<String>());
     final getRes = await client.getBucket(newBucketName);

@@ -1,3 +1,7 @@
+## [0.0.5]
+
+- fix: Set `X-Client-Info` header
+
 ## [0.0.4]
 
 - fix: Set default meme type to `application/octet-stream` when meme type not found.

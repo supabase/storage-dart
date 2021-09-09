@@ -7,14 +7,20 @@ Future<void> main() async {
   const supabaseUrl = '';
   const supabaseKey = '';
   final client = SupabaseStorageClient(
-      '$supabaseUrl/storage/v1', {'Authorization': 'Bearer $supabaseKey'});
+    '$supabaseUrl/storage/v1',
+    {
+      'Authorization': 'Bearer $supabaseKey',
+    },
+  );
 
   // Upload binary file
   final List<int> listBytes = 'Hello world'.codeUnits;
   final Uint8List fileData = Uint8List.fromList(listBytes);
   final uploadBinaryResponse = await client.from('public').uploadBinary(
-      'binaryExample.txt', fileData,
-      fileOptions: const FileOptions(upsert: true));
+        'binaryExample.txt',
+        fileData,
+        fileOptions: const FileOptions(upsert: true),
+      );
   print('upload binary response : ${uploadBinaryResponse.data}');
 
   // Upload file to bucket "public"

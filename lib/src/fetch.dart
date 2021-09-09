@@ -168,42 +168,63 @@ class Fetch {
     return _handleRequest('GET', url, {}, options);
   }
 
-  Future<StorageResponse> post(String url, dynamic body,
-      {FetchOptions? options}) async {
+  Future<StorageResponse> post(
+    String url,
+    dynamic body, {
+    FetchOptions? options,
+  }) async {
     return _handleRequest('POST', url, body, options);
   }
 
-  Future<StorageResponse> put(String url, dynamic body,
-      {FetchOptions? options}) async {
+  Future<StorageResponse> put(
+    String url,
+    dynamic body, {
+    FetchOptions? options,
+  }) async {
     return _handleRequest('PUT', url, body, options);
   }
 
-  Future<StorageResponse> delete(String url, dynamic body,
-      {FetchOptions? options}) async {
+  Future<StorageResponse> delete(
+    String url,
+    dynamic body, {
+    FetchOptions? options,
+  }) async {
     return _handleRequest('DELETE', url, body, options);
   }
 
   Future<StorageResponse> postFile(
-      String url, File file, FileOptions fileOptions,
-      {FetchOptions? options}) async {
+    String url,
+    File file,
+    FileOptions fileOptions, {
+    FetchOptions? options,
+  }) async {
     return _handleMultipartRequest('POST', url, file, fileOptions, options);
   }
 
   Future<StorageResponse> putFile(
-      String url, File file, FileOptions fileOptions,
-      {FetchOptions? options}) async {
+    String url,
+    File file,
+    FileOptions fileOptions, {
+    FetchOptions? options,
+  }) async {
     return _handleMultipartRequest('PUT', url, file, fileOptions, options);
   }
 
   Future<StorageResponse> postBinaryFile(
-      String url, Uint8List data, FileOptions fileOptions,
-      {FetchOptions? options}) async {
+    String url,
+    Uint8List data,
+    FileOptions fileOptions, {
+    FetchOptions? options,
+  }) async {
     return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
   }
 
   Future<StorageResponse> putBinaryFile(
-      String url, Uint8List data, FileOptions fileOptions,
-      {FetchOptions? options}) async {
+    String url,
+    Uint8List data,
+    FileOptions fileOptions, {
+    FetchOptions? options,
+  }) async {
     return _handleBinaryFileRequest('PUT', url, data, fileOptions, options);
   }
 }

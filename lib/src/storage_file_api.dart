@@ -32,8 +32,11 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
   /// [file] The File object to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> upload(String path, File file,
-      {FileOptions? fileOptions}) async {
+  Future<StorageResponse<String>> upload(
+    String path,
+    File file, {
+    FileOptions? fileOptions,
+  }) async {
     try {
       final _path = _getFinalPath(path);
       final response = await fetch.postFile(
@@ -47,7 +50,8 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-            data: (response.data as Map)['Key'] as String);
+          data: (response.data as Map)['Key'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));
@@ -59,8 +63,11 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
   /// [data] The binary file data to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> uploadBinary(String path, Uint8List data,
-      {FileOptions? fileOptions}) async {
+  Future<StorageResponse<String>> uploadBinary(
+    String path,
+    Uint8List data, {
+    FileOptions? fileOptions,
+  }) async {
     try {
       final _path = _getFinalPath(path);
       final response = await fetch.postBinaryFile(
@@ -74,7 +81,8 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-            data: (response.data as Map)['Key'] as String);
+          data: (response.data as Map)['Key'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));
@@ -86,8 +94,11 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
   /// [file] The file object to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> update(String path, File file,
-      {FileOptions? fileOptions}) async {
+  Future<StorageResponse<String>> update(
+    String path,
+    File file, {
+    FileOptions? fileOptions,
+  }) async {
     try {
       final _path = _getFinalPath(path);
       final response = await fetch.putFile(
@@ -112,8 +123,11 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
   /// [data] The binary file data to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> updateBinary(String path, Uint8List data,
-      {FileOptions? fileOptions}) async {
+  Future<StorageResponse<String>> updateBinary(
+    String path,
+    Uint8List data, {
+    FileOptions? fileOptions,
+  }) async {
     try {
       final _path = _getFinalPath(path);
       final response = await fetch.putBinaryFile(
@@ -127,7 +141,8 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-            data: (response.data as Map)['Key'] as String);
+          data: (response.data as Map)['Key'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));
@@ -154,7 +169,8 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-            data: response.data['message'] as String);
+          data: response.data['message'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));
@@ -166,7 +182,9 @@ class StorageFileApi {
   /// [path] The file path to be downloaded, including the current file name. For example `folder/image.png`.
   /// [expiresIn] The number of seconds until the signed URL expires. For example, `60` for a URL which is valid for one minute.
   Future<StorageResponse<String>> createSignedUrl(
-      String path, int expiresIn) async {
+    String path,
+    int expiresIn,
+  ) async {
     try {
       final _path = _getFinalPath(path);
       final options = FetchOptions(headers: headers);
@@ -224,13 +242,18 @@ class StorageFileApi {
     try {
       final options = FetchOptions(headers: headers);
       final response = await fetch.delete(
-          '$url/object/$bucketId', {'prefixes': paths},
-          options: options);
+        '$url/object/$bucketId',
+        {'prefixes': paths},
+        options: options,
+      );
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
         final fileObjects = List<FileObject>.from(
-            (response.data as List).map((item) => FileObject.fromJson(item)));
+          (response.data as List).map(
+            (item) => FileObject.fromJson(item),
+          ),
+        );
         return StorageResponse<List<FileObject>>(data: fileObjects);
       }
     } catch (e) {
@@ -241,8 +264,10 @@ class StorageFileApi {
   /// Lists all the files within a bucket.
   /// [path] The folder path.
   /// [searchOptions] includes `limit`, `offset`, and `sortBy`.
-  Future<StorageResponse<List<FileObject>>> list(
-      {String? path, SearchOptions? searchOptions}) async {
+  Future<StorageResponse<List<FileObject>>> list({
+    String? path,
+    SearchOptions? searchOptions,
+  }) async {
     try {
       final Map<String, dynamic> body = {
         'prefix': path ?? '',
@@ -256,13 +281,19 @@ class StorageFileApi {
         },
       };
       final options = FetchOptions(headers: headers);
-      final response = await fetch.post('$url/object/list/$bucketId', body,
-          options: options);
+      final response = await fetch.post(
+        '$url/object/list/$bucketId',
+        body,
+        options: options,
+      );
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
         final fileObjects = List<FileObject>.from(
-            (response.data as List).map((item) => FileObject.fromJson(item)));
+          (response.data as List).map(
+            (item) => FileObject.fromJson(item),
+          ),
+        );
         return StorageResponse<List<FileObject>>(data: fileObjects);
       }
     } catch (e) {

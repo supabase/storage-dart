@@ -16,7 +16,10 @@ class StorageBucketApi {
         return StorageResponse(error: response.error);
       } else {
         final buckets = List<Bucket>.from(
-            (response.data as List).map((value) => Bucket.fromJson(value)));
+          (response.data as List).map(
+            (value) => Bucket.fromJson(value),
+          ),
+        );
         return StorageResponse<List<Bucket>>(data: buckets);
       }
     } catch (e) {
@@ -45,9 +48,10 @@ class StorageBucketApi {
   ///
   /// [id] A unique identifier for the bucket you are creating.
   /// [bucketOptions] A parameter to optionally make the bucket public.
-  Future<StorageResponse<String>> createBucket(String id,
-      [BucketOptions bucketOptions =
-          const BucketOptions(public: false)]) async {
+  Future<StorageResponse<String>> createBucket(
+    String id, [
+    BucketOptions bucketOptions = const BucketOptions(public: false),
+  ]) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
       final response = await fetch.post(
@@ -71,7 +75,9 @@ class StorageBucketApi {
   /// [id] A unique identifier for the bucket you are creating.
   /// [bucketOptions] A parameter to set the publicity of the bucket.
   Future<StorageResponse<String>> updateBucket(
-      String id, BucketOptions bucketOptions) async {
+    String id,
+    BucketOptions bucketOptions,
+  ) async {
     try {
       final FetchOptions options = FetchOptions(headers: headers);
       final response = await fetch.put(
@@ -102,7 +108,8 @@ class StorageBucketApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-            data: response.data['message'] as String);
+          data: response.data['message'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));
@@ -122,7 +129,8 @@ class StorageBucketApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-            data: response.data['message'] as String);
+          data: response.data['message'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));

@@ -111,3 +111,29 @@ class Metadata {
 
   final String? name;
 }
+
+class StorageError {
+  final String message;
+  final String? error;
+  final String? statusCode;
+
+  StorageError(this.message, {this.error, this.statusCode});
+
+  StorageError.fromJson(dynamic json)
+      : assert(json is Map<String, dynamic>),
+        message = json['message'] as String,
+        error = json['error'] as String?,
+        statusCode = json['statusCode'] as String?;
+
+  @override
+  String toString() => message;
+}
+
+class StorageResponse<T> {
+  final StorageError? error;
+  final T? data;
+
+  StorageResponse({this.data, this.error});
+
+  bool get hasError => error != null;
+}

@@ -1,3 +1,7 @@
+## [0.0.5+1]
+
+- fix: Move `StorageError` to `types.dart`
+
 ## [0.0.5]
 
 - fix: Set `X-Client-Info` header

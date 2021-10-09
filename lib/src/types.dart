@@ -77,10 +77,20 @@ class BucketOptions {
 }
 
 class FileOptions {
-  const FileOptions({this.cacheControl = '3600', this.upsert = false});
+  const FileOptions({
+    this.cacheControl = '3600',
+    this.upsert = false,
+    this.mime,
+  });
 
   final String cacheControl;
   final bool upsert;
+
+  /// Used as Content-Type
+  /// Gets parsed with [MediaType.parse(mime)]
+  ///
+  /// Throws a FormatError if the media type is invalid.
+  final String? mime;
 }
 
 class SearchOptions {

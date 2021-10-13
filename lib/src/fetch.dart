@@ -99,13 +99,15 @@ class Fetch {
   ) async {
     try {
       final headers = options?.headers ?? {};
+      final contentType = fileOptions.mime != null
+          ? MediaType.parse(fileOptions.mime!)
+          : _parseMediaType(url);
       final multipartFile = http.MultipartFile.fromBytes(
         '',
         data,
         // request fails with null filename so set it empty instead.
         filename: '',
-        contentType:
-            MediaType.parse(fileOptions.mime ?? 'application/octet-stream'),
+        contentType: contentType,
       );
       final request = http.MultipartRequest(method, Uri.parse(url))
         ..headers.addAll(headers)

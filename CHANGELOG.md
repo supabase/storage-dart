@@ -1,3 +1,8 @@
+## [0.0.6]
+
+- feat: set custom mime/Content-Type from `FileOptions`
+- fix: Move `StorageError` to `types.dart`
+
 ## [0.0.5]
 
 - fix: Set `X-Client-Info` header

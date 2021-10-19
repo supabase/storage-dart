@@ -136,7 +136,9 @@ class StorageError {
         statusCode = json['statusCode'] as String?;
 
   @override
-  String toString() => message;
+  String toString() {
+    return 'StorageError(message: $message, statusCode: $statusCode, error: $error)';
+  }
 }
 
 class StorageResponse<T> {

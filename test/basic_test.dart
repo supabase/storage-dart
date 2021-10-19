@@ -204,7 +204,7 @@ void main() {
 
     test('should move file', () async {
       const requestBody = {
-        'bucketName': 'public',
+        'bucketId': 'public',
         'sourceKey': 'a.txt',
         'destinationKey': 'b.txt',
       };

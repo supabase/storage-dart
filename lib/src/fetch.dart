@@ -15,12 +15,8 @@ class Fetch {
   }
 
   MediaType? _parseMediaType(String path) {
-    try {
-      final mime = lookupMimeType(path);
-      return MediaType.parse(mime ?? 'application/octet-stream');
-    } catch (error) {
-      rethrow;
-    }
+    final mime = lookupMimeType(path);
+    return MediaType.parse(mime ?? 'application/octet-stream');
   }
 
   StorageError _handleError(dynamic error) {

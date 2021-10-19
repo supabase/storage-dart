@@ -1,3 +1,7 @@
+## [0.0.6+1]
+
+- fix: Moving an object
+
 ## [0.0.6]
 
 - feat: set custom mime/Content-Type from `FileOptions`

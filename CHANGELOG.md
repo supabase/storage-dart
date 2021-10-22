@@ -1,6 +1,6 @@
 ## [0.0.6+1]
 
-- fix: Moving an object
+- fix: Bug where `move()` does not work properly
 
 ## [0.0.6]
 

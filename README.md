@@ -19,8 +19,6 @@ Dart client library to interact with Supabase Storage.
 
 This repo is licensed under MIT.
 
-https://github.com/dshukertjr/storage-dart.git
-
 ## Credits
 
 - https://github.com/supabase/storage-js - ported from supabase/storage-js

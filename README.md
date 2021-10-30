@@ -2,6 +2,8 @@
 
 Dart client library to interact with Supabase Storage.
 
+- Documentation: https://supabase.io/docs/reference/dart/storage-createbucket
+
 [![pub package](https://img.shields.io/pub/v/storage_client.svg)](https://pub.dev/packages/storage_client)
 [![pub test](https://github.com/supabase/storage-dart/workflows/Test/badge.svg)](https://github.com/supabase/storage-dart/actions?query=workflow%3ATest)
 
@@ -16,6 +18,8 @@ Dart client library to interact with Supabase Storage.
 ## License
 
 This repo is licensed under MIT.
+
+https://github.com/dshukertjr/storage-dart.git
 
 ## Credits
 

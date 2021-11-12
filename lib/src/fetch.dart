@@ -25,10 +25,16 @@ class Fetch {
         final data = json.decode(error.body) as Map<String, dynamic>;
         return StorageError.fromJson(data);
       } on FormatException catch (_) {
-        return StorageError(error.body);
+        return StorageError(
+          error.body,
+          statusCode: error.statusCode.toString(),
+        );
       }
     } else {
-      return StorageError(error.toString());
+      return StorageError(
+        error.toString(),
+        statusCode: error.runtimeType.toString(),
+      );
     }
   }
 

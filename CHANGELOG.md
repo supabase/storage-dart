@@ -1,3 +1,7 @@
+## [0.0.6+2]
+
+- fix: add status code to `StorageError` within `Fetch`
+
 ## [0.0.6+1]
 
 - fix: Bug where `move()` does not work properly

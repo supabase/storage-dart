@@ -139,12 +139,3 @@ class StorageError {
     return 'StorageError(message: $message, statusCode: $statusCode, error: $error)';
   }
 }
-
-class StorageResponse<T> {
-  final StorageError? error;
-  final T? data;
-
-  const StorageResponse({this.data, this.error});
-
-  bool get hasError => error != null;
-}

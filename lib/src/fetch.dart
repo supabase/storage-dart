@@ -38,7 +38,7 @@ class Fetch {
     }
   }
 
-  Future<StorageResponse> _handleRequest(
+  Future _handleRequest(
     String method,
     String url,
     dynamic body,
@@ -57,11 +57,11 @@ class Fetch {
       final streamedResponse = await request.send();
       return _handleResponse(streamedResponse, options);
     } catch (e) {
-      return StorageResponse(error: _handleError(e));
+      throw _handleError(e);
     }
   }
 
-  Future<StorageResponse> _handleMultipartRequest(
+  Future _handleMultipartRequest(
     String method,
     String url,
     File file,
@@ -88,11 +88,11 @@ class Fetch {
       final streamedResponse = await request.send();
       return _handleResponse(streamedResponse, options);
     } catch (e) {
-      return StorageResponse(error: _handleError(e));
+      throw _handleError(e);
     }
   }
 
-  Future<StorageResponse> _handleBinaryFileRequest(
+  Future _handleBinaryFileRequest(
     String method,
     String url,
     Uint8List data,
@@ -120,11 +120,11 @@ class Fetch {
       final streamedResponse = await request.send();
       return _handleResponse(streamedResponse, options);
     } catch (e) {
-      return StorageResponse(error: _handleError(e));
+      throw _handleError(e);
     }
   }
 
-  Future<StorageResponse> _handleResponse(
+  Future _handleResponse(
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
   ) async {
@@ -133,24 +133,24 @@ class Fetch {
 
       if (_isSuccessStatusCode(response.statusCode)) {
         if (options?.noResolveJson == true) {
-          return StorageResponse(data: response.bodyBytes);
+          return response.bodyBytes;
         } else {
           final jsonBody = json.decode(response.body);
-          return StorageResponse(data: jsonBody);
+          return jsonBody;
         }
       } else {
-        throw response;
+        throw response.body;
       }
     } catch (e) {
-      return StorageResponse(error: _handleError(e));
+      throw _handleError(e);
     }
   }
 
-  Future<StorageResponse> get(String url, {FetchOptions? options}) async {
+  Future get(String url, {FetchOptions? options}) async {
     return _handleRequest('GET', url, {}, options);
   }
 
-  Future<StorageResponse> post(
+  Future post(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -158,7 +158,7 @@ class Fetch {
     return _handleRequest('POST', url, body, options);
   }
 
-  Future<StorageResponse> put(
+  Future put(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -166,7 +166,7 @@ class Fetch {
     return _handleRequest('PUT', url, body, options);
   }
 
-  Future<StorageResponse> delete(
+  Future delete(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -174,7 +174,7 @@ class Fetch {
     return _handleRequest('DELETE', url, body, options);
   }
 
-  Future<StorageResponse> postFile(
+  Future postFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -183,7 +183,7 @@ class Fetch {
     return _handleMultipartRequest('POST', url, file, fileOptions, options);
   }
 
-  Future<StorageResponse> putFile(
+  Future putFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -192,7 +192,7 @@ class Fetch {
     return _handleMultipartRequest('PUT', url, file, fileOptions, options);
   }
 
-  Future<StorageResponse> postBinaryFile(
+  Future postBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {
@@ -201,7 +201,7 @@ class Fetch {
     return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
   }
 
-  Future<StorageResponse> putBinaryFile(
+  Future putBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {

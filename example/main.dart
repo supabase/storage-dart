@@ -16,38 +16,52 @@ Future<void> main() async {
   // Upload a list of bytes
   final List<int> listBytes = 'Hello world'.codeUnits;
   final Uint8List fileData = Uint8List.fromList(listBytes);
-  final uploadBinaryResponse = await client.from('public').uploadBytes(
-        'binaryExample.txt',
-        fileData,
-        fileOptions: const FileOptions(upsert: true),
-      );
-  print('upload binary response : ${uploadBinaryResponse.data}');
+  try {
+    final uploadBinaryResponse = await client.from('public').uploadBytes(
+          'binaryExample.txt',
+          fileData,
+          fileOptions: const FileOptions(upsert: true),
+        );
+    print('upload binary response: $uploadBinaryResponse');
+  } catch (e) {
+    print('failed to upload a list of bytes: $e');
+  }
 
   // Upload file to bucket "public"
   final file = File('example.txt');
-  file.writeAsStringSync('File content');
+  await file.writeAsString('File content');
 
-  final storageResponse =
-      await client.from('public').upload('example.txt', file);
-  print('upload response : ${storageResponse.data}');
+  try {
+    final key = await client.from('public').upload('example.txt', file);
+    print('file uploaded: $key');
+  } catch (e) {
+    print('failed to upload file');
+  }
 
   // Get download url
-  final urlResponse =
-      await client.from('public').createSignedUrl('example.txt', 60);
-  print('download url : ${urlResponse.data}');
+  try {
+    final url = await client.from('public').createSignedUrl('example.txt', 60);
+    print('download url: $url');
+  } catch (e) {
+    print('Error getting signed url: $e');
+  }
 
   // Download text file
-  final fileResponse = await client.from('public').download('example.txt');
-  if (fileResponse.hasError) {
-    print('Error while downloading file : ${fileResponse.error}');
-  } else {
-    print('downloaded file : ${String.fromCharCodes(fileResponse.data!)}');
+  try {
+    final fileResponse = await client.from('public').download('example.txt');
+    print('downloaded file : ${String.fromCharCodes(fileResponse)}');
+  } catch (e) {
+    print('Error while downloading file: $e');
   }
 
   // Delete file
-  final deleteResponse = await client.from('public').remove(['example.txt']);
-  print('deleted file id : ${deleteResponse.data?.first.id}');
+  try {
+    final deleteResponse = await client.from('public').remove(['example.txt']);
+    print('deleted file id: ${deleteResponse.first.id}');
+  } catch (e) {
+    print('Error while deleting file: $e');
+  }
 
   // Local file cleanup
-  if (file.existsSync()) file.deleteSync();
+  if (file.existsSync()) await file.delete();
 }

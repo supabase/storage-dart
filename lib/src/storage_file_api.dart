@@ -49,7 +49,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
     );
 
-    return (response.data as Map)['Key'] as String;
+    return (response as Map)['Key'] as String;
   }
 
   /// Uploads a binary file to an existing bucket. Can be used with Flutter web.
@@ -74,7 +74,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
     );
 
-    return (response.data as Map)['Key'] as String;
+    return (response as Map)['Key'] as String;
   }
 
   /// Replaces an existing file at the specified path with a new one.
@@ -99,7 +99,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
     );
 
-    return response.data['Key'] as String;
+    return response['Key'] as String;
   }
 
   /// Replaces an existing file at the specified path with a new one.
@@ -124,7 +124,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
     );
 
-    return response.data['Key'] as String;
+    return response['Key'] as String;
   }
 
   /// Moves an existing file, optionally renaming it at the same time.
@@ -145,7 +145,7 @@ class StorageFileApi {
       },
       options: options,
     );
-    return response.data['message'] as String;
+    return response['message'] as String;
   }
 
   /// Create signed url to download file without requiring permissions. This URL
@@ -167,7 +167,7 @@ class StorageFileApi {
       {'expiresIn': expiresIn},
       options: options,
     );
-    final signedUrl = '$url${response.data['signedURL']}';
+    final signedUrl = '$url${response['signedURL']}';
     return signedUrl;
   }
 
@@ -179,7 +179,7 @@ class StorageFileApi {
     final _path = _getFinalPath(path);
     final options = FetchOptions(headers: headers, noResolveJson: true);
     final response = await fetch.get('$url/object/$_path', options: options);
-    return response.data as Uint8List;
+    return response as Uint8List;
   }
 
   /// Retrieve URLs for assets in public buckets
@@ -204,7 +204,7 @@ class StorageFileApi {
       options: options,
     );
     final fileObjects = List<FileObject>.from(
-      (response.data as List).cast<Map<String, dynamic>>().map(
+      (response as List).cast<Map<String, dynamic>>().map(
             (item) => FileObject.fromJson(item),
           ),
     );
@@ -238,7 +238,7 @@ class StorageFileApi {
       options: options,
     );
     final fileObjects = List<FileObject>.from(
-      (response.data as List).cast<Map<String, dynamic>>().map(
+      (response as List).cast<Map<String, dynamic>>().map(
             (item) => FileObject.fromJson(item),
           ),
     );

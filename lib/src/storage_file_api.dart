@@ -17,7 +17,7 @@ const defaultSearchOptions = SearchOptions(
 const defaultFileOptions = FileOptions();
 
 class StorageFileApi {
-  StorageFileApi(this.url, this.headers, this.bucketId);
+  const StorageFileApi(this.url, this.headers, this.bucketId);
 
   final String url;
   final Map<String, String> headers;
@@ -29,8 +29,12 @@ class StorageFileApi {
 
   /// Uploads a file to an existing bucket.
   ///
-  /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
+  /// [path] The relative file path. Should be of the format
+  /// `folder/subfolder/filename.png`. The bucket must already exist before
+  /// attempting to upload.
+  ///
   /// [file] The File object to be stored in the bucket.
+  ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   Future<StorageResponse<String>> upload(
     String path,
@@ -58,12 +62,16 @@ class StorageFileApi {
     }
   }
 
-  /// Uploads a binary file to an existing bucket. Can be use with Flutter web.
+  /// Uploads a binary file to an existing bucket. Can be used with Flutter web.
   ///
-  /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
-  /// [data] The binary file data to be stored in the bucket.
+  /// [path] The relative file path. Should be of the format
+  /// `folder/subfolder/filename.png`. The bucket must already exist before
+  /// attempting to upload.
+  ///
+  /// [data] The bytes to be stored in the bucket.
+  ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> uploadBinary(
+  Future<StorageResponse<String>> uploadBytes(
     String path,
     Uint8List data, {
     FileOptions? fileOptions,
@@ -91,8 +99,12 @@ class StorageFileApi {
 
   /// Replaces an existing file at the specified path with a new one.
   ///
-  /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
+  /// [path] The relative file path. Should be of the format
+  /// `folder/subfolder/filename.png`. The bucket must already exist before
+  /// attempting to upload.
+  ///
   /// [file] The file object to be stored in the bucket.
+  ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   Future<StorageResponse<String>> update(
     String path,
@@ -120,10 +132,14 @@ class StorageFileApi {
 
   /// Replaces an existing file at the specified path with a new one.
   ///
-  /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
-  /// [data] The binary file data to be stored in the bucket.
+  /// [path] The relative file path. Should be of the format
+  /// `folder/subfolder/filename.png`. The bucket must already exist before
+  /// attempting to upload.
+  ///
+  /// [data] The bytes to be stored in the bucket.
+  ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> updateBinary(
+  Future<StorageResponse<String>> updateBytes(
     String path,
     Uint8List data, {
     FileOptions? fileOptions,
@@ -151,8 +167,11 @@ class StorageFileApi {
 
   /// Moves an existing file, optionally renaming it at the same time.
   ///
-  /// [fromPath] The original file path, including the current file name. For example `folder/image.png`.
-  /// [toPath] The new file path, including the new file name. For example `folder/image-copy.png`.
+  /// [fromPath] The original file path, including the current file name.
+  /// For example `folder/image.png`.
+  ///
+  /// [toPath] The new file path, including the new file name. For example
+  /// `folder/image-copy.png`.
   Future<StorageResponse<String>> move(String fromPath, String toPath) async {
     try {
       final options = FetchOptions(headers: headers);
@@ -177,10 +196,14 @@ class StorageFileApi {
     }
   }
 
-  /// Create signed url to download file without requiring permissions. This URL can be valid for a set number of seconds.
+  /// Create signed url to download file without requiring permissions. This URL
+  /// can be valid for a set number of seconds.
   ///
-  /// [path] The file path to be downloaded, including the current file name. For example `folder/image.png`.
-  /// [expiresIn] The number of seconds until the signed URL expires. For example, `60` for a URL which is valid for one minute.
+  /// [path] The file path to be downloaded, including the current file name.
+  /// For example `folder/image.png`.
+  ///
+  /// [expiresIn] The number of seconds until the signed URL expires. For
+  /// example, `60` for a URL which is valid for one minute.
   Future<StorageResponse<String>> createSignedUrl(
     String path,
     int expiresIn,
@@ -206,7 +229,8 @@ class StorageFileApi {
 
   /// Downloads a file.
   ///
-  /// [path] The file path to be downloaded, including the path and file name. For example `folder/image.png`.
+  /// [path] The file path to be downloaded, including the path and file name.
+  /// For example `folder/image.png`.
   Future<StorageResponse<Uint8List>> download(String path) async {
     try {
       final _path = _getFinalPath(path);
@@ -224,7 +248,8 @@ class StorageFileApi {
 
   /// Retrieve URLs for assets in public buckets
   ///
-  /// [path] The file path to be downloaded, including the current file name. For example `folder/image.png`.
+  /// [path] The file path to be downloaded, including the current file name.
+  /// For example `folder/image.png`.
   StorageResponse<String> getPublicUrl(String path) {
     try {
       final _path = _getFinalPath(path);
@@ -237,7 +262,8 @@ class StorageFileApi {
 
   /// Deletes files within the same bucket
   ///
-  /// [paths] An array of files to be deletes, including the path and file name. For example [`folder/image.png`].
+  /// [paths] An array of files to be deletes, including the path and file name.
+  /// For example [`folder/image.png`].
   Future<StorageResponse<List<FileObject>>> remove(List<String> paths) async {
     try {
       final options = FetchOptions(headers: headers);
@@ -262,7 +288,9 @@ class StorageFileApi {
   }
 
   /// Lists all the files within a bucket.
+  ///
   /// [path] The folder path.
+  ///
   /// [searchOptions] includes `limit`, `offset`, and `sortBy`.
   Future<StorageResponse<List<FileObject>>> list({
     String? path,

@@ -127,7 +127,7 @@ class StorageError {
   final String? error;
   final String? statusCode;
 
-  StorageError(this.message, {this.error, this.statusCode});
+  const StorageError(this.message, {this.error, this.statusCode});
 
   StorageError.fromJson(dynamic json)
       : assert(json is Map<String, dynamic>),

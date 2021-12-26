@@ -2,7 +2,7 @@ import 'fetch.dart';
 import 'types.dart';
 
 class StorageBucketApi {
-  StorageBucketApi(this.url, this.headers);
+  const StorageBucketApi(this.url, this.headers);
 
   final String url;
   final Map<String, String> headers;
@@ -47,6 +47,7 @@ class StorageBucketApi {
   /// Creates a new Storage bucket
   ///
   /// [id] A unique identifier for the bucket you are creating.
+  ///
   /// [bucketOptions] A parameter to optionally make the bucket public.
   Future<StorageResponse<String>> createBucket(
     String id, [
@@ -73,6 +74,7 @@ class StorageBucketApi {
   /// Updates a new Storage bucket
   ///
   /// [id] A unique identifier for the bucket you are creating.
+  ///
   /// [bucketOptions] A parameter to set the publicity of the bucket.
   Future<StorageResponse<String>> updateBucket(
     String id,
@@ -116,8 +118,8 @@ class StorageBucketApi {
     }
   }
 
-  /// Deletes an existing bucket. A bucket can't be deleted with existing objects inside it.
-  /// You must first `emptyBucket()` the bucket.
+  /// Deletes an existing bucket. A bucket can't be deleted with existing
+  /// objects inside it. You must first `emptyBucket()` the bucket.
   ///
   /// [id] The unique identifier of the bucket you would like to delete.
   Future<StorageResponse<String>> deleteBucket(String id) async {

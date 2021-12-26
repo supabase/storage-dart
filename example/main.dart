@@ -13,10 +13,10 @@ Future<void> main() async {
     },
   );
 
-  // Upload binary file
+  // Upload a list of bytes
   final List<int> listBytes = 'Hello world'.codeUnits;
   final Uint8List fileData = Uint8List.fromList(listBytes);
-  final uploadBinaryResponse = await client.from('public').uploadBinary(
+  final uploadBinaryResponse = await client.from('public').uploadBytes(
         'binaryExample.txt',
         fileData,
         fileOptions: const FileOptions(upsert: true),
@@ -26,6 +26,7 @@ Future<void> main() async {
   // Upload file to bucket "public"
   final file = File('example.txt');
   file.writeAsStringSync('File content');
+
   final storageResponse =
       await client.from('public').upload('example.txt', file);
   print('upload response : ${storageResponse.data}');

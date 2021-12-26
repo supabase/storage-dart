@@ -1,5 +1,5 @@
-import 'fetch.dart';
-import 'types.dart';
+import 'package:storage_client/src/fetch.dart';
+import 'package:storage_client/src/types.dart';
 
 class StorageBucketApi {
   const StorageBucketApi(this.url, this.headers);
@@ -12,7 +12,7 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await fetch.get('$url/bucket', options: options);
     final buckets = List<Bucket>.from(
-      (response.data as List).cast<Map<String, dynamic>>().map(
+      (response as List).cast<Map<String, dynamic>>().map(
             (bucket) => Bucket.fromJson(bucket),
           ),
     );
@@ -25,7 +25,7 @@ class StorageBucketApi {
   Future<Bucket> getBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await fetch.get('$url/bucket/$id', options: options);
-    return Bucket.fromJson(response.data as Map<String, dynamic>);
+    return Bucket.fromJson(response as Map<String, dynamic>);
   }
 
   /// Creates a new Storage bucket
@@ -43,7 +43,7 @@ class StorageBucketApi {
       {'id': id, 'name': id, 'public': bucketOptions.public},
       options: options,
     );
-    final bucketId = response.data['name'] as String;
+    final bucketId = response['name'] as String;
     return bucketId;
   }
 
@@ -62,7 +62,7 @@ class StorageBucketApi {
       {'id': id, 'public': bucketOptions.public},
       options: options,
     );
-    final message = response.data['message'] as String;
+    final message = response['message'] as String;
     return message;
   }
 
@@ -73,7 +73,7 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response =
         await fetch.post('$url/bucket/$id/empty', {}, options: options);
-    return response.data['message'] as String?;
+    return response['message'] as String?;
   }
 
   /// Deletes an existing bucket. A bucket can't be deleted with existing
@@ -84,6 +84,6 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response =
         await fetch.delete('$url/bucket/$id', {}, options: options);
-    return response.data['message'] as String?;
+    return response['message'] as String?;
   }
 }

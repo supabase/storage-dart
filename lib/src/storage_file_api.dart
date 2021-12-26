@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:storage_client/src/fetch.dart';
+import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
-
-import 'fetch.dart';
-import 'types.dart';
 
 const defaultSearchOptions = SearchOptions(
   limit: 100,

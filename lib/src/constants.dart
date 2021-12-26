@@ -1,4 +1,4 @@
-import 'package:storage_client/src/version.dart';
+import 'version.dart';
 
 class Constants {
   static const Map<String, String> defaultHeaders = {

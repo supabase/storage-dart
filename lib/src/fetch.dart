@@ -38,7 +38,7 @@ class Fetch {
     }
   }
 
-  Future _handleRequest(
+  Future<dynamic> _handleRequest(
     String method,
     String url,
     dynamic body,
@@ -124,7 +124,7 @@ class Fetch {
     }
   }
 
-  Future _handleResponse(
+  Future<dynamic> _handleResponse(
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
   ) async {
@@ -146,11 +146,11 @@ class Fetch {
     }
   }
 
-  Future get(String url, {FetchOptions? options}) async {
+  Future<dynamic> get(String url, {FetchOptions? options}) async {
     return _handleRequest('GET', url, {}, options);
   }
 
-  Future post(
+  Future<dynamic> post(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -158,7 +158,7 @@ class Fetch {
     return _handleRequest('POST', url, body, options);
   }
 
-  Future put(
+  Future<dynamic> put(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -166,7 +166,7 @@ class Fetch {
     return _handleRequest('PUT', url, body, options);
   }
 
-  Future delete(
+  Future<dynamic> delete(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -174,7 +174,7 @@ class Fetch {
     return _handleRequest('DELETE', url, body, options);
   }
 
-  Future postFile(
+  Future<dynamic> postFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -183,7 +183,7 @@ class Fetch {
     return _handleMultipartRequest('POST', url, file, fileOptions, options);
   }
 
-  Future putFile(
+  Future<dynamic> putFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -192,7 +192,7 @@ class Fetch {
     return _handleMultipartRequest('PUT', url, file, fileOptions, options);
   }
 
-  Future postBinaryFile(
+  Future<dynamic> postBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {
@@ -201,7 +201,7 @@ class Fetch {
     return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
   }
 
-  Future putBinaryFile(
+  Future<dynamic> putBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {

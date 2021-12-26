@@ -71,18 +71,16 @@ void main() {
 
     test('should create bucket', () async {
       const testBucketId = 'test_bucket';
-      const requestBody = {
-        'id': testBucketId,
-        'name': testBucketId,
-        'public': false
-      };
-      when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
-          .thenAnswer(
-        (_) => Future.value(
-          const {
-            'name': 'test_bucket',
-          },
+      when<dynamic>(
+        () => fetch.post(
+          any(),
+          any(),
+          options: any(named: 'options'),
         ),
+      ).thenAnswer(
+        (i) => Future.value(const {
+          'name': 'test_bucket',
+        }),
       );
 
       final response = await client.createBucket(testBucketId);
@@ -95,7 +93,7 @@ void main() {
       when(
         () => fetch.get(
           '$bucketUrl/$testBucketId',
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(testBucketJson),
@@ -112,8 +110,8 @@ void main() {
       when(
         () => fetch.post(
           '$bucketUrl/$testBucketId/empty',
-          {},
-          options: mockFetchOptions,
+          any(),
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(
@@ -132,8 +130,8 @@ void main() {
       when(
         () => fetch.delete(
           '$bucketUrl/$testBucketId',
-          {},
-          options: mockFetchOptions,
+          any(),
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(const {'message': 'Deleted'}),
@@ -152,13 +150,17 @@ void main() {
           '$objectUrl/public/a.txt',
           file,
           mockFileOptions,
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(const {'Key': 'public/a.txt'}),
       );
 
-      final response = await client.from('public').upload('a.txt', file);
+      final response = await client.from('public').upload(
+            'a.txt',
+            file,
+            fileOptions: mockFileOptions,
+          );
       expect(response, isA<String>());
       expect(response.endsWith('/a.txt'), isTrue);
     });
@@ -172,13 +174,17 @@ void main() {
           '$objectUrl/public/a.txt',
           file,
           mockFileOptions,
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(const {'Key': 'public/a.txt'}),
       );
 
-      final response = await client.from('public').update('a.txt', file);
+      final response = await client.from('public').update(
+            'a.txt',
+            file,
+            fileOptions: mockFileOptions,
+          );
       expect(response, isA<String>());
       expect(response.endsWith('/a.txt'), isTrue);
     });
@@ -193,7 +199,7 @@ void main() {
         () => fetch.post(
           '$objectUrl/move',
           requestBody,
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(const {'message': 'Move'}),
@@ -209,7 +215,7 @@ void main() {
         () => fetch.post(
           '$objectUrl/sign/public/b.txt',
           {'expiresIn': 60},
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value(const {'signedURL': 'url'}),
@@ -225,7 +231,7 @@ void main() {
         () => fetch.post(
           '$objectUrl/list/public',
           any(),
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value([testFileObjectJson, testFileObjectJson]),
@@ -244,7 +250,7 @@ void main() {
       when(
         () => fetch.get(
           '$objectUrl/public/b.txt',
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => file.readAsBytes(),
@@ -270,7 +276,7 @@ void main() {
         () => fetch.delete(
           '$objectUrl/public',
           requestBody,
-          options: mockFetchOptions,
+          options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) => Future.value([testFileObjectJson, testFileObjectJson]),

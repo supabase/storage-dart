@@ -24,54 +24,84 @@ void main() {
   });
 
   test('List buckets', () async {
-    final response = await client.listBuckets();
-    expect(response.error, isNull);
-    expect(response.data!.length, 4);
+    try {
+      final response = await client.listBuckets();
+      expect(response.length, 4);
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 
   test('Get bucket by id', () async {
-    final response = await client.getBucket('bucket2');
-    expect(response.data!.name, 'bucket2');
+    try {
+      final response = await client.getBucket('bucket2');
+      expect(response.name, 'bucket2');
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 
   test('Get bucket with wrong id', () async {
-    final response = await client.getBucket('not-exist-id');
-    expect(response.error, isNotNull);
+    try {
+      await client.getBucket('not-exist-id');
+      fail('Bucket with wrong id found');
+    } catch (e) {
+      expect(e, isNotNull);
+    }
   });
 
   test('Create new bucket', () async {
-    final response = await client.createBucket(newBucketName);
-    expect(response.data, newBucketName);
+    try {
+      final response = await client.createBucket(newBucketName);
+      expect(response, newBucketName);
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 
   test('Create new public bucket', () async {
-    const newPublicBucketName = 'my-new-public-bucket';
-    await client.createBucket(
-      newPublicBucketName,
-      const BucketOptions(public: true),
-    );
-    final response = await client.getBucket(newPublicBucketName);
-    expect(response.data!.public, true);
+    try {
+      const newPublicBucketName = 'my-new-public-bucket';
+      await client.createBucket(
+        newPublicBucketName,
+        const BucketOptions(public: true),
+      );
+      final response = await client.getBucket(newPublicBucketName);
+      expect(response.public, true);
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 
   test('update bucket', () async {
-    final updateRes = await client.updateBucket(
-      newBucketName,
-      const BucketOptions(public: true),
-    );
-    expect(updateRes.error, isNull);
-    expect(updateRes.data, isA<String>());
-    final getRes = await client.getBucket(newBucketName);
-    expect(getRes.data!.public, true);
+    try {
+      final updateRes = await client.updateBucket(
+        newBucketName,
+        const BucketOptions(public: true),
+      );
+      expect(updateRes, isA<String>());
+      final getRes = await client.getBucket(newBucketName);
+      expect(getRes.public, true);
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 
   test('Empty bucket', () async {
-    final response = await client.emptyBucket(newBucketName);
-    expect(response.data, 'Successfully emptied');
+    try {
+      final response = await client.emptyBucket(newBucketName);
+      expect(response, 'Successfully emptied');
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 
   test('Delete bucket', () async {
-    final response = await client.deleteBucket(newBucketName);
-    expect(response.data, 'Successfully deleted');
+    try {
+      final response = await client.deleteBucket(newBucketName);
+      expect(response, 'Successfully deleted');
+    } catch (e) {
+      fail(e.toString());
+    }
   });
 }

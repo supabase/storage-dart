@@ -2,7 +2,7 @@ class FetchOptions {
   final Map<String, String>? headers;
   final bool? noResolveJson;
 
-  FetchOptions({this.headers, this.noResolveJson});
+  const FetchOptions({this.headers, this.noResolveJson});
 }
 
 class Bucket {
@@ -15,9 +15,8 @@ class Bucket {
     required this.public,
   });
 
-  Bucket.fromJson(dynamic json)
-      : assert(json is Map),
-        id = json['id'] as String,
+  Bucket.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as String,
         name = json['name'] as String,
         owner = json['owner'] as String,
         createdAt = json['created_at'] as String,
@@ -45,7 +44,7 @@ class FileObject {
     required this.buckets,
   });
 
-  FileObject.fromJson(dynamic json)
+  FileObject.fromJson(Map<String, dynamic> json)
       : id = json['id'] as String?,
         name = json['name'] as String,
         bucketId = json['bucket_id'] as String?,
@@ -54,10 +53,11 @@ class FileObject {
         createdAt = json['created_at'] as String?,
         lastAccessedAt = json['last_accessed_at'] as String?,
         metadata = json['metadata'] != null
-            ? Metadata.fromJson(json['metadata'])
+            ? Metadata.fromJson(json['metadata'] as Map<String, dynamic>)
             : null,
-        buckets =
-            json['buckets'] != null ? Bucket.fromJson(json['buckets']) : null;
+        buckets = json['buckets'] != null
+            ? Bucket.fromJson(json['buckets'] as Map<String, dynamic>)
+            : null;
 
   final String name;
   final String? bucketId;
@@ -117,7 +117,7 @@ class SortBy {
 class Metadata {
   const Metadata({required this.name});
 
-  Metadata.fromJson(dynamic json) : name = json['name'] as String?;
+  Metadata.fromJson(Map<String, dynamic> json) : name = json['name'] as String?;
 
   final String? name;
 }
@@ -129,9 +129,8 @@ class StorageError {
 
   const StorageError(this.message, {this.error, this.statusCode});
 
-  StorageError.fromJson(dynamic json)
-      : assert(json is Map<String, dynamic>),
-        message = json['message'] as String,
+  StorageError.fromJson(Map<String, dynamic> json)
+      : message = json['message'] as String,
         error = json['error'] as String?,
         statusCode = json['statusCode'] as String?;
 
@@ -145,7 +144,7 @@ class StorageResponse<T> {
   final StorageError? error;
   final T? data;
 
-  StorageResponse({this.data, this.error});
+  const StorageResponse({this.data, this.error});
 
   bool get hasError => error != null;
 }

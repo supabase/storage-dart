@@ -54,7 +54,7 @@ void main() {
 
       // Register default mock values (used by mocktail)
       registerFallbackValue<FileOptions>(const FileOptions());
-      registerFallbackValue<FetchOptions>(FetchOptions());
+      registerFallbackValue<FetchOptions>(const FetchOptions());
     });
 
     tearDown(() {
@@ -84,7 +84,7 @@ void main() {
       when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
           .thenAnswer(
         (_) => Future.value(
-          StorageResponse(
+          const StorageResponse(
             data: {
               'name': 'test_bucket',
             },
@@ -130,7 +130,7 @@ void main() {
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
+          const StorageResponse(
             data: {
               'message': 'Emptied',
             },
@@ -152,7 +152,9 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'message': 'Deleted'})),
+        (_) => Future.value(
+          const StorageResponse(data: {'message': 'Deleted'}),
+        ),
       );
 
       final response = await client.deleteBucket(testBucketId);
@@ -172,7 +174,8 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})),
+        (_) =>
+            Future.value(const StorageResponse(data: {'Key': 'public/a.txt'})),
       );
 
       final response = await client.from('public').upload('a.txt', file);
@@ -193,7 +196,8 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})),
+        (_) =>
+            Future.value(const StorageResponse(data: {'Key': 'public/a.txt'})),
       );
 
       final response = await client.from('public').update('a.txt', file);
@@ -215,7 +219,7 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'message': 'Move'})),
+        (_) => Future.value(const StorageResponse(data: {'message': 'Move'})),
       );
 
       final response = await client.from('public').move('a.txt', 'b.txt');
@@ -231,7 +235,7 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'signedURL': 'url'})),
+        (_) => Future.value(const StorageResponse(data: {'signedURL': 'url'})),
       );
 
       final response = await client.from('public').createSignedUrl('b.txt', 60);

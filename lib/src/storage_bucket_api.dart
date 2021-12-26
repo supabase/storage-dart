@@ -16,9 +16,9 @@ class StorageBucketApi {
         return StorageResponse(error: response.error);
       } else {
         final buckets = List<Bucket>.from(
-          (response.data as List).map(
-            (value) => Bucket.fromJson(value),
-          ),
+          (response.data as List).cast<Map<String, dynamic>>().map(
+                (bucket) => Bucket.fromJson(bucket),
+              ),
         );
         return StorageResponse<List<Bucket>>(data: buckets);
       }
@@ -37,7 +37,9 @@ class StorageBucketApi {
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
-        return StorageResponse<Bucket>(data: Bucket.fromJson(response.data));
+        return StorageResponse<Bucket>(
+          data: Bucket.fromJson(response.data as Map<String, dynamic>),
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));

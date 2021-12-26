@@ -276,9 +276,9 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         final fileObjects = List<FileObject>.from(
-          (response.data as List).map(
-            (item) => FileObject.fromJson(item),
-          ),
+          (response.data as List).cast<Map<String, dynamic>>().map(
+                (item) => FileObject.fromJson(item),
+              ),
         );
         return StorageResponse<List<FileObject>>(data: fileObjects);
       }
@@ -318,9 +318,9 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         final fileObjects = List<FileObject>.from(
-          (response.data as List).map(
-            (item) => FileObject.fromJson(item),
-          ),
+          (response.data as List).cast<Map<String, dynamic>>().map(
+                (item) => FileObject.fromJson(item),
+              ),
         );
         return StorageResponse<List<FileObject>>(data: fileObjects);
       }

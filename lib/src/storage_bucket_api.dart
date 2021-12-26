@@ -38,11 +38,11 @@ class StorageBucketApi {
     BucketOptions bucketOptions = const BucketOptions(public: false),
   ]) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final Map<String, dynamic> response = await fetch.post(
       '$url/bucket',
       {'id': id, 'name': id, 'public': bucketOptions.public},
       options: options,
-    );
+    ) as Map<String, dynamic>;
     final bucketId = response['name'] as String;
     return bucketId;
   }
@@ -57,11 +57,11 @@ class StorageBucketApi {
     BucketOptions bucketOptions,
   ) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.put(
+    final Map<String, dynamic> response = await fetch.put(
       '$url/bucket/$id',
       {'id': id, 'public': bucketOptions.public},
       options: options,
-    );
+    ) as Map<String, dynamic>;
     final message = response['message'] as String;
     return message;
   }
@@ -71,8 +71,11 @@ class StorageBucketApi {
   /// [id] The unique identifier of the bucket you would like to empty.
   Future<String?> emptyBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response =
-        await fetch.post('$url/bucket/$id/empty', {}, options: options);
+    final Map<String, dynamic> response = await fetch.post(
+      '$url/bucket/$id/empty',
+      {},
+      options: options,
+    ) as Map<String, dynamic>;
     return response['message'] as String?;
   }
 
@@ -82,8 +85,11 @@ class StorageBucketApi {
   /// [id] The unique identifier of the bucket you would like to delete.
   Future<String?> deleteBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response =
-        await fetch.delete('$url/bucket/$id', {}, options: options);
+    final Map<String, dynamic> response = await fetch.delete(
+      '$url/bucket/$id',
+      {},
+      options: options,
+    ) as Map<String, dynamic>;
     return response['message'] as String?;
   }
 }

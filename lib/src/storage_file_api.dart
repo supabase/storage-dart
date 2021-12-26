@@ -91,12 +91,12 @@ class StorageFileApi {
     FileOptions? fileOptions,
   }) async {
     final _path = _getFinalPath(path);
-    final response = await fetch.putFile(
+    final Map<String, dynamic> response = await fetch.putFile(
       '$url/object/$_path',
       file,
       fileOptions ?? defaultFileOptions,
       options: FetchOptions(headers: headers),
-    );
+    ) as Map<String, dynamic>;
 
     return response['Key'] as String;
   }
@@ -116,12 +116,12 @@ class StorageFileApi {
     FileOptions? fileOptions,
   }) async {
     final _path = _getFinalPath(path);
-    final response = await fetch.putBinaryFile(
+    final Map<String, dynamic> response = await fetch.putBinaryFile(
       '$url/object/$_path',
       data,
       fileOptions ?? defaultFileOptions,
       options: FetchOptions(headers: headers),
-    );
+    ) as Map<String, dynamic>;
 
     return response['Key'] as String;
   }
@@ -135,7 +135,7 @@ class StorageFileApi {
   /// `folder/image-copy.png`.
   Future<String> move(String fromPath, String toPath) async {
     final options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final Map<String, dynamic> response = await fetch.post(
       '$url/object/move',
       {
         'bucketId': bucketId,
@@ -143,7 +143,7 @@ class StorageFileApi {
         'destinationKey': toPath,
       },
       options: options,
-    );
+    ) as Map<String, dynamic>;
     return response['message'] as String;
   }
 
@@ -161,11 +161,11 @@ class StorageFileApi {
   ) async {
     final _path = _getFinalPath(path);
     final options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final Map<String, dynamic> response = await fetch.post(
       '$url/object/sign/$_path',
       {'expiresIn': expiresIn},
       options: options,
-    );
+    ) as Map<String, dynamic>;
     final signedUrl = '$url${response['signedURL']}';
     return signedUrl;
   }

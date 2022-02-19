@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:storage_client/src/fetch.dart';
+import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
-
-import 'fetch.dart';
-import 'types.dart';
 
 const defaultSearchOptions = SearchOptions(
   limit: 100,
@@ -111,7 +110,9 @@ class StorageFileApi {
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
-        return StorageResponse<String>(data: response.data['Key'] as String);
+        return StorageResponse<String>(
+          data: (response.data as Map<String, dynamic>)['Key'] as String,
+        );
       }
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));
@@ -169,7 +170,7 @@ class StorageFileApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-          data: response.data['message'] as String,
+          data: (response.data as Map<String, dynamic>)['message'] as String,
         );
       }
     } catch (e) {

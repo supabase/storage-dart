@@ -1,5 +1,5 @@
-import 'fetch.dart';
-import 'types.dart';
+import 'package:storage_client/src/fetch.dart';
+import 'package:storage_client/src/types.dart';
 
 class StorageBucketApi {
   StorageBucketApi(this.url, this.headers);
@@ -62,7 +62,8 @@ class StorageBucketApi {
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
-        final bucketId = response.data['name'] as String;
+        final bucketId =
+            (response.data as Map<String, dynamic>)['name'] as String;
         return StorageResponse<String>(data: bucketId);
       }
     } catch (e) {
@@ -88,7 +89,8 @@ class StorageBucketApi {
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
-        final message = response.data['message'] as String;
+        final message =
+            (response.data as Map<String, dynamic>)['message'] as String;
         return StorageResponse<String>(data: message);
       }
     } catch (e) {
@@ -108,7 +110,7 @@ class StorageBucketApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-          data: response.data['message'] as String,
+          data: (response.data as Map<String, dynamic>)['message'] as String,
         );
       }
     } catch (e) {
@@ -129,7 +131,7 @@ class StorageBucketApi {
         return StorageResponse(error: response.error);
       } else {
         return StorageResponse<String>(
-          data: response.data['message'] as String,
+          data: (response.data as Map<String, dynamic>)['message'] as String,
         );
       }
     } catch (e) {

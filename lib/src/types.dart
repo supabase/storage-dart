@@ -17,7 +17,7 @@ class Bucket {
 
   Bucket.fromJson(dynamic json)
       : assert(json is Map),
-        id = json['id'] as String,
+        id = (json as Map<String, dynamic>)['id'] as String,
         name = json['name'] as String,
         owner = json['owner'] as String,
         createdAt = json['created_at'] as String,
@@ -46,7 +46,7 @@ class FileObject {
   });
 
   FileObject.fromJson(dynamic json)
-      : id = json['id'] as String?,
+      : id = (json as Map<String, dynamic>)['id'] as String?,
         name = json['name'] as String,
         bucketId = json['bucket_id'] as String?,
         owner = json['owner'] as String?,
@@ -131,7 +131,7 @@ class StorageError {
 
   StorageError.fromJson(dynamic json)
       : assert(json is Map<String, dynamic>),
-        message = json['message'] as String,
+        message = (json as Map<String, dynamic>)['message'] as String,
         error = json['error'] as String?,
         statusCode = json['statusCode'] as String?;
 

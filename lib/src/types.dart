@@ -117,7 +117,8 @@ class SortBy {
 class Metadata {
   const Metadata({required this.name});
 
-  Metadata.fromJson(dynamic json) : name = json['name'] as String?;
+  Metadata.fromJson(dynamic json)
+      : name = (json as Map<String, dynamic>)['name'] as String?;
 
   final String? name;
 }

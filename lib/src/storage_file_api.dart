@@ -197,7 +197,8 @@ class StorageFileApi {
       if (response.hasError) {
         return StorageResponse(error: response.error);
       } else {
-        final signedUrl = '$url${response.data['signedURL']}';
+        final signedUrl =
+            '$url${(response.data as Map<String, dynamic>)['signedURL']}';
         return StorageResponse<String>(data: signedUrl);
       }
     } catch (e) {

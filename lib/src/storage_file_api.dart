@@ -230,7 +230,7 @@ class StorageFileApi {
   StorageResponse<String> getPublicUrl(String path) {
     try {
       final _path = _getFinalPath(path);
-      final publicUrl = '$url/object/public/$_path';
+      final publicUrl = '$url/object/$_path';
       return StorageResponse<String>(data: publicUrl);
     } catch (e) {
       return StorageResponse(error: StorageError(e.toString()));

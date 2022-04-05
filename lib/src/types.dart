@@ -132,7 +132,8 @@ class StorageError {
 
   StorageError.fromJson(dynamic json)
       : assert(json is Map<String, dynamic>),
-        message = (json as Map<String, dynamic>)['message'] as String,
+        message = (json as Map<String, dynamic>)['message'] as String? ??
+            json.toString(),
         error = json['error'] as String?,
         statusCode = json['statusCode'] as String?;
 

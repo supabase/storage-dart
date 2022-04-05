@@ -1,8 +1,11 @@
+import 'package:http/http.dart';
 import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/src/types.dart';
 
 class StorageBucketApi {
-  StorageBucketApi(this.url, this.headers);
+  StorageBucketApi(this.url, this.headers, {Client? httpClient}) {
+    fetch = Fetch(httpClient);
+  }
 
   final String url;
   final Map<String, String> headers;

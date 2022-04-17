@@ -4,23 +4,12 @@ import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
 
-const defaultSearchOptions = SearchOptions(
-  limit: 100,
-  offset: 0,
-  sortBy: SortBy(
-    column: 'name',
-    order: 'asc',
-  ),
-);
-
-const defaultFileOptions = FileOptions();
-
 class StorageFileApi {
-  StorageFileApi(this.url, this.headers, this.bucketId);
-
   final String url;
   final Map<String, String> headers;
   final String? bucketId;
+
+  const StorageFileApi(this.url, this.headers, this.bucketId);
 
   String _getFinalPath(String path) {
     return '$bucketId/$path';
@@ -34,13 +23,13 @@ class StorageFileApi {
   Future<String> upload(
     String path,
     File file, {
-    FileOptions? fileOptions,
+    FileOptions fileOptions = const FileOptions(),
   }) async {
     final _path = _getFinalPath(path);
     final response = await storageFetch.postFile(
       '$url/object/$_path',
       file,
-      fileOptions ?? defaultFileOptions,
+      fileOptions,
       options: FetchOptions(headers: headers),
     );
 
@@ -55,13 +44,13 @@ class StorageFileApi {
   Future<String> uploadBinary(
     String path,
     Uint8List data, {
-    FileOptions? fileOptions,
+    FileOptions fileOptions = const FileOptions(),
   }) async {
     final _path = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
       '$url/object/$_path',
       data,
-      fileOptions ?? defaultFileOptions,
+      fileOptions,
       options: FetchOptions(headers: headers),
     );
 
@@ -76,13 +65,13 @@ class StorageFileApi {
   Future<String> update(
     String path,
     File file, {
-    FileOptions? fileOptions,
+    FileOptions fileOptions = const FileOptions(),
   }) async {
     final _path = _getFinalPath(path);
     final response = await storageFetch.putFile(
       '$url/object/$_path',
       file,
-      fileOptions ?? defaultFileOptions,
+      fileOptions,
       options: FetchOptions(headers: headers),
     );
 
@@ -97,13 +86,13 @@ class StorageFileApi {
   Future<String> updateBinary(
     String path,
     Uint8List data, {
-    FileOptions? fileOptions,
+    FileOptions fileOptions = const FileOptions(),
   }) async {
     final _path = _getFinalPath(path);
     final response = await storageFetch.putBinaryFile(
       '$url/object/$_path',
       data,
-      fileOptions ?? defaultFileOptions,
+      fileOptions,
       options: FetchOptions(headers: headers),
     );
 
@@ -190,18 +179,11 @@ class StorageFileApi {
   /// [searchOptions] includes `limit`, `offset`, and `sortBy`.
   Future<List<FileObject>> list({
     String? path,
-    SearchOptions? searchOptions,
+    SearchOptions searchOptions = const SearchOptions(),
   }) async {
     final Map<String, dynamic> body = {
       'prefix': path ?? '',
-      'limit': searchOptions?.limit ?? defaultSearchOptions.limit,
-      'offset': searchOptions?.offset ?? defaultSearchOptions.offset,
-      'sort_by': {
-        'column': searchOptions?.sortBy?.column ??
-            defaultSearchOptions.sortBy!.column,
-        'order':
-            searchOptions?.sortBy?.order ?? defaultSearchOptions.sortBy!.order,
-      },
+      ...searchOptions.toMap(),
     };
     final options = FetchOptions(headers: headers);
     final response = await storageFetch.post(

@@ -65,8 +65,8 @@ class Fetch {
     FetchOptions? options,
   ) async {
     final headers = options?.headers ?? {};
-    final contentType = fileOptions.mime != null
-        ? MediaType.parse(fileOptions.mime!)
+    final contentType = fileOptions.contentType != null
+        ? MediaType.parse(fileOptions.contentType!)
         : _parseMediaType(file.path);
     final multipartFile = http.MultipartFile.fromBytes(
       '',
@@ -92,8 +92,8 @@ class Fetch {
     FetchOptions? options,
   ) async {
     final headers = options?.headers ?? {};
-    final contentType = fileOptions.mime != null
-        ? MediaType.parse(fileOptions.mime!)
+    final contentType = fileOptions.contentType != null
+        ? MediaType.parse(fileOptions.contentType!)
         : _parseMediaType(url);
     final multipartFile = http.MultipartFile.fromBytes(
       '',

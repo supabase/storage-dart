@@ -83,18 +83,16 @@ class FileOptions {
   /// Gets parsed with [MediaType.parse(mime)]
   ///
   /// Throws a FormatError if the media type is invalid.
-  final String? mime;
+  final String? contentType;
 
   const FileOptions({
     this.cacheControl = '3600',
     this.upsert = false,
-    this.mime,
+    this.contentType = 'text/plain;charset=UTF-8',
   });
 }
 
 class SearchOptions {
-  const SearchOptions({this.limit, this.offset, this.sortBy, this.search});
-
   /// The number of files you want to be returned. */
   final int? limit;
 
@@ -106,6 +104,25 @@ class SearchOptions {
 
   /// The search string to filter files by.
   final String? search;
+
+  const SearchOptions({
+    this.limit = 100,
+    this.offset = 0,
+    this.sortBy = const SortBy(
+      column: 'name',
+      order: 'asc',
+    ),
+    this.search,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'limit': limit,
+      'offset': offset,
+      'sortBy': sortBy?.toMap(),
+      'search': search,
+    };
+  }
 }
 
 class SortBy {
@@ -113,6 +130,13 @@ class SortBy {
   final String? order;
 
   const SortBy({this.column, this.order});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'column': column,
+      'order': order,
+    };
+  }
 }
 
 // TODO: need to check for metadata props. The api swagger doesnt have.

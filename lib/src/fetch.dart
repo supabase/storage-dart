@@ -19,19 +19,19 @@ class Fetch {
     return MediaType.parse(mime ?? 'application/octet-stream');
   }
 
-  StorageError _handleError(dynamic error, StackTrace stack) {
+  StorageException _handleError(dynamic error, StackTrace stack) {
     if (error is http.Response) {
       try {
         final data = json.decode(error.body) as Map<String, dynamic>;
-        return StorageError.fromJson(data);
+        return StorageException.fromJson(data, '${error.statusCode}');
       } on FormatException catch (_) {
-        return StorageError(
+        return StorageException(
           error.body,
-          statusCode: error.statusCode.toString(),
+          statusCode: '${error.statusCode}',
         );
       }
     } else {
-      return StorageError(
+      return StorageException(
         error.toString(),
         statusCode: error.runtimeType.toString(),
       );
@@ -44,21 +44,17 @@ class Fetch {
     dynamic body,
     FetchOptions? options,
   ) async {
-    try {
-      final headers = options?.headers ?? {};
-      if (method != 'GET') {
-        headers['Content-Type'] = 'application/json';
-      }
-      final bodyStr = json.encode(body ?? {});
-      final request = http.Request(method, Uri.parse(url))
-        ..headers.addAll(headers)
-        ..body = bodyStr;
-
-      final streamedResponse = await request.send();
-      return _handleResponse(streamedResponse, options);
-    } catch (error, stack) {
-      throw _handleError(error, stack);
+    final headers = options?.headers ?? {};
+    if (method != 'GET') {
+      headers['Content-Type'] = 'application/json';
     }
+    final bodyStr = json.encode(body ?? {});
+    final request = http.Request(method, Uri.parse(url))
+      ..headers.addAll(headers)
+      ..body = bodyStr;
+
+    final streamedResponse = await request.send();
+    return _handleResponse(streamedResponse, options);
   }
 
   Future<dynamic> _handleMultipartRequest(
@@ -68,28 +64,24 @@ class Fetch {
     FileOptions fileOptions,
     FetchOptions? options,
   ) async {
-    try {
-      final headers = options?.headers ?? {};
-      final contentType = fileOptions.mime != null
-          ? MediaType.parse(fileOptions.mime!)
-          : _parseMediaType(file.path);
-      final multipartFile = http.MultipartFile.fromBytes(
-        '',
-        file.readAsBytesSync(),
-        filename: file.path,
-        contentType: contentType,
-      );
-      final request = http.MultipartRequest(method, Uri.parse(url))
-        ..headers.addAll(headers)
-        ..files.add(multipartFile)
-        ..fields['cacheControl'] = fileOptions.cacheControl
-        ..headers['x-upsert'] = fileOptions.upsert.toString();
+    final headers = options?.headers ?? {};
+    final contentType = fileOptions.mime != null
+        ? MediaType.parse(fileOptions.mime!)
+        : _parseMediaType(file.path);
+    final multipartFile = http.MultipartFile.fromBytes(
+      '',
+      file.readAsBytesSync(),
+      filename: file.path,
+      contentType: contentType,
+    );
+    final request = http.MultipartRequest(method, Uri.parse(url))
+      ..headers.addAll(headers)
+      ..files.add(multipartFile)
+      ..fields['cacheControl'] = fileOptions.cacheControl
+      ..headers['x-upsert'] = fileOptions.upsert.toString();
 
-      final streamedResponse = await request.send();
-      return _handleResponse(streamedResponse, options);
-    } catch (error, stack) {
-      throw _handleError(error, stack);
-    }
+    final streamedResponse = await request.send();
+    return _handleResponse(streamedResponse, options);
   }
 
   Future<dynamic> _handleBinaryFileRequest(
@@ -99,50 +91,41 @@ class Fetch {
     FileOptions fileOptions,
     FetchOptions? options,
   ) async {
-    try {
-      final headers = options?.headers ?? {};
-      final contentType = fileOptions.mime != null
-          ? MediaType.parse(fileOptions.mime!)
-          : _parseMediaType(url);
-      final multipartFile = http.MultipartFile.fromBytes(
-        '',
-        data,
-        // request fails with null filename so set it empty instead.
-        filename: '',
-        contentType: contentType,
-      );
-      final request = http.MultipartRequest(method, Uri.parse(url))
-        ..headers.addAll(headers)
-        ..files.add(multipartFile)
-        ..fields['cacheControl'] = fileOptions.cacheControl
-        ..headers['x-upsert'] = fileOptions.upsert.toString();
+    final headers = options?.headers ?? {};
+    final contentType = fileOptions.mime != null
+        ? MediaType.parse(fileOptions.mime!)
+        : _parseMediaType(url);
+    final multipartFile = http.MultipartFile.fromBytes(
+      '',
+      data,
+      // request fails with null filename so set it empty instead.
+      filename: '',
+      contentType: contentType,
+    );
+    final request = http.MultipartRequest(method, Uri.parse(url))
+      ..headers.addAll(headers)
+      ..files.add(multipartFile)
+      ..fields['cacheControl'] = fileOptions.cacheControl
+      ..headers['x-upsert'] = fileOptions.upsert.toString();
 
-      final streamedResponse = await request.send();
-      return _handleResponse(streamedResponse, options);
-    } catch (error, stack) {
-      throw _handleError(error, stack);
-    }
+    final streamedResponse = await request.send();
+    return _handleResponse(streamedResponse, options);
   }
 
   Future<dynamic> _handleResponse(
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
   ) async {
-    try {
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (_isSuccessStatusCode(response.statusCode)) {
-        if (options?.noResolveJson == true) {
-          return response.bodyBytes;
-        } else {
-          final jsonBody = json.decode(response.body);
-          return jsonBody;
-        }
+    final response = await http.Response.fromStream(streamedResponse);
+    if (_isSuccessStatusCode(response.statusCode)) {
+      if (options?.noResolveJson == true) {
+        return response.bodyBytes;
       } else {
-        throw response;
+        final jsonBody = json.decode(response.body);
+        return jsonBody;
       }
-    } catch (error, stack) {
-      throw _handleError(error, stack);
+    } else {
+      throw _handleError(response, StackTrace.current);
     }
   }
 

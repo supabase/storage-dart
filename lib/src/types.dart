@@ -123,18 +123,17 @@ class Metadata {
   final String? name;
 }
 
-class StorageError {
+class StorageException {
   final String message;
   final String? error;
   final String? statusCode;
 
-  StorageError(this.message, {this.error, this.statusCode});
+  const StorageException(this.message, {this.error, this.statusCode});
 
-  StorageError.fromJson(dynamic json)
-      : assert(json is Map<String, dynamic>),
-        message = (json as Map<String, dynamic>)['message'] as String,
+  StorageException.fromJson(Map<String, dynamic> json, [String? statusCode])
+      : message = json['message'] as String,
         error = json['error'] as String?,
-        statusCode = json['statusCode'] as String?;
+        statusCode = (json['statusCode'] as String?) ?? statusCode;
 
   @override
   String toString() {

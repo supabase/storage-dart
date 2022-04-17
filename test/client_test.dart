@@ -63,7 +63,7 @@ void main() {
       newBucketName,
       const BucketOptions(public: true),
     );
-    expect(updateRes, newBucketName);
+    expect(updateRes, 'Successfully updated');
 
     final getRes = await client.getBucket(newBucketName);
     expect(getRes.public, true);

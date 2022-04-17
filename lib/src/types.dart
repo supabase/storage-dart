@@ -6,6 +6,13 @@ class FetchOptions {
 }
 
 class Bucket {
+  final String id;
+  final String name;
+  final String owner;
+  final String createdAt;
+  final String updatedAt;
+  final bool public;
+
   const Bucket({
     required this.id,
     required this.name,
@@ -15,24 +22,26 @@ class Bucket {
     required this.public,
   });
 
-  Bucket.fromJson(dynamic json)
-      : assert(json is Map),
-        id = (json as Map<String, dynamic>)['id'] as String,
+  Bucket.fromJson(Map<String, dynamic> json)
+      : id = (json)['id'] as String,
         name = json['name'] as String,
         owner = json['owner'] as String,
         createdAt = json['created_at'] as String,
         updatedAt = json['updated_at'] as String,
         public = json['public'] as bool;
-
-  final String id;
-  final String name;
-  final String owner;
-  final String createdAt;
-  final String updatedAt;
-  final bool public;
 }
 
 class FileObject {
+  final String name;
+  final String? bucketId;
+  final String? owner;
+  final String? id;
+  final String? updatedAt;
+  final String? createdAt;
+  final String? lastAccessedAt;
+  final Metadata? metadata;
+  final Bucket? buckets;
+
   const FileObject({
     required this.name,
     required this.bucketId,
@@ -58,31 +67,15 @@ class FileObject {
             : null,
         buckets =
             json['buckets'] != null ? Bucket.fromJson(json['buckets']) : null;
-
-  final String name;
-  final String? bucketId;
-  final String? owner;
-  final String? id;
-  final String? updatedAt;
-  final String? createdAt;
-  final String? lastAccessedAt;
-  final Metadata? metadata;
-  final Bucket? buckets;
 }
 
 class BucketOptions {
-  const BucketOptions({required this.public});
-
   final bool public;
+
+  const BucketOptions({required this.public});
 }
 
 class FileOptions {
-  const FileOptions({
-    this.cacheControl = '3600',
-    this.upsert = false,
-    this.mime,
-  });
-
   final String cacheControl;
   final bool upsert;
 
@@ -91,10 +84,16 @@ class FileOptions {
   ///
   /// Throws a FormatError if the media type is invalid.
   final String? mime;
+
+  const FileOptions({
+    this.cacheControl = '3600',
+    this.upsert = false,
+    this.mime,
+  });
 }
 
 class SearchOptions {
-  const SearchOptions({this.limit, this.offset, this.sortBy});
+  const SearchOptions({this.limit, this.offset, this.sortBy, this.search});
 
   /// The number of files you want to be returned. */
   final int? limit;
@@ -104,23 +103,26 @@ class SearchOptions {
 
   /// The column to sort by. Can be any column inside a FileObject. */
   final SortBy? sortBy;
+
+  /// The search string to filter files by.
+  final String? search;
 }
 
 class SortBy {
-  const SortBy({this.column, this.order});
-
   final String? column;
   final String? order;
+
+  const SortBy({this.column, this.order});
 }
 
 // TODO: need to check for metadata props. The api swagger doesnt have.
 class Metadata {
   const Metadata({required this.name});
 
-  Metadata.fromJson(dynamic json)
-      : name = (json as Map<String, dynamic>)['name'] as String?;
+  Metadata.fromJson(Map<String, dynamic> json)
+      : name = (json)['name'] as String;
 
-  final String? name;
+  final String name;
 }
 
 class StorageException {
@@ -140,12 +142,3 @@ class StorageException {
     return 'StorageError(message: $message, statusCode: $statusCode, error: $error)';
   }
 }
-
-// class StorageResponse<T> {
-//   final StorageError? error;
-//   final T? data;
-
-//   StorageResponse({this.data, this.error});
-
-//   bool get hasError => error != null;
-// }

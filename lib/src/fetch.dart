@@ -19,7 +19,7 @@ class Fetch {
     return MediaType.parse(mime ?? 'application/octet-stream');
   }
 
-  StorageError _handleError(dynamic error) {
+  StorageError _handleError(dynamic error, StackTrace stack) {
     if (error is http.Response) {
       try {
         final data = json.decode(error.body) as Map<String, dynamic>;
@@ -38,7 +38,7 @@ class Fetch {
     }
   }
 
-  Future<StorageResponse> _handleRequest(
+  Future<dynamic> _handleRequest(
     String method,
     String url,
     dynamic body,
@@ -56,12 +56,12 @@ class Fetch {
 
       final streamedResponse = await request.send();
       return _handleResponse(streamedResponse, options);
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    } catch (error, stack) {
+      throw _handleError(error, stack);
     }
   }
 
-  Future<StorageResponse> _handleMultipartRequest(
+  Future<dynamic> _handleMultipartRequest(
     String method,
     String url,
     File file,
@@ -87,12 +87,12 @@ class Fetch {
 
       final streamedResponse = await request.send();
       return _handleResponse(streamedResponse, options);
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    } catch (error, stack) {
+      throw _handleError(error, stack);
     }
   }
 
-  Future<StorageResponse> _handleBinaryFileRequest(
+  Future<dynamic> _handleBinaryFileRequest(
     String method,
     String url,
     Uint8List data,
@@ -119,12 +119,12 @@ class Fetch {
 
       final streamedResponse = await request.send();
       return _handleResponse(streamedResponse, options);
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    } catch (error, stack) {
+      throw _handleError(error, stack);
     }
   }
 
-  Future<StorageResponse> _handleResponse(
+  Future<dynamic> _handleResponse(
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
   ) async {
@@ -133,24 +133,24 @@ class Fetch {
 
       if (_isSuccessStatusCode(response.statusCode)) {
         if (options?.noResolveJson == true) {
-          return StorageResponse(data: response.bodyBytes);
+          return response.bodyBytes;
         } else {
           final jsonBody = json.decode(response.body);
-          return StorageResponse(data: jsonBody);
+          return jsonBody;
         }
       } else {
         throw response;
       }
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    } catch (error, stack) {
+      throw _handleError(error, stack);
     }
   }
 
-  Future<StorageResponse> get(String url, {FetchOptions? options}) async {
+  Future<dynamic> get(String url, {FetchOptions? options}) async {
     return _handleRequest('GET', url, {}, options);
   }
 
-  Future<StorageResponse> post(
+  Future<dynamic> post(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -158,7 +158,7 @@ class Fetch {
     return _handleRequest('POST', url, body, options);
   }
 
-  Future<StorageResponse> put(
+  Future<dynamic> put(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -166,7 +166,7 @@ class Fetch {
     return _handleRequest('PUT', url, body, options);
   }
 
-  Future<StorageResponse> delete(
+  Future<dynamic> delete(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -174,7 +174,7 @@ class Fetch {
     return _handleRequest('DELETE', url, body, options);
   }
 
-  Future<StorageResponse> postFile(
+  Future<dynamic> postFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -183,7 +183,7 @@ class Fetch {
     return _handleMultipartRequest('POST', url, file, fileOptions, options);
   }
 
-  Future<StorageResponse> putFile(
+  Future<dynamic> putFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -192,7 +192,7 @@ class Fetch {
     return _handleMultipartRequest('PUT', url, file, fileOptions, options);
   }
 
-  Future<StorageResponse> postBinaryFile(
+  Future<dynamic> postBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {
@@ -201,7 +201,7 @@ class Fetch {
     return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
   }
 
-  Future<StorageResponse> putBinaryFile(
+  Future<dynamic> putBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {

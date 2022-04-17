@@ -31,30 +31,20 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
   /// [file] The File object to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> upload(
+  Future<String> upload(
     String path,
     File file, {
     FileOptions? fileOptions,
   }) async {
-    try {
-      final _path = _getFinalPath(path);
-      final response = await fetch.postFile(
-        '$url/object/$_path',
-        file,
-        fileOptions ?? defaultFileOptions,
-        options: FetchOptions(headers: headers),
-      );
+    final _path = _getFinalPath(path);
+    final response = await fetch.postFile(
+      '$url/object/$_path',
+      file,
+      fileOptions ?? defaultFileOptions,
+      options: FetchOptions(headers: headers),
+    );
 
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        return StorageResponse<String>(
-          data: (response.data as Map)['Key'] as String,
-        );
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+    return (response.data as Map)['Key'] as String;
   }
 
   /// Uploads a binary file to an existing bucket. Can be use with Flutter web.
@@ -62,30 +52,20 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
   /// [data] The binary file data to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> uploadBinary(
+  Future<String> uploadBinary(
     String path,
     Uint8List data, {
     FileOptions? fileOptions,
   }) async {
-    try {
-      final _path = _getFinalPath(path);
-      final response = await fetch.postBinaryFile(
-        '$url/object/$_path',
-        data,
-        fileOptions ?? defaultFileOptions,
-        options: FetchOptions(headers: headers),
-      );
+    final _path = _getFinalPath(path);
+    final response = await fetch.postBinaryFile(
+      '$url/object/$_path',
+      data,
+      fileOptions ?? defaultFileOptions,
+      options: FetchOptions(headers: headers),
+    );
 
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        return StorageResponse<String>(
-          data: (response.data as Map)['Key'] as String,
-        );
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+    return (response.data as Map)['Key'] as String;
   }
 
   /// Replaces an existing file at the specified path with a new one.
@@ -93,30 +73,20 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
   /// [file] The file object to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> update(
+  Future<String> update(
     String path,
     File file, {
     FileOptions? fileOptions,
   }) async {
-    try {
-      final _path = _getFinalPath(path);
-      final response = await fetch.putFile(
-        '$url/object/$_path',
-        file,
-        fileOptions ?? defaultFileOptions,
-        options: FetchOptions(headers: headers),
-      );
+    final _path = _getFinalPath(path);
+    final response = await fetch.putFile(
+      '$url/object/$_path',
+      file,
+      fileOptions ?? defaultFileOptions,
+      options: FetchOptions(headers: headers),
+    );
 
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        return StorageResponse<String>(
-          data: (response.data as Map<String, dynamic>)['Key'] as String,
-        );
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+    return (response.data as Map<String, dynamic>)['Key'] as String;
   }
 
   /// Replaces an existing file at the specified path with a new one.
@@ -124,182 +94,126 @@ class StorageFileApi {
   /// [path] The relative file path including the bucket ID. Should be of the format `bucket/folder/subfolder`. The bucket already exist before attempting to upload.
   /// [data] The binary file data to be stored in the bucket.
   /// [fileOptions] HTTP headers. For example `cacheControl`
-  Future<StorageResponse<String>> updateBinary(
+  Future<String> updateBinary(
     String path,
     Uint8List data, {
     FileOptions? fileOptions,
   }) async {
-    try {
-      final _path = _getFinalPath(path);
-      final response = await fetch.putBinaryFile(
-        '$url/object/$_path',
-        data,
-        fileOptions ?? defaultFileOptions,
-        options: FetchOptions(headers: headers),
-      );
+    final _path = _getFinalPath(path);
+    final response = await fetch.putBinaryFile(
+      '$url/object/$_path',
+      data,
+      fileOptions ?? defaultFileOptions,
+      options: FetchOptions(headers: headers),
+    );
 
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        return StorageResponse<String>(
-          data: (response.data as Map)['Key'] as String,
-        );
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+    return (response.data as Map)['Key'] as String;
   }
 
   /// Moves an existing file, optionally renaming it at the same time.
   ///
   /// [fromPath] The original file path, including the current file name. For example `folder/image.png`.
   /// [toPath] The new file path, including the new file name. For example `folder/image-copy.png`.
-  Future<StorageResponse<String>> move(String fromPath, String toPath) async {
-    try {
-      final options = FetchOptions(headers: headers);
-      final response = await fetch.post(
-        '$url/object/move',
-        {
-          'bucketId': bucketId,
-          'sourceKey': fromPath,
-          'destinationKey': toPath,
-        },
-        options: options,
-      );
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        return StorageResponse<String>(
-          data: (response.data as Map<String, dynamic>)['message'] as String,
-        );
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+  Future<String> move(String fromPath, String toPath) async {
+    final options = FetchOptions(headers: headers);
+    final response = await fetch.post(
+      '$url/object/move',
+      {
+        'bucketId': bucketId,
+        'sourceKey': fromPath,
+        'destinationKey': toPath,
+      },
+      options: options,
+    );
+    return (response.data as Map<String, dynamic>)['message'] as String;
   }
 
   /// Create signed url to download file without requiring permissions. This URL can be valid for a set number of seconds.
   ///
   /// [path] The file path to be downloaded, including the current file name. For example `folder/image.png`.
   /// [expiresIn] The number of seconds until the signed URL expires. For example, `60` for a URL which is valid for one minute.
-  Future<StorageResponse<String>> createSignedUrl(
+  Future<String> createSignedUrl(
     String path,
     int expiresIn,
   ) async {
-    try {
-      final _path = _getFinalPath(path);
-      final options = FetchOptions(headers: headers);
-      final response = await fetch.post(
-        '$url/object/sign/$_path',
-        {'expiresIn': expiresIn},
-        options: options,
-      );
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        final signedUrl =
-            '$url${(response.data as Map<String, dynamic>)['signedURL']}';
-        return StorageResponse<String>(data: signedUrl);
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+    final _path = _getFinalPath(path);
+    final options = FetchOptions(headers: headers);
+    final response = await fetch.post(
+      '$url/object/sign/$_path',
+      {'expiresIn': expiresIn},
+      options: options,
+    );
+    final signedUrl =
+        '$url${(response.data as Map<String, dynamic>)['signedURL']}';
+    return signedUrl;
   }
 
   /// Downloads a file.
   ///
   /// [path] The file path to be downloaded, including the path and file name. For example `folder/image.png`.
-  Future<StorageResponse<Uint8List>> download(String path) async {
-    try {
-      final _path = _getFinalPath(path);
-      final options = FetchOptions(headers: headers, noResolveJson: true);
-      final response = await fetch.get('$url/object/$_path', options: options);
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        return StorageResponse<Uint8List>(data: response.data as Uint8List);
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+  Future<Uint8List> download(String path) async {
+    final _path = _getFinalPath(path);
+    final options = FetchOptions(headers: headers, noResolveJson: true);
+    final response = await fetch.get('$url/object/$_path', options: options);
+    return response.data as Uint8List;
   }
 
   /// Retrieve URLs for assets in public buckets
   ///
   /// [path] The file path to be downloaded, including the current file name. For example `folder/image.png`.
-  StorageResponse<String> getPublicUrl(String path) {
-    try {
-      final _path = _getFinalPath(path);
-      final publicUrl = '$url/object/public/$_path';
-      return StorageResponse<String>(data: publicUrl);
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+  String getPublicUrl(String path) {
+    final _path = _getFinalPath(path);
+    final publicUrl = '$url/object/public/$_path';
+    return publicUrl;
   }
 
   /// Deletes files within the same bucket
   ///
   /// [paths] An array of files to be deletes, including the path and file name. For example [`folder/image.png`].
-  Future<StorageResponse<List<FileObject>>> remove(List<String> paths) async {
-    try {
-      final options = FetchOptions(headers: headers);
-      final response = await fetch.delete(
-        '$url/object/$bucketId',
-        {'prefixes': paths},
-        options: options,
-      );
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        final fileObjects = List<FileObject>.from(
-          (response.data as List).map(
-            (item) => FileObject.fromJson(item),
-          ),
-        );
-        return StorageResponse<List<FileObject>>(data: fileObjects);
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+  Future<List<FileObject>> remove(List<String> paths) async {
+    final options = FetchOptions(headers: headers);
+    final response = await fetch.delete(
+      '$url/object/$bucketId',
+      {'prefixes': paths},
+      options: options,
+    );
+    final fileObjects = List<FileObject>.from(
+      (response.data as List).map(
+        (item) => FileObject.fromJson(item),
+      ),
+    );
+    return fileObjects;
   }
 
   /// Lists all the files within a bucket.
   /// [path] The folder path.
   /// [searchOptions] includes `limit`, `offset`, and `sortBy`.
-  Future<StorageResponse<List<FileObject>>> list({
+  Future<List<FileObject>> list({
     String? path,
     SearchOptions? searchOptions,
   }) async {
-    try {
-      final Map<String, dynamic> body = {
-        'prefix': path ?? '',
-        'limit': searchOptions?.limit ?? defaultSearchOptions.limit,
-        'offset': searchOptions?.offset ?? defaultSearchOptions.offset,
-        'sort_by': {
-          'column': searchOptions?.sortBy?.column ??
-              defaultSearchOptions.sortBy!.column,
-          'order': searchOptions?.sortBy?.order ??
-              defaultSearchOptions.sortBy!.order,
-        },
-      };
-      final options = FetchOptions(headers: headers);
-      final response = await fetch.post(
-        '$url/object/list/$bucketId',
-        body,
-        options: options,
-      );
-      if (response.hasError) {
-        return StorageResponse(error: response.error);
-      } else {
-        final fileObjects = List<FileObject>.from(
-          (response.data as List).map(
-            (item) => FileObject.fromJson(item),
-          ),
-        );
-        return StorageResponse<List<FileObject>>(data: fileObjects);
-      }
-    } catch (e) {
-      return StorageResponse(error: StorageError(e.toString()));
-    }
+    final Map<String, dynamic> body = {
+      'prefix': path ?? '',
+      'limit': searchOptions?.limit ?? defaultSearchOptions.limit,
+      'offset': searchOptions?.offset ?? defaultSearchOptions.offset,
+      'sort_by': {
+        'column': searchOptions?.sortBy?.column ??
+            defaultSearchOptions.sortBy!.column,
+        'order':
+            searchOptions?.sortBy?.order ?? defaultSearchOptions.sortBy!.order,
+      },
+    };
+    final options = FetchOptions(headers: headers);
+    final response = await fetch.post(
+      '$url/object/list/$bucketId',
+      body,
+      options: options,
+    );
+    final fileObjects = List<FileObject>.from(
+      (response.data as List).map(
+        (item) => FileObject.fromJson(item),
+      ),
+    );
+    return fileObjects;
   }
 }

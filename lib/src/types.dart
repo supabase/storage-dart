@@ -142,11 +142,11 @@ class StorageError {
   }
 }
 
-class StorageResponse<T> {
-  final StorageError? error;
-  final T? data;
+// class StorageResponse<T> {
+//   final StorageError? error;
+//   final T? data;
 
-  StorageResponse({this.data, this.error});
+//   StorageResponse({this.data, this.error});
 
-  bool get hasError => error != null;
-}
+//   bool get hasError => error != null;
+// }

@@ -2,7 +2,7 @@ class FetchOptions {
   final Map<String, String>? headers;
   final bool? noResolveJson;
 
-  FetchOptions({this.headers, this.noResolveJson});
+  const FetchOptions({this.headers, this.noResolveJson});
 }
 
 class Bucket {

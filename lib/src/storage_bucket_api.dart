@@ -10,7 +10,7 @@ class StorageBucketApi {
   /// Retrieves the details of all Storage buckets within an existing product.
   Future<List<Bucket>> listBuckets() async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.get('$url/bucket', options: options);
+    final response = await storageFetch.get('$url/bucket', options: options);
     final buckets = List<Bucket>.from(
       (response as List).map(
         (value) => Bucket.fromJson(value),
@@ -24,7 +24,8 @@ class StorageBucketApi {
   /// [id] The unique identifier of the bucket you would like to retrieve.
   Future<Bucket> getBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.get('$url/bucket/$id', options: options);
+    final response =
+        await storageFetch.get('$url/bucket/$id', options: options);
     return Bucket.fromJson(response);
   }
 
@@ -37,7 +38,7 @@ class StorageBucketApi {
     BucketOptions bucketOptions = const BucketOptions(public: false),
   ]) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final response = await storageFetch.post(
       '$url/bucket',
       {'id': id, 'name': id, 'public': bucketOptions.public},
       options: options,
@@ -55,7 +56,7 @@ class StorageBucketApi {
     BucketOptions bucketOptions,
   ) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.put(
+    final response = await storageFetch.put(
       '$url/bucket/$id',
       {'id': id, 'public': bucketOptions.public},
       options: options,
@@ -70,7 +71,7 @@ class StorageBucketApi {
   Future<String> emptyBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response =
-        await fetch.post('$url/bucket/$id/empty', {}, options: options);
+        await storageFetch.post('$url/bucket/$id/empty', {}, options: options);
     return (response as Map<String, dynamic>)['message'] as String;
   }
 
@@ -80,7 +81,7 @@ class StorageBucketApi {
   /// [id] The unique identifier of the bucket you would like to delete.
   Future<String> deleteBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
-    final response = await fetch.delete(
+    final response = await storageFetch.delete(
       '$url/bucket/$id',
       {},
       options: options,

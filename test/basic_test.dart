@@ -49,8 +49,8 @@ void main() {
         'Authorization': 'Bearer $supabaseKey',
       });
 
-      // Use mocked version for `fetch`, to prevent actual http calls.
-      fetch = MockFetch();
+      // Use mocked version for `storageFetch`, to prevent actual http calls.
+      storageFetch = MockFetch();
 
       // Register default mock values (used by mocktail)
       registerFallbackValue<FileOptions>(const FileOptions());
@@ -63,7 +63,8 @@ void main() {
     });
 
     test('should list buckets', () async {
-      when(() => fetch.get(bucketUrl, options: mockFetchOptions)).thenAnswer(
+      when(() => storageFetch.get(bucketUrl, options: mockFetchOptions))
+          .thenAnswer(
         (_) => Future.value([testBucketJson, testBucketJson]),
       );
 
@@ -78,8 +79,13 @@ void main() {
         'name': testBucketId,
         'public': false
       };
-      when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
-          .thenAnswer(
+      when(
+        () => storageFetch.post(
+          bucketUrl,
+          requestBody,
+          options: mockFetchOptions,
+        ),
+      ).thenAnswer(
         (_) => Future.value(
           {
             'name': 'test_bucket',
@@ -95,7 +101,7 @@ void main() {
     test('should get bucket', () async {
       const testBucketId = 'test_bucket';
       when(
-        () => fetch.get(
+        () => storageFetch.get(
           '$bucketUrl/$testBucketId',
           options: mockFetchOptions,
         ),
@@ -114,7 +120,7 @@ void main() {
     test('should empty bucket', () async {
       const testBucketId = 'test_bucket';
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$bucketUrl/$testBucketId/empty',
           {},
           options: mockFetchOptions,
@@ -134,7 +140,7 @@ void main() {
     test('should delete bucket', () async {
       const testBucketId = 'test_bucket';
       when(
-        () => fetch.delete(
+        () => storageFetch.delete(
           '$bucketUrl/$testBucketId',
           {},
           options: mockFetchOptions,
@@ -152,7 +158,7 @@ void main() {
       file.writeAsStringSync('File content');
 
       when(
-        () => fetch.postFile(
+        () => storageFetch.postFile(
           '$objectUrl/public/a.txt',
           file,
           mockFileOptions,
@@ -172,7 +178,7 @@ void main() {
       file.writeAsStringSync('Updated content');
 
       when(
-        () => fetch.putFile(
+        () => storageFetch.putFile(
           '$objectUrl/public/a.txt',
           file,
           mockFileOptions,
@@ -194,7 +200,7 @@ void main() {
         'destinationKey': 'b.txt',
       };
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$objectUrl/move',
           requestBody,
           options: mockFetchOptions,
@@ -209,7 +215,7 @@ void main() {
 
     test('should createSignedUrl file', () async {
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$objectUrl/sign/public/b.txt',
           {'expiresIn': 60},
           options: mockFetchOptions,
@@ -224,7 +230,7 @@ void main() {
 
     test('should list files', () async {
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$objectUrl/list/public',
           any(),
           options: mockFetchOptions,
@@ -245,7 +251,7 @@ void main() {
       file.writeAsStringSync('Updated content');
 
       when(
-        () => fetch.get(
+        () => storageFetch.get(
           '$objectUrl/public/b.txt',
           options: mockFetchOptions,
         ),
@@ -270,7 +276,7 @@ void main() {
         'prefixes': ['a.txt', 'b.txt']
       };
       when(
-        () => fetch.delete(
+        () => storageFetch.delete(
           '$objectUrl/public',
           requestBody,
           options: mockFetchOptions,

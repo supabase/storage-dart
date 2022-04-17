@@ -7,7 +7,7 @@ import 'package:mime/mime.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
 
-Fetch fetch = Fetch();
+Fetch storageFetch = Fetch();
 
 class Fetch {
   bool _isSuccessStatusCode(int code) {

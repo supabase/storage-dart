@@ -37,7 +37,7 @@ class StorageFileApi {
     FileOptions? fileOptions,
   }) async {
     final _path = _getFinalPath(path);
-    final response = await fetch.postFile(
+    final response = await storageFetch.postFile(
       '$url/object/$_path',
       file,
       fileOptions ?? defaultFileOptions,
@@ -58,7 +58,7 @@ class StorageFileApi {
     FileOptions? fileOptions,
   }) async {
     final _path = _getFinalPath(path);
-    final response = await fetch.postBinaryFile(
+    final response = await storageFetch.postBinaryFile(
       '$url/object/$_path',
       data,
       fileOptions ?? defaultFileOptions,
@@ -79,7 +79,7 @@ class StorageFileApi {
     FileOptions? fileOptions,
   }) async {
     final _path = _getFinalPath(path);
-    final response = await fetch.putFile(
+    final response = await storageFetch.putFile(
       '$url/object/$_path',
       file,
       fileOptions ?? defaultFileOptions,
@@ -100,7 +100,7 @@ class StorageFileApi {
     FileOptions? fileOptions,
   }) async {
     final _path = _getFinalPath(path);
-    final response = await fetch.putBinaryFile(
+    final response = await storageFetch.putBinaryFile(
       '$url/object/$_path',
       data,
       fileOptions ?? defaultFileOptions,
@@ -116,7 +116,7 @@ class StorageFileApi {
   /// [toPath] The new file path, including the new file name. For example `folder/image-copy.png`.
   Future<String> move(String fromPath, String toPath) async {
     final options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final response = await storageFetch.post(
       '$url/object/move',
       {
         'bucketId': bucketId,
@@ -138,7 +138,7 @@ class StorageFileApi {
   ) async {
     final _path = _getFinalPath(path);
     final options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final response = await storageFetch.post(
       '$url/object/sign/$_path',
       {'expiresIn': expiresIn},
       options: options,
@@ -153,7 +153,8 @@ class StorageFileApi {
   Future<Uint8List> download(String path) async {
     final _path = _getFinalPath(path);
     final options = FetchOptions(headers: headers, noResolveJson: true);
-    final response = await fetch.get('$url/object/$_path', options: options);
+    final response =
+        await storageFetch.get('$url/object/$_path', options: options);
     return response as Uint8List;
   }
 
@@ -171,7 +172,7 @@ class StorageFileApi {
   /// [paths] An array of files to be deletes, including the path and file name. For example [`folder/image.png`].
   Future<List<FileObject>> remove(List<String> paths) async {
     final options = FetchOptions(headers: headers);
-    final response = await fetch.delete(
+    final response = await storageFetch.delete(
       '$url/object/$bucketId',
       {'prefixes': paths},
       options: options,
@@ -203,7 +204,7 @@ class StorageFileApi {
       },
     };
     final options = FetchOptions(headers: headers);
-    final response = await fetch.post(
+    final response = await storageFetch.post(
       '$url/object/list/$bucketId',
       body,
       options: options,

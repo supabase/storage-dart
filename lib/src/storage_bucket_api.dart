@@ -12,7 +12,7 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await fetch.get('$url/bucket', options: options);
     final buckets = List<Bucket>.from(
-      (response.data as List).map(
+      (response as List).map(
         (value) => Bucket.fromJson(value),
       ),
     );
@@ -25,7 +25,7 @@ class StorageBucketApi {
   Future<Bucket> getBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await fetch.get('$url/bucket/$id', options: options);
-    return Bucket.fromJson(response.data);
+    return Bucket.fromJson(response);
   }
 
   /// Creates a new Storage bucket
@@ -42,7 +42,7 @@ class StorageBucketApi {
       {'id': id, 'name': id, 'public': bucketOptions.public},
       options: options,
     );
-    final bucketId = (response.data as Map<String, dynamic>)['name'] as String;
+    final bucketId = (response as Map<String, dynamic>)['name'] as String;
     return bucketId;
   }
 
@@ -60,8 +60,7 @@ class StorageBucketApi {
       {'id': id, 'public': bucketOptions.public},
       options: options,
     );
-    final message =
-        (response.data as Map<String, dynamic>)['message'] as String;
+    final message = (response as Map<String, dynamic>)['message'] as String;
     return message;
   }
 
@@ -72,7 +71,7 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response =
         await fetch.post('$url/bucket/$id/empty', {}, options: options);
-    return (response.data as Map<String, dynamic>)['message'] as String;
+    return (response as Map<String, dynamic>)['message'] as String;
   }
 
   /// Deletes an existing bucket. A bucket can't be deleted with existing objects inside it.
@@ -86,6 +85,6 @@ class StorageBucketApi {
       {},
       options: options,
     );
-    return (response.data as Map<String, dynamic>)['message'] as String;
+    return (response as Map<String, dynamic>)['message'] as String;
   }
 }

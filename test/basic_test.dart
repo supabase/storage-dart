@@ -64,14 +64,11 @@ void main() {
 
     test('should list buckets', () async {
       when(() => fetch.get(bucketUrl, options: mockFetchOptions)).thenAnswer(
-        (_) => Future.value(
-          StorageResponse(data: [testBucketJson, testBucketJson]),
-        ),
+        (_) => Future.value([testBucketJson, testBucketJson]),
       );
 
       final response = await client.listBuckets();
-      expect(response.error, isNull);
-      expect(response.data, isA<List<Bucket>>());
+      expect(response, isA<List<Bucket>>());
     });
 
     test('should create bucket', () async {
@@ -84,18 +81,15 @@ void main() {
       when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
           .thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: {
-              'name': 'test_bucket',
-            },
-          ),
+          {
+            'name': 'test_bucket',
+          },
         ),
       );
 
       final response = await client.createBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
-      expect(response.data, 'test_bucket');
+      expect(response, isA<String>());
+      expect(response, 'test_bucket');
     });
 
     test('should get bucket', () async {
@@ -107,17 +101,14 @@ void main() {
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: testBucketJson,
-          ),
+          testBucketJson,
         ),
       );
 
       final response = await client.getBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, isA<Bucket>());
-      expect(response.data?.id, testBucketId);
-      expect(response.data?.name, testBucketId);
+      expect(response, isA<Bucket>());
+      expect(response.id, testBucketId);
+      expect(response.name, testBucketId);
     });
 
     test('should empty bucket', () async {
@@ -130,17 +121,14 @@ void main() {
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: {
-              'message': 'Emptied',
-            },
-          ),
+          {
+            'message': 'Emptied',
+          },
         ),
       );
 
       final response = await client.emptyBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, 'Emptied');
+      expect(response, 'Emptied');
     });
 
     test('should delete bucket', () async {
@@ -152,12 +140,11 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'message': 'Deleted'})),
+        (_) => Future.value({'message': 'Deleted'}),
       );
 
       final response = await client.deleteBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, 'Deleted');
+      expect(response, 'Deleted');
     });
 
     test('should upload file', () async {
@@ -172,13 +159,12 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})),
+        (_) => Future.value({'Key': 'public/a.txt'}),
       );
 
       final response = await client.from('public').upload('a.txt', file);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
-      expect(response.data?.endsWith('/a.txt'), isTrue);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
     });
 
     test('should update file', () async {
@@ -193,13 +179,12 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})),
+        (_) => Future.value({'Key': 'public/a.txt'}),
       );
 
       final response = await client.from('public').update('a.txt', file);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
-      expect(response.data?.endsWith('/a.txt'), isTrue);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
     });
 
     test('should move file', () async {
@@ -215,12 +200,11 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'message': 'Move'})),
+        (_) => Future.value({'message': 'Move'}),
       );
 
       final response = await client.from('public').move('a.txt', 'b.txt');
-      expect(response.error, isNull);
-      expect(response.data, 'Move');
+      expect(response, 'Move');
     });
 
     test('should createSignedUrl file', () async {
@@ -231,12 +215,11 @@ void main() {
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'signedURL': 'url'})),
+        (_) => Future.value({'signedURL': 'url'}),
       );
 
       final response = await client.from('public').createSignedUrl('b.txt', 60);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
+      expect(response, isA<String>());
     });
 
     test('should list files', () async {
@@ -248,16 +231,13 @@ void main() {
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: [testFileObjectJson, testFileObjectJson],
-          ),
+          [testFileObjectJson, testFileObjectJson],
         ),
       );
 
       final response = await client.from('public').list();
-      expect(response.error, isNull);
-      expect(response.data, isA<List<FileObject>>());
-      expect(response.data?.length, 2);
+      expect(response, isA<List<FileObject>>());
+      expect(response.length, 2);
     });
 
     test('should download file', () async {
@@ -271,22 +251,18 @@ void main() {
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: file.readAsBytesSync(),
-          ),
+          file.readAsBytesSync(),
         ),
       );
 
       final response = await client.from('public').download('b.txt');
-      expect(response.error, isNull);
-      expect(response.data, isA<Uint8List>());
-      expect(String.fromCharCodes(response.data!), 'Updated content');
+      expect(response, isA<Uint8List>());
+      expect(String.fromCharCodes(response), 'Updated content');
     });
 
     test('should get public URL of a path', () {
       final response = client.from('files').getPublicUrl('b.txt');
-      expect(response.error, isNull);
-      expect(response.data, '$objectUrl/public/files/b.txt');
+      expect(response, '$objectUrl/public/files/b.txt');
     });
 
     test('should remove file', () async {
@@ -301,16 +277,13 @@ void main() {
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: [testFileObjectJson, testFileObjectJson],
-          ),
+          [testFileObjectJson, testFileObjectJson],
         ),
       );
 
       final response = await client.from('public').remove(['a.txt', 'b.txt']);
-      expect(response.error, isNull);
-      expect(response.data, isA<List>());
-      expect(response.data?.length, 2);
+      expect(response, isA<List>());
+      expect(response.length, 2);
     });
   });
 

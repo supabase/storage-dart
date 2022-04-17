@@ -25,23 +25,26 @@ void main() {
 
   test('List buckets', () async {
     final response = await client.listBuckets();
-    expect(response.error, isNull);
-    expect(response.data!.length, 4);
+    expect(response.length, 4);
   });
 
   test('Get bucket by id', () async {
     final response = await client.getBucket('bucket2');
-    expect(response.data!.name, 'bucket2');
+    expect(response.name, 'bucket2');
   });
 
   test('Get bucket with wrong id', () async {
-    final response = await client.getBucket('not-exist-id');
-    expect(response.error, isNotNull);
+    try {
+      await client.getBucket('not-exist-id');
+      fail('Bucket that does not exist was found');
+    } catch (error) {
+      expect(error, isNotNull);
+    }
   });
 
   test('Create new bucket', () async {
     final response = await client.createBucket(newBucketName);
-    expect(response.data, newBucketName);
+    expect(response, newBucketName);
   });
 
   test('Create new public bucket', () async {
@@ -51,7 +54,8 @@ void main() {
       const BucketOptions(public: true),
     );
     final response = await client.getBucket(newPublicBucketName);
-    expect(response.data!.public, true);
+    expect(response.public, true);
+    expect(response.name, newPublicBucketName);
   });
 
   test('update bucket', () async {
@@ -59,19 +63,19 @@ void main() {
       newBucketName,
       const BucketOptions(public: true),
     );
-    expect(updateRes.error, isNull);
-    expect(updateRes.data, isA<String>());
+    expect(updateRes, newBucketName);
+
     final getRes = await client.getBucket(newBucketName);
-    expect(getRes.data!.public, true);
+    expect(getRes.public, true);
   });
 
   test('Empty bucket', () async {
     final response = await client.emptyBucket(newBucketName);
-    expect(response.data, 'Successfully emptied');
+    expect(response, 'Successfully emptied');
   });
 
   test('Delete bucket', () async {
     final response = await client.deleteBucket(newBucketName);
-    expect(response.data, 'Successfully deleted');
+    expect(response, 'Successfully deleted');
   });
 }

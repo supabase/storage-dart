@@ -2,12 +2,12 @@ import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/src/types.dart';
 
 class StorageBucketApi {
-  const StorageBucketApi(this.url, this.headers);
-
   final String url;
   final Map<String, String> headers;
 
-  /// Retrieves the details of all Storage buckets within an existing product.
+  const StorageBucketApi(this.url, this.headers);
+
+  /// Retrieves the details of all Storage buckets within an existing project.
   Future<List<Bucket>> listBuckets() async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await storageFetch.get('$url/bucket', options: options);
@@ -21,7 +21,7 @@ class StorageBucketApi {
 
   /// Retrieves the details of an existing Storage bucket.
   ///
-  /// [id] The unique identifier of the bucket you would like to retrieve.
+  /// [id] is the unique identifier of the bucket you would like to retrieve.
   Future<Bucket> getBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response =
@@ -31,8 +31,20 @@ class StorageBucketApi {
 
   /// Creates a new Storage bucket
   ///
-  /// [id] A unique identifier for the bucket you are creating.
-  /// [bucketOptions] A parameter to optionally make the bucket public.
+  /// [id] is a unique identifier for the bucket you are creating.
+  ///
+  /// [bucketOptions] is a parameter to optionally make the bucket public.
+  ///
+  /// It returns the newly created bucket it. To get the bucket reference, use
+  /// [getBucket]:
+  ///
+  /// ```dart
+  /// void bucket() async {
+  ///   final newBucketId = await createBucket('images');
+  ///   final bucket = await Bucket(newBucketId);
+  ///   print('${bucket.id}');
+  /// }
+  /// ```
   Future<String> createBucket(
     String id, [
     BucketOptions bucketOptions = const BucketOptions(public: false),
@@ -49,8 +61,9 @@ class StorageBucketApi {
 
   /// Updates a new Storage bucket
   ///
-  /// [id] A unique identifier for the bucket you are creating.
-  /// [bucketOptions] A parameter to set the publicity of the bucket.
+  /// [id] is a unique identifier for the bucket you are creating.
+  ///
+  /// [bucketOptions] is a parameter to set the publicity of the bucket.
   Future<String> updateBucket(
     String id,
     BucketOptions bucketOptions,
@@ -58,7 +71,7 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await storageFetch.put(
       '$url/bucket/$id',
-      {'id': id, 'public': bucketOptions.public},
+      {'id': id, 'name': id, 'public': bucketOptions.public},
       options: options,
     );
     final message = (response as Map<String, dynamic>)['message'] as String;
@@ -67,7 +80,7 @@ class StorageBucketApi {
 
   /// Removes all objects inside a single bucket.
   ///
-  /// [id] The unique identifier of the bucket you would like to empty.
+  /// [id] is the unique identifier of the bucket you would like to empty.
   Future<String> emptyBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response =
@@ -75,10 +88,10 @@ class StorageBucketApi {
     return (response as Map<String, dynamic>)['message'] as String;
   }
 
-  /// Deletes an existing bucket. A bucket can't be deleted with existing objects inside it.
-  /// You must first `emptyBucket()` the bucket.
+  /// Deletes an existing bucket. A bucket can't be deleted with existing
+  /// objects inside it. You must first clear the bucket using [emptyBucket].
   ///
-  /// [id] The unique identifier of the bucket you would like to delete.
+  /// [id] is the unique identifier of the bucket you would like to delete.
   Future<String> deleteBucket(String id) async {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await storageFetch.delete(

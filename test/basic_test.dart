@@ -305,7 +305,7 @@ void main() {
     });
     test('should list buckets', () async {
       try {
-        final response = await client.listBuckets();
+        await client.listBuckets();
       } catch (e) {
         expect((e as dynamic).statusCode, "420");
       }

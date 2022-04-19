@@ -164,6 +164,8 @@ class StorageFileApi {
   ///
   /// [expiresIn] is the number of seconds until the signed URL expire. For
   /// example, `60` for a URL which are valid for one minute.
+  ///
+  /// The signed url is returned.
   Future<String> createSignedUrl(
     String path,
     int expiresIn,
@@ -183,29 +185,33 @@ class StorageFileApi {
   /// Create signed URLs to download files without requiring permissions. These
   /// URLs can be valid for a set number of seconds.
   ///
-  /// [path] is the file paths to be downloaded, including the current file
+  /// [paths] is the file paths to be downloaded, including the current file
   /// names. For example: `createdSignedUrl(['folder/image.png', 'folder2/image2.png'])`.
   ///
   /// [expiresIn] is the number of seconds until the signed URLs expire. For
   /// example, `60` for URLs which are valid for one minute.
-  Future<List<String>> createSignedUrls(
+  ///
+  /// A list of [SignedUrl]s is returned.
+  Future<List<SignedUrl>> createSignedUrls(
     List<String> paths,
     int expiresIn,
   ) async {
     final options = FetchOptions(headers: headers);
     final response = await storageFetch.post(
       '$url/object/sign/$bucketId',
-      {'expiresIn': expiresIn},
+      {
+        'expiresIn': expiresIn,
+        'paths': paths,
+      },
       options: options,
     );
-    final urls = (response as List).map((e) {
-      return '$url${e['signedUrl']}';
-      // return {
-      //   ...e,
-      //   'signedUrl': '$url${e['signedUrl']}',
-      // };
-    });
-    return urls.toList();
+    final List<SignedUrl> urls = (response as List).map((e) {
+      return SignedUrl(
+        path: e['path'],
+        signedUrl: e['signedURL'],
+      );
+    }).toList();
+    return urls;
   }
 
   /// Downloads a file.

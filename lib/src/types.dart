@@ -149,6 +149,38 @@ class Metadata {
   final String name;
 }
 
+class SignedUrl {
+  final String? path;
+  final String? signedUrl;
+
+  const SignedUrl({this.path, this.signedUrl});
+
+  @override
+  String toString() => 'SignedUrl(path: $path, signedUrl: $signedUrl)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SignedUrl &&
+        other.path == path &&
+        other.signedUrl == signedUrl;
+  }
+
+  @override
+  int get hashCode => path.hashCode ^ signedUrl.hashCode;
+
+  SignedUrl copyWith({
+    String? path,
+    String? signedUrl,
+  }) {
+    return SignedUrl(
+      path: path ?? this.path,
+      signedUrl: signedUrl ?? this.signedUrl,
+    );
+  }
+}
+
 class StorageException {
   final String message;
   final String? error;

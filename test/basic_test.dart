@@ -51,12 +51,12 @@ void main() {
         'Authorization': 'Bearer $supabaseKey',
       });
 
-      // Use mocked version for `fetch`, to prevent actual http calls.
-      fetch = MockFetch();
+      // Use mocked version for `storageFetch`, to prevent actual http calls.
+      storageFetch = MockFetch();
 
       // Register default mock values (used by mocktail)
       registerFallbackValue<FileOptions>(const FileOptions());
-      registerFallbackValue<FetchOptions>(FetchOptions());
+      registerFallbackValue<FetchOptions>(const FetchOptions());
     });
 
     tearDown(() {
@@ -65,15 +65,13 @@ void main() {
     });
 
     test('should list buckets', () async {
-      when(() => fetch.get(bucketUrl, options: mockFetchOptions)).thenAnswer(
-        (_) => Future.value(
-          StorageResponse(data: [testBucketJson, testBucketJson]),
-        ),
+      when(() => storageFetch.get(bucketUrl, options: mockFetchOptions))
+          .thenAnswer(
+        (_) => Future.value([testBucketJson, testBucketJson]),
       );
 
       final response = await client.listBuckets();
-      expect(response.error, isNull);
-      expect(response.data, isA<List<Bucket>>());
+      expect(response, isA<List<Bucket>>());
     });
 
     test('should create bucket', () async {
@@ -83,83 +81,78 @@ void main() {
         'name': testBucketId,
         'public': false
       };
-      when(() => fetch.post(bucketUrl, requestBody, options: mockFetchOptions))
-          .thenAnswer(
+      when(
+        () => storageFetch.post(
+          bucketUrl,
+          requestBody,
+          options: mockFetchOptions,
+        ),
+      ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: {
-              'name': 'test_bucket',
-            },
-          ),
+          {
+            'name': 'test_bucket',
+          },
         ),
       );
 
       final response = await client.createBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
-      expect(response.data, 'test_bucket');
+      expect(response, isA<String>());
+      expect(response, 'test_bucket');
     });
 
     test('should get bucket', () async {
       const testBucketId = 'test_bucket';
       when(
-        () => fetch.get(
+        () => storageFetch.get(
           '$bucketUrl/$testBucketId',
           options: mockFetchOptions,
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: testBucketJson,
-          ),
+          testBucketJson,
         ),
       );
 
       final response = await client.getBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, isA<Bucket>());
-      expect(response.data?.id, testBucketId);
-      expect(response.data?.name, testBucketId);
+      expect(response, isA<Bucket>());
+      expect(response.id, testBucketId);
+      expect(response.name, testBucketId);
     });
 
     test('should empty bucket', () async {
       const testBucketId = 'test_bucket';
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$bucketUrl/$testBucketId/empty',
           {},
           options: mockFetchOptions,
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: {
-              'message': 'Emptied',
-            },
-          ),
+          {
+            'message': 'Emptied',
+          },
         ),
       );
 
       final response = await client.emptyBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, 'Emptied');
+      expect(response, 'Emptied');
     });
 
     test('should delete bucket', () async {
       const testBucketId = 'test_bucket';
       when(
-        () => fetch.delete(
+        () => storageFetch.delete(
           '$bucketUrl/$testBucketId',
           {},
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'message': 'Deleted'})),
+        (_) => Future.value({'message': 'Deleted'}),
       );
 
       final response = await client.deleteBucket(testBucketId);
-      expect(response.error, isNull);
-      expect(response.data, 'Deleted');
+      expect(response, 'Deleted');
     });
 
     test('should upload file', () async {
@@ -167,20 +160,19 @@ void main() {
       file.writeAsStringSync('File content');
 
       when(
-        () => fetch.postFile(
+        () => storageFetch.postFile(
           '$objectUrl/public/a.txt',
           file,
           mockFileOptions,
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})),
+        (_) => Future.value({'Key': 'public/a.txt'}),
       );
 
       final response = await client.from('public').upload('a.txt', file);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
-      expect(response.data?.endsWith('/a.txt'), isTrue);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
     });
 
     test('should update file', () async {
@@ -188,20 +180,19 @@ void main() {
       file.writeAsStringSync('Updated content');
 
       when(
-        () => fetch.putFile(
+        () => storageFetch.putFile(
           '$objectUrl/public/a.txt',
           file,
           mockFileOptions,
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'Key': 'public/a.txt'})),
+        (_) => Future.value({'Key': 'public/a.txt'}),
       );
 
       final response = await client.from('public').update('a.txt', file);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
-      expect(response.data?.endsWith('/a.txt'), isTrue);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
     });
 
     test('should move file', () async {
@@ -211,55 +202,50 @@ void main() {
         'destinationKey': 'b.txt',
       };
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$objectUrl/move',
           requestBody,
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'message': 'Move'})),
+        (_) => Future.value({'message': 'Move'}),
       );
 
       final response = await client.from('public').move('a.txt', 'b.txt');
-      expect(response.error, isNull);
-      expect(response.data, 'Move');
+      expect(response, 'Move');
     });
 
     test('should createSignedUrl file', () async {
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$objectUrl/sign/public/b.txt',
           {'expiresIn': 60},
           options: mockFetchOptions,
         ),
       ).thenAnswer(
-        (_) => Future.value(StorageResponse(data: {'signedURL': 'url'})),
+        (_) => Future.value({'signedURL': 'url'}),
       );
 
       final response = await client.from('public').createSignedUrl('b.txt', 60);
-      expect(response.error, isNull);
-      expect(response.data, isA<String>());
+      expect(response, isA<String>());
     });
 
     test('should list files', () async {
       when(
-        () => fetch.post(
+        () => storageFetch.post(
           '$objectUrl/list/public',
           any(),
           options: mockFetchOptions,
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: [testFileObjectJson, testFileObjectJson],
-          ),
+          [testFileObjectJson, testFileObjectJson],
         ),
       );
 
       final response = await client.from('public').list();
-      expect(response.error, isNull);
-      expect(response.data, isA<List<FileObject>>());
-      expect(response.data?.length, 2);
+      expect(response, isA<List<FileObject>>());
+      expect(response.length, 2);
     });
 
     test('should download file', () async {
@@ -267,28 +253,24 @@ void main() {
       file.writeAsStringSync('Updated content');
 
       when(
-        () => fetch.get(
+        () => storageFetch.get(
           '$objectUrl/public/b.txt',
           options: mockFetchOptions,
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: file.readAsBytesSync(),
-          ),
+          file.readAsBytesSync(),
         ),
       );
 
       final response = await client.from('public').download('b.txt');
-      expect(response.error, isNull);
-      expect(response.data, isA<Uint8List>());
-      expect(String.fromCharCodes(response.data!), 'Updated content');
+      expect(response, isA<Uint8List>());
+      expect(String.fromCharCodes(response), 'Updated content');
     });
 
     test('should get public URL of a path', () {
       final response = client.from('files').getPublicUrl('b.txt');
-      expect(response.error, isNull);
-      expect(response.data, '$objectUrl/public/files/b.txt');
+      expect(response, '$objectUrl/public/files/b.txt');
     });
 
     test('should remove file', () async {
@@ -296,23 +278,20 @@ void main() {
         'prefixes': ['a.txt', 'b.txt']
       };
       when(
-        () => fetch.delete(
+        () => storageFetch.delete(
           '$objectUrl/public',
           requestBody,
           options: mockFetchOptions,
         ),
       ).thenAnswer(
         (_) => Future.value(
-          StorageResponse(
-            data: [testFileObjectJson, testFileObjectJson],
-          ),
+          [testFileObjectJson, testFileObjectJson],
         ),
       );
 
       final response = await client.from('public').remove(['a.txt', 'b.txt']);
-      expect(response.error, isNull);
-      expect(response.data, isA<List>());
-      expect(response.data?.length, 2);
+      expect(response, isA<List>());
+      expect(response.length, 2);
     });
   });
 
@@ -322,11 +301,14 @@ void main() {
       client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
         'Authorization': 'Bearer $supabaseKey',
       });
-      fetch = Fetch(CustomHttpClient());
+      storageFetch = Fetch(CustomHttpClient());
     });
     test('should list buckets', () async {
-      final response = await client.listBuckets();
-      expect(response.error?.statusCode, "420");
+      try {
+        final response = await client.listBuckets();
+      } catch (e) {
+        expect((e as dynamic).statusCode, "420");
+      }
     });
   });
 

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -21,31 +23,31 @@ Future<void> main() async {
         fileData,
         fileOptions: const FileOptions(upsert: true),
       );
-  print('upload binary response : ${uploadBinaryResponse.data}');
+  print('upload binary response : $uploadBinaryResponse');
 
   // Upload file to bucket "public"
   final file = File('example.txt');
   file.writeAsStringSync('File content');
   final storageResponse =
       await client.from('public').upload('example.txt', file);
-  print('upload response : ${storageResponse.data}');
+  print('upload response : $storageResponse');
 
   // Get download url
   final urlResponse =
       await client.from('public').createSignedUrl('example.txt', 60);
-  print('download url : ${urlResponse.data}');
+  print('download url : $urlResponse');
 
   // Download text file
-  final fileResponse = await client.from('public').download('example.txt');
-  if (fileResponse.hasError) {
-    print('Error while downloading file : ${fileResponse.error}');
-  } else {
-    print('downloaded file : ${String.fromCharCodes(fileResponse.data!)}');
+  try {
+    final fileResponse = await client.from('public').download('example.txt');
+    print('downloaded file : ${String.fromCharCodes(fileResponse)}');
+  } catch (error) {
+    print('Error while downloading file : $error');
   }
 
   // Delete file
   final deleteResponse = await client.from('public').remove(['example.txt']);
-  print('deleted file id : ${deleteResponse.data?.first.id}');
+  print('deleted file id : ${deleteResponse.first.id}');
 
   // Local file cleanup
   if (file.existsSync()) file.deleteSync();

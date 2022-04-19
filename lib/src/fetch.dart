@@ -8,7 +8,7 @@ import 'package:mime/mime.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
 
-Fetch fetch = Fetch();
+Fetch storageFetch = Fetch();
 
 class Fetch {
   final Client? httpClient;
@@ -24,153 +24,135 @@ class Fetch {
     return MediaType.parse(mime ?? 'application/octet-stream');
   }
 
-  StorageError _handleError(dynamic error) {
+  StorageException _handleError(dynamic error, StackTrace stack) {
     if (error is http.Response) {
       try {
         final data = json.decode(error.body) as Map<String, dynamic>;
-        data.putIfAbsent("statusCode", () => error.statusCode.toString());
-        return StorageError.fromJson(data);
+        return StorageException.fromJson(data, '${error.statusCode}');
       } on FormatException catch (_) {
-        return StorageError(
+        return StorageException(
           error.body,
-          statusCode: error.statusCode.toString(),
+          statusCode: '${error.statusCode}',
         );
       }
     } else {
-      return StorageError(
+      return StorageException(
         error.toString(),
         statusCode: error.runtimeType.toString(),
       );
     }
   }
 
-  Future<StorageResponse> _handleRequest(
+  Future<dynamic> _handleRequest(
     String method,
     String url,
     dynamic body,
     FetchOptions? options,
   ) async {
-    try {
-      final headers = options?.headers ?? {};
-      if (method != 'GET') {
-        headers['Content-Type'] = 'application/json';
-      }
-      final bodyStr = json.encode(body ?? {});
-      final request = http.Request(method, Uri.parse(url))
-        ..headers.addAll(headers)
-        ..body = bodyStr;
-      http.StreamedResponse streamedResponse;
-      if (httpClient != null) {
-        streamedResponse = await httpClient!.send(request);
-      } else {
-        streamedResponse = await request.send();
-      }
-      return _handleResponse(streamedResponse, options);
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    final headers = options?.headers ?? {};
+    if (method != 'GET') {
+      headers['Content-Type'] = 'application/json';
     }
+    final bodyStr = json.encode(body ?? {});
+    final request = http.Request(method, Uri.parse(url))
+      ..headers.addAll(headers)
+      ..body = bodyStr;
+    final http.StreamedResponse streamedResponse;
+    if (httpClient != null) {
+      streamedResponse = await httpClient!.send(request);
+    } else {
+      streamedResponse = await request.send();
+    }
+    return _handleResponse(streamedResponse, options);
   }
 
-  Future<StorageResponse> _handleMultipartRequest(
+  Future<dynamic> _handleMultipartRequest(
     String method,
     String url,
     File file,
     FileOptions fileOptions,
     FetchOptions? options,
   ) async {
-    try {
-      final headers = options?.headers ?? {};
-      final contentType = fileOptions.mime != null
-          ? MediaType.parse(fileOptions.mime!)
-          : _parseMediaType(file.path);
-      final multipartFile = http.MultipartFile.fromBytes(
-        '',
-        file.readAsBytesSync(),
-        filename: file.path,
-        contentType: contentType,
-      );
-      final request = http.MultipartRequest(method, Uri.parse(url))
-        ..headers.addAll(headers)
-        ..files.add(multipartFile)
-        ..fields['cacheControl'] = fileOptions.cacheControl
-        ..headers['x-upsert'] = fileOptions.upsert.toString();
+    final headers = options?.headers ?? {};
+    final contentType = fileOptions.contentType != null
+        ? MediaType.parse(fileOptions.contentType!)
+        : _parseMediaType(file.path);
+    final multipartFile = http.MultipartFile.fromBytes(
+      '',
+      file.readAsBytesSync(),
+      filename: file.path,
+      contentType: contentType,
+    );
+    final request = http.MultipartRequest(method, Uri.parse(url))
+      ..headers.addAll(headers)
+      ..files.add(multipartFile)
+      ..fields['cacheControl'] = fileOptions.cacheControl
+      ..headers['x-upsert'] = fileOptions.upsert.toString();
 
-      http.StreamedResponse streamedResponse;
-      if (httpClient != null) {
-        streamedResponse = await httpClient!.send(request);
-      } else {
-        streamedResponse = await request.send();
-      }
-      return _handleResponse(streamedResponse, options);
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    final http.StreamedResponse streamedResponse;
+    if (httpClient != null) {
+      streamedResponse = await httpClient!.send(request);
+    } else {
+      streamedResponse = await request.send();
     }
+    return _handleResponse(streamedResponse, options);
   }
 
-  Future<StorageResponse> _handleBinaryFileRequest(
+  Future<dynamic> _handleBinaryFileRequest(
     String method,
     String url,
     Uint8List data,
     FileOptions fileOptions,
     FetchOptions? options,
   ) async {
-    try {
-      final headers = options?.headers ?? {};
-      final contentType = fileOptions.mime != null
-          ? MediaType.parse(fileOptions.mime!)
-          : _parseMediaType(url);
-      final multipartFile = http.MultipartFile.fromBytes(
-        '',
-        data,
-        // request fails with null filename so set it empty instead.
-        filename: '',
-        contentType: contentType,
-      );
-      final request = http.MultipartRequest(method, Uri.parse(url))
-        ..headers.addAll(headers)
-        ..files.add(multipartFile)
-        ..fields['cacheControl'] = fileOptions.cacheControl
-        ..headers['x-upsert'] = fileOptions.upsert.toString();
+    final headers = options?.headers ?? {};
+    final contentType = fileOptions.contentType != null
+        ? MediaType.parse(fileOptions.contentType!)
+        : _parseMediaType(url);
+    final multipartFile = http.MultipartFile.fromBytes(
+      '',
+      data,
+      // request fails with null filename so set it empty instead.
+      filename: '',
+      contentType: contentType,
+    );
+    final request = http.MultipartRequest(method, Uri.parse(url))
+      ..headers.addAll(headers)
+      ..files.add(multipartFile)
+      ..fields['cacheControl'] = fileOptions.cacheControl
+      ..headers['x-upsert'] = fileOptions.upsert.toString();
 
-      http.StreamedResponse streamedResponse;
-      if (httpClient != null) {
-        streamedResponse = await httpClient!.send(request);
-      } else {
-        streamedResponse = await request.send();
-      }
-      return _handleResponse(streamedResponse, options);
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    final http.StreamedResponse streamedResponse;
+    if (httpClient != null) {
+      streamedResponse = await httpClient!.send(request);
+    } else {
+      streamedResponse = await request.send();
     }
+    return _handleResponse(streamedResponse, options);
   }
 
-  Future<StorageResponse> _handleResponse(
+  Future<dynamic> _handleResponse(
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
   ) async {
-    try {
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (_isSuccessStatusCode(response.statusCode)) {
-        if (options?.noResolveJson == true) {
-          return StorageResponse(data: response.bodyBytes);
-        } else {
-          final jsonBody = json.decode(response.body);
-          return StorageResponse(data: jsonBody);
-        }
+    final response = await http.Response.fromStream(streamedResponse);
+    if (_isSuccessStatusCode(response.statusCode)) {
+      if (options?.noResolveJson == true) {
+        return response.bodyBytes;
       } else {
-        throw response;
+        final jsonBody = json.decode(response.body);
+        return jsonBody;
       }
-    } catch (e) {
-      return StorageResponse(error: _handleError(e));
+    } else {
+      throw _handleError(response, StackTrace.current);
     }
   }
 
-  Future<StorageResponse> get(String url, {FetchOptions? options}) async {
+  Future<dynamic> get(String url, {FetchOptions? options}) async {
     return _handleRequest('GET', url, {}, options);
   }
 
-  Future<StorageResponse> post(
+  Future<dynamic> post(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -178,7 +160,7 @@ class Fetch {
     return _handleRequest('POST', url, body, options);
   }
 
-  Future<StorageResponse> put(
+  Future<dynamic> put(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -186,7 +168,7 @@ class Fetch {
     return _handleRequest('PUT', url, body, options);
   }
 
-  Future<StorageResponse> delete(
+  Future<dynamic> delete(
     String url,
     dynamic body, {
     FetchOptions? options,
@@ -194,7 +176,7 @@ class Fetch {
     return _handleRequest('DELETE', url, body, options);
   }
 
-  Future<StorageResponse> postFile(
+  Future<dynamic> postFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -203,7 +185,7 @@ class Fetch {
     return _handleMultipartRequest('POST', url, file, fileOptions, options);
   }
 
-  Future<StorageResponse> putFile(
+  Future<dynamic> putFile(
     String url,
     File file,
     FileOptions fileOptions, {
@@ -212,7 +194,7 @@ class Fetch {
     return _handleMultipartRequest('PUT', url, file, fileOptions, options);
   }
 
-  Future<StorageResponse> postBinaryFile(
+  Future<dynamic> postBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {
@@ -221,7 +203,7 @@ class Fetch {
     return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
   }
 
-  Future<StorageResponse> putBinaryFile(
+  Future<dynamic> putBinaryFile(
     String url,
     Uint8List data,
     FileOptions fileOptions, {

@@ -1,3 +1,9 @@
+## [0.1.0]
+
+- BREAKING: error is now thrown instead of returned within the responses.
+- feat: added `createSignedUrls` to create signed URLs in bulk.
+- feat: added `copy` method to copy a file to another path.
+
 ## [0.0.6+2]
 
 - fix: add status code to `StorageError` within `Fetch`

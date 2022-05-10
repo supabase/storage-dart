@@ -6,6 +6,8 @@ import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
 
+import 'custom_http_client.dart';
+
 const String supabaseUrl = 'SUPABASE_TEST_URL';
 const String supabaseKey = 'SUPABASE_TEST_KEY';
 
@@ -42,7 +44,7 @@ String get objectUrl => '$supabaseUrl/storage/v1/object';
 void main() {
   late SupabaseStorageClient client;
 
-  group('client', () {
+  group('Client with default http client', () {
     setUp(() {
       // init SupabaseClient with test url & test key
       client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
@@ -290,6 +292,23 @@ void main() {
       final response = await client.from('public').remove(['a.txt', 'b.txt']);
       expect(response, isA<List>());
       expect(response.length, 2);
+    });
+  });
+
+  group("Client with custom http client", () {
+    setUp(() {
+      // init SupabaseClient with test url & test key
+      client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
+        'Authorization': 'Bearer $supabaseKey',
+      });
+      storageFetch = Fetch(CustomHttpClient());
+    });
+    test('should list buckets', () async {
+      try {
+        await client.listBuckets();
+      } catch (e) {
+        expect((e as dynamic).statusCode, "420");
+      }
     });
   });
 

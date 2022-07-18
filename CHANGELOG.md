@@ -1,8 +1,9 @@
-## [0.1.0]
+## [0.1.0-dev.1]
 
 - BREAKING: error is now thrown instead of returned within the responses.
 - feat: added `createSignedUrls` to create signed URLs in bulk.
 - feat: added `copy` method to copy a file to another path.
+- feat: added support for custom http client
 
 ## [0.0.6+2]
 

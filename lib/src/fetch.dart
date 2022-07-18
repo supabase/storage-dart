@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:mime/mime.dart';
 import 'package:storage_client/src/types.dart';
@@ -10,6 +11,10 @@ import 'package:universal_io/io.dart';
 Fetch storageFetch = Fetch();
 
 class Fetch {
+  final Client? httpClient;
+
+  Fetch([this.httpClient]);
+
   bool _isSuccessStatusCode(int code) {
     return code >= 200 && code <= 299;
   }
@@ -52,8 +57,12 @@ class Fetch {
     final request = http.Request(method, Uri.parse(url))
       ..headers.addAll(headers)
       ..body = bodyStr;
-
-    final streamedResponse = await request.send();
+    final http.StreamedResponse streamedResponse;
+    if (httpClient != null) {
+      streamedResponse = await httpClient!.send(request);
+    } else {
+      streamedResponse = await request.send();
+    }
     return _handleResponse(streamedResponse, options);
   }
 
@@ -80,7 +89,12 @@ class Fetch {
       ..fields['cacheControl'] = fileOptions.cacheControl
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
-    final streamedResponse = await request.send();
+    final http.StreamedResponse streamedResponse;
+    if (httpClient != null) {
+      streamedResponse = await httpClient!.send(request);
+    } else {
+      streamedResponse = await request.send();
+    }
     return _handleResponse(streamedResponse, options);
   }
 
@@ -108,7 +122,12 @@ class Fetch {
       ..fields['cacheControl'] = fileOptions.cacheControl
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
-    final streamedResponse = await request.send();
+    final http.StreamedResponse streamedResponse;
+    if (httpClient != null) {
+      streamedResponse = await httpClient!.send(request);
+    } else {
+      streamedResponse = await request.send();
+    }
     return _handleResponse(streamedResponse, options);
   }
 

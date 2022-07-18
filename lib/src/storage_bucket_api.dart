@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/src/types.dart';
 
@@ -5,7 +6,9 @@ class StorageBucketApi {
   final String url;
   final Map<String, String> headers;
 
-  const StorageBucketApi(this.url, this.headers);
+  StorageBucketApi(this.url, this.headers, {Client? httpClient}) {
+    storageFetch = Fetch(httpClient);
+  }
 
   /// Retrieves the details of all Storage buckets within an existing project.
   Future<List<Bucket>> listBuckets() async {

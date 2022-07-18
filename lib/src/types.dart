@@ -189,7 +189,7 @@ class StorageException {
   const StorageException(this.message, {this.error, this.statusCode});
 
   StorageException.fromJson(Map<String, dynamic> json, [String? statusCode])
-      : message = json['message'] as String,
+      : message = json['message'] as String? ?? json.toString(),
         error = json['error'] as String?,
         statusCode = (json['statusCode'] as String?) ?? statusCode;
 

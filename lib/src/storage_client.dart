@@ -1,10 +1,18 @@
+import 'package:http/http.dart';
 import 'package:storage_client/src/constants.dart';
 import 'package:storage_client/src/storage_bucket_api.dart';
 import 'package:storage_client/src/storage_file_api.dart';
 
 class SupabaseStorageClient extends StorageBucketApi {
-  SupabaseStorageClient(String url, Map<String, String> headers)
-      : super(url, {...Constants.defaultHeaders, ...headers});
+  SupabaseStorageClient(
+    String url,
+    Map<String, String> headers, {
+    Client? httpClient,
+  }) : super(
+          url,
+          {...Constants.defaultHeaders, ...headers},
+          httpClient: httpClient,
+        );
 
   /// Perform file operation in a bucket.
   ///

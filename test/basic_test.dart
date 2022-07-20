@@ -55,8 +55,8 @@ void main() {
       storageFetch = MockFetch();
 
       // Register default mock values (used by mocktail)
-      registerFallbackValue<FileOptions>(const FileOptions());
-      registerFallbackValue<FetchOptions>(const FetchOptions());
+      registerFallbackValue(const FileOptions());
+      registerFallbackValue(const FetchOptions());
     });
 
     tearDown(() {

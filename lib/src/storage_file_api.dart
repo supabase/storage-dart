@@ -29,9 +29,9 @@ class StorageFileApi {
     File file, {
     FileOptions fileOptions = const FileOptions(),
   }) async {
-    final _path = _getFinalPath(path);
+    final finalPath = _getFinalPath(path);
     final response = await storageFetch.postFile(
-      '$url/object/$_path',
+      '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
@@ -54,9 +54,9 @@ class StorageFileApi {
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
   }) async {
-    final _path = _getFinalPath(path);
+    final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
-      '$url/object/$_path',
+      '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
@@ -78,9 +78,9 @@ class StorageFileApi {
     File file, {
     FileOptions fileOptions = const FileOptions(),
   }) async {
-    final _path = _getFinalPath(path);
+    final finalPath = _getFinalPath(path);
     final response = await storageFetch.putFile(
-      '$url/object/$_path',
+      '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
@@ -104,9 +104,9 @@ class StorageFileApi {
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
   }) async {
-    final _path = _getFinalPath(path);
+    final finalPath = _getFinalPath(path);
     final response = await storageFetch.putBinaryFile(
-      '$url/object/$_path',
+      '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
@@ -170,10 +170,10 @@ class StorageFileApi {
     String path,
     int expiresIn,
   ) async {
-    final _path = _getFinalPath(path);
+    final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers);
     final response = await storageFetch.post(
-      '$url/object/sign/$_path',
+      '$url/object/sign/$finalPath',
       {'expiresIn': expiresIn},
       options: options,
     );
@@ -219,10 +219,10 @@ class StorageFileApi {
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
   Future<Uint8List> download(String path) async {
-    final _path = _getFinalPath(path);
+    final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers, noResolveJson: true);
     final response =
-        await storageFetch.get('$url/object/$_path', options: options);
+        await storageFetch.get('$url/object/$finalPath', options: options);
     return response as Uint8List;
   }
 
@@ -231,8 +231,8 @@ class StorageFileApi {
   /// [path] is the file path to be downloaded, including the current file name.
   /// For example `getPublicUrl('folder/image.png')`.
   String getPublicUrl(String path) {
-    final _path = _getFinalPath(path);
-    final publicUrl = '$url/object/public/$_path';
+    final finalPath = _getFinalPath(path);
+    final publicUrl = '$url/object/public/$finalPath';
     return publicUrl;
   }
 

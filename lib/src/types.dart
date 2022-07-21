@@ -63,7 +63,7 @@ class FileObject {
         createdAt = json['created_at'] as String?,
         lastAccessedAt = json['last_accessed_at'] as String?,
         metadata = json['metadata'] != null
-            ? Metadata.fromJson(json['metadata'])
+            ? Metadata._fromJson(json['metadata'])
             : null,
         buckets =
             json['buckets'] != null ? Bucket.fromJson(json['buckets']) : null;
@@ -143,7 +143,7 @@ class SortBy {
 class Metadata {
   const Metadata({required this.name});
 
-  Metadata.fromJson(Map<String, dynamic> json)
+  Metadata._fromJson(Map<String, dynamic> json)
       : name = (json)['name'] as String;
 
   final String name;

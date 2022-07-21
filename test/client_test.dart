@@ -19,8 +19,8 @@ void main() {
     });
 
     // Register default mock values (used by mocktail)
-    registerFallbackValue<FileOptions>(const FileOptions());
-    registerFallbackValue<FetchOptions>(const FetchOptions());
+    registerFallbackValue(const FileOptions());
+    registerFallbackValue(const FetchOptions());
   });
 
   test('List buckets', () async {

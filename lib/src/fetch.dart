@@ -53,10 +53,13 @@ class Fetch {
     if (method != 'GET') {
       headers['Content-Type'] = 'application/json';
     }
-    final bodyStr = json.encode(body ?? {});
+
     final request = http.Request(method, Uri.parse(url))
-      ..headers.addAll(headers)
-      ..body = bodyStr;
+      ..headers.addAll(headers);
+    if (body != null) {
+      request.body = json.encode(body);
+    }
+
     final http.StreamedResponse streamedResponse;
     if (httpClient != null) {
       streamedResponse = await httpClient!.send(request);
@@ -149,7 +152,7 @@ class Fetch {
   }
 
   Future<dynamic> get(String url, {FetchOptions? options}) async {
-    return _handleRequest('GET', url, {}, options);
+    return _handleRequest('GET', url, null, options);
   }
 
   Future<dynamic> post(

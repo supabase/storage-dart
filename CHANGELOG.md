@@ -1,4 +1,4 @@
-## [0.1.0-dev.1]
+## [1.0.0-dev.1]
 
 - BREAKING: error is now thrown instead of returned within the responses.
 Before:

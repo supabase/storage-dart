@@ -181,14 +181,14 @@ class SignedUrl {
   }
 }
 
-class StorageException {
+class StorageError {
   final String message;
   final String? error;
   final String? statusCode;
 
-  const StorageException(this.message, {this.error, this.statusCode});
+  const StorageError(this.message, {this.error, this.statusCode});
 
-  StorageException.fromJson(Map<String, dynamic> json, [String? statusCode])
+  StorageError.fromJson(Map<String, dynamic> json, [String? statusCode])
       : message = json['message'] as String? ?? json.toString(),
         error = json['error'] as String?,
         statusCode = (json['statusCode'] as String?) ?? statusCode;

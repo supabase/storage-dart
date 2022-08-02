@@ -1,3 +1,7 @@
+## [1.0.0-dev.2]
+
+- BREAKING: rename `StorageException` to `StorageError`
+
 ## [1.0.0-dev.1]
 
 - BREAKING: error is now thrown instead of returned within the responses.

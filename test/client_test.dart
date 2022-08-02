@@ -1,4 +1,5 @@
 import 'package:mocktail/mocktail.dart';
+import 'package:storage_client/src/types.dart';
 import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
 

@@ -1,6 +1,7 @@
 ## [1.0.0-dev.2]
 
 - fix: don't export `FetchOptions`
+- feat: `StorageException` implements `Exception`
 
 ## [1.0.0-dev.1]
 

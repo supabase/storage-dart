@@ -1,6 +1,6 @@
 ## [1.0.0-dev.2]
 
-- BREAKING: rename `StorageException` to `StorageError`
+- fix: don't export `FetchOptions`
 
 ## [1.0.0-dev.1]
 
@@ -21,7 +21,7 @@ Now:
 ```dart
 try {
   final data = await ....;
-} on StorageError catch (error) {
+} on StorageException catch (error) {
   // handle storage errors
 } catch (error) {
   // handle other errors

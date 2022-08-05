@@ -200,6 +200,6 @@ class StorageException implements Exception {
 
   @override
   String toString() {
-    return 'StorageError(message: $message, statusCode: $statusCode, error: $error)';
+    return 'StorageException(message: $message, statusCode: $statusCode, error: $error)';
   }
 }

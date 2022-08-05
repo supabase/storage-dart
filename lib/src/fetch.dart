@@ -24,19 +24,19 @@ class Fetch {
     return MediaType.parse(mime ?? 'application/octet-stream');
   }
 
-  StorageError _handleError(dynamic error, StackTrace stack) {
+  StorageException _handleError(dynamic error, StackTrace stack) {
     if (error is http.Response) {
       try {
         final data = json.decode(error.body) as Map<String, dynamic>;
-        return StorageError.fromJson(data, '${error.statusCode}');
+        return StorageException.fromJson(data, '${error.statusCode}');
       } on FormatException catch (_) {
-        return StorageError(
+        return StorageException(
           error.body,
           statusCode: '${error.statusCode}',
         );
       }
     } else {
-      return StorageError(
+      return StorageException(
         error.toString(),
         statusCode: error.runtimeType.toString(),
       );

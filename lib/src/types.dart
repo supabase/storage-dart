@@ -181,20 +181,25 @@ class SignedUrl {
   }
 }
 
-class StorageException {
+class StorageException implements Exception {
   final String message;
   final String? error;
   final String? statusCode;
 
-  const StorageException(this.message, {this.error, this.statusCode});
+  const StorageException(this.message, {this.error, this.statusCode}) : super();
 
-  StorageException.fromJson(Map<String, dynamic> json, [String? statusCode])
-      : message = json['message'] as String? ?? json.toString(),
-        error = json['error'] as String?,
-        statusCode = (json['statusCode'] as String?) ?? statusCode;
+  factory StorageException.fromJson(
+    Map<String, dynamic> json, [
+    String? statusCode,
+  ]) =>
+      StorageException(
+        json['message'] as String? ?? json.toString(),
+        error: json['error'] as String?,
+        statusCode: (json['statusCode'] as String?) ?? statusCode,
+      );
 
   @override
   String toString() {
-    return 'StorageError(message: $message, statusCode: $statusCode, error: $error)';
+    return 'StorageException(message: $message, statusCode: $statusCode, error: $error)';
   }
 }

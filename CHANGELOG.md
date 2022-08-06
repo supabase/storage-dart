@@ -1,3 +1,8 @@
+## [1.0.0-dev.2]
+
+- fix: don't export `FetchOptions`
+- feat: `StorageException` implements `Exception`
+
 ## [1.0.0-dev.1]
 
 - BREAKING: error is now thrown instead of returned within the responses.
@@ -17,7 +22,7 @@ Now:
 ```dart
 try {
   final data = await ....;
-} on StorageError catch (error) {
+} on StorageException catch (error) {
   // handle storage errors
 } catch (error) {
   // handle other errors

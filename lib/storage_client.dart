@@ -1,4 +1,4 @@
 library storage_client;
 
 export 'src/storage_client.dart';
-export 'src/types.dart';
+export 'src/types.dart' hide FetchOptions;

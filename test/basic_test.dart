@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:mocktail/mocktail.dart';
 import 'package:storage_client/src/fetch.dart';
+import 'package:storage_client/src/types.dart';
 import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
 

@@ -1,3 +1,7 @@
+## [1.0.0-dev.3]
+
+- feat: exported `StorageFileApi`
+
 ## [1.0.0-dev.2]
 
 - fix: don't export `FetchOptions`

@@ -42,18 +42,6 @@ class FileObject {
   final Metadata? metadata;
   final Bucket? buckets;
 
-  const FileObject({
-    required this.name,
-    required this.bucketId,
-    required this.owner,
-    required this.id,
-    required this.updatedAt,
-    required this.createdAt,
-    required this.lastAccessedAt,
-    required this.metadata,
-    required this.buckets,
-  });
-
   FileObject.fromJson(dynamic json)
       : id = (json as Map<String, dynamic>)['id'] as String?,
         name = json['name'] as String,
@@ -93,13 +81,13 @@ class FileOptions {
 }
 
 class SearchOptions {
-  /// The number of files you want to be returned. */
+  /// The number of files you want to be returned.
   final int? limit;
 
-  /// The starting position. */
+  /// The starting position.
   final int? offset;
 
-  /// The column to sort by. Can be any column inside a FileObject. */
+  /// The column to sort by. Can be any column inside a FileObject.
   final SortBy? sortBy;
 
   /// The search string to filter files by.
@@ -129,7 +117,9 @@ class SortBy {
   final String? column;
   final String? order;
 
-  const SortBy({this.column, this.order});
+  const SortBy({this.column, this.order})
+      : assert(order == 'asc' || order == 'desc',
+            '`order` has to be either \'asc\' or \'desc\'');
 
   Map<String, dynamic> toMap() {
     return {
@@ -139,14 +129,17 @@ class SortBy {
   }
 }
 
-// TODO: need to check for metadata props. The api swagger doesnt have.
 class Metadata {
-  const Metadata({required this.name});
-
   Metadata._fromJson(Map<String, dynamic> json)
-      : name = (json)['name'] as String;
+      : name = json['name'] as String?,
+        size = json['size'] as int?,
+        mimetype = json['mimetype'] as String?,
+        cacheControl = json['cacheControl'] as String?;
 
-  final String name;
+  final String? name;
+  final int? size;
+  final String? mimetype;
+  final String? cacheControl;
 }
 
 class SignedUrl {

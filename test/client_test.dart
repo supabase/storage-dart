@@ -24,59 +24,74 @@ void main() {
     registerFallbackValue(const FetchOptions());
   });
 
-  test('List buckets', () async {
-    final response = await client.listBuckets();
-    expect(response.length, 4);
+  group('files', () {
+    test('list with sort', () async {
+      final response = await client.from('bucket2').list(
+          path: 'authenticated',
+          searchOptions: SearchOptions(
+            limit: 1,
+            sortBy: SortBy(column: 'name', order: 'desc'),
+          ));
+      expect(response.length, 1);
+      expect(response.first.name, 'cat.jpg');
+    });
   });
 
-  test('Get bucket by id', () async {
-    final response = await client.getBucket('bucket2');
-    expect(response.name, 'bucket2');
-  });
+  group('buckets', () {
+    test('List buckets', () async {
+      final response = await client.listBuckets();
+      expect(response.length, 4);
+    });
 
-  test('Get bucket with wrong id', () async {
-    try {
-      await client.getBucket('not-exist-id');
-      fail('Bucket that does not exist was found');
-    } catch (error) {
-      expect(error, isNotNull);
-    }
-  });
+    test('Get bucket by id', () async {
+      final response = await client.getBucket('bucket2');
+      expect(response.name, 'bucket2');
+    });
 
-  test('Create new bucket', () async {
-    final response = await client.createBucket(newBucketName);
-    expect(response, newBucketName);
-  });
+    test('Get bucket with wrong id', () async {
+      try {
+        await client.getBucket('not-exist-id');
+        fail('Bucket that does not exist was found');
+      } catch (error) {
+        expect(error, isNotNull);
+      }
+    });
 
-  test('Create new public bucket', () async {
-    const newPublicBucketName = 'my-new-public-bucket';
-    await client.createBucket(
-      newPublicBucketName,
-      const BucketOptions(public: true),
-    );
-    final response = await client.getBucket(newPublicBucketName);
-    expect(response.public, true);
-    expect(response.name, newPublicBucketName);
-  });
+    test('Create new bucket', () async {
+      final response = await client.createBucket(newBucketName);
+      expect(response, newBucketName);
+    });
 
-  test('update bucket', () async {
-    final updateRes = await client.updateBucket(
-      newBucketName,
-      const BucketOptions(public: true),
-    );
-    expect(updateRes, 'Successfully updated');
+    test('Create new public bucket', () async {
+      const newPublicBucketName = 'my-new-public-bucket';
+      await client.createBucket(
+        newPublicBucketName,
+        const BucketOptions(public: true),
+      );
+      final response = await client.getBucket(newPublicBucketName);
+      expect(response.public, true);
+      expect(response.name, newPublicBucketName);
+    });
 
-    final getRes = await client.getBucket(newBucketName);
-    expect(getRes.public, true);
-  });
+    test('update bucket', () async {
+      final updateRes = await client.updateBucket(
+        newBucketName,
+        const BucketOptions(public: true),
+      );
+      expect(updateRes, 'Successfully updated');
 
-  test('Empty bucket', () async {
-    final response = await client.emptyBucket(newBucketName);
-    expect(response, 'Successfully emptied');
-  });
+      final getRes = await client.getBucket(newBucketName);
+      expect(getRes.public, true);
+    });
 
-  test('Delete bucket', () async {
-    final response = await client.deleteBucket(newBucketName);
-    expect(response, 'Successfully deleted');
+    test('Empty bucket', () async {
+      final response = await client.emptyBucket(newBucketName);
+      expect(response, 'Successfully emptied');
+    });
+
+    test('Delete bucket', () async {
+      final response = await client.deleteBucket(newBucketName);
+      expect(response, 'Successfully deleted');
+    });
   });
 }

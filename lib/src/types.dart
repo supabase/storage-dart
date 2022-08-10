@@ -39,7 +39,7 @@ class FileObject {
   final String? updatedAt;
   final String? createdAt;
   final String? lastAccessedAt;
-  final Metadata? metadata;
+  final Map<String, dynamic>? metadata;
   final Bucket? buckets;
 
   const FileObject({
@@ -62,9 +62,7 @@ class FileObject {
         updatedAt = json['updated_at'] as String?,
         createdAt = json['created_at'] as String?,
         lastAccessedAt = json['last_accessed_at'] as String?,
-        metadata = json['metadata'] != null
-            ? Metadata._fromJson(json['metadata'])
-            : null,
+        metadata = json['metadata'] as Map<String, dynamic>?,
         buckets =
             json['buckets'] != null ? Bucket.fromJson(json['buckets']) : null;
 }
@@ -137,16 +135,6 @@ class SortBy {
       'order': order,
     };
   }
-}
-
-// TODO: need to check for metadata props. The api swagger doesnt have.
-class Metadata {
-  const Metadata({required this.name});
-
-  Metadata._fromJson(Map<String, dynamic> json)
-      : name = (json)['name'] as String;
-
-  final String name;
 }
 
 class SignedUrl {

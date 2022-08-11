@@ -24,6 +24,11 @@ void main() {
     registerFallbackValue(const FetchOptions());
   });
 
+  test('List files', () async {
+    final response = await client.from('bucket2').list(path: 'public');
+    expect(response.length, 2);
+  });
+
   test('List buckets', () async {
     final response = await client.listBuckets();
     expect(response.length, 4);

@@ -1,3 +1,7 @@
+## [1.0.0-dev.4]
+
+- BREAKING: Update type of `metadata` of `FileObject` to `Map<String, dynamic>`
+
 ## [1.0.0-dev.3]
 
 - feat: exported `StorageFileApi`

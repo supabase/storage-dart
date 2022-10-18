@@ -1,3 +1,8 @@
+## [1.0.0]
+
+- chore: v1.0.0 release 🚀
+- BREAKING: set minimum Dart SDK to 2.14.0 ([42](https://github.com/supabase-community/storage-dart/pull/42))
+
 ## [1.0.0-dev.4]
 
 - BREAKING: Update type of `metadata` of `FileObject` to `Map<String, dynamic>`

@@ -5,7 +5,7 @@ homepage: "https://supabase.io"
 repository: "https://github.com/supabase/storage-dart"
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.14.0 <3.0.0"
 
 dependencies:
   http: ^0.13.4
@@ -16,4 +16,4 @@ dependencies:
 dev_dependencies:
   mocktail: ^0.3.0
   test: ^1.21.4
-  lints: ^2.0.0
+  lints: ^1.0.1

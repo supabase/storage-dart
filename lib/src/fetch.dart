@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -5,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:mime/mime.dart';
+import 'package:retry/retry.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
 
@@ -75,6 +77,7 @@ class Fetch {
     File file,
     FileOptions fileOptions,
     FetchOptions? options,
+    int retryCount,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -93,11 +96,18 @@ class Fetch {
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
     final http.StreamedResponse streamedResponse;
-    if (httpClient != null) {
-      streamedResponse = await httpClient!.send(request);
-    } else {
-      streamedResponse = await request.send();
-    }
+    final r = RetryOptions(maxAttempts: retryCount);
+    streamedResponse = await r.retry<http.StreamedResponse>(
+      () async {
+        if (httpClient != null) {
+          return httpClient!.send(request);
+        } else {
+          return request.send();
+        }
+      },
+      retryIf: (error) => error is SocketException || error is TimeoutException,
+    );
+
     return _handleResponse(streamedResponse, options);
   }
 
@@ -184,8 +194,16 @@ class Fetch {
     File file,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int retryCount,
   }) async {
-    return _handleMultipartRequest('POST', url, file, fileOptions, options);
+    return _handleMultipartRequest(
+      'POST',
+      url,
+      file,
+      fileOptions,
+      options,
+      retryCount,
+    );
   }
 
   Future<dynamic> putFile(
@@ -193,8 +211,16 @@ class Fetch {
     File file,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int retryCount,
   }) async {
-    return _handleMultipartRequest('PUT', url, file, fileOptions, options);
+    return _handleMultipartRequest(
+      'PUT',
+      url,
+      file,
+      fileOptions,
+      options,
+      retryCount,
+    );
   }
 
   Future<dynamic> postBinaryFile(

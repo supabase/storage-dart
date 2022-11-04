@@ -166,6 +166,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
+          retryCount: 0,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -186,6 +187,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
+          retryCount: 0,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),

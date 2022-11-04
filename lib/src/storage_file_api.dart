@@ -24,10 +24,26 @@ class StorageFileApi {
   /// [file] is the File object to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// If [retryCount] is specified, failed upload operation
+  /// due to `SocketException` or `TimeoutException` will be retried.
+  ///
+  /// Time between each retries are set as the following:
+  ///  1. 400 ms +/- 25%
+  ///  2. 800 ms +/- 25%
+  ///  3. 1600 ms +/- 25%
+  ///  4. 3200 ms +/- 25%
+  ///  5. 6400 ms +/- 25%
+  ///  6. 12800 ms +/- 25%
+  ///  7. 25600 ms +/- 25%
+  ///  8. 30000 ms +/- 25%
+  ///
+  /// Anything beyond the 8th try will have 30 second delay.
   Future<String> upload(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
+    int retryCount = 0,
   }) async {
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postFile(
@@ -35,6 +51,7 @@ class StorageFileApi {
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
+      retryCount: retryCount,
     );
 
     return (response as Map)['Key'] as String;
@@ -49,10 +66,26 @@ class StorageFileApi {
   /// [data] is the binary file data to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// If [retryCount] is specified, failed upload operation
+  /// due to `SocketException` or `TimeoutException` will be retried.
+  ///
+  /// Time between each retries are set as the following:
+  ///  1. 400 ms +/- 25%
+  ///  2. 800 ms +/- 25%
+  ///  3. 1600 ms +/- 25%
+  ///  4. 3200 ms +/- 25%
+  ///  5. 6400 ms +/- 25%
+  ///  6. 12800 ms +/- 25%
+  ///  7. 25600 ms +/- 25%
+  ///  8. 30000 ms +/- 25%
+  ///
+  /// Anything beyond the 8th try will have 30 second delay.
   Future<String> uploadBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
+    int? retryCount,
   }) async {
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
@@ -73,10 +106,26 @@ class StorageFileApi {
   /// [file] is the file object to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// If [retryCount] is specified, failed upload operation
+  /// due to `SocketException` or `TimeoutException` will be retried.
+  ///
+  /// Time between each retries are set as the following:
+  ///  1. 400 ms +/- 25%
+  ///  2. 800 ms +/- 25%
+  ///  3. 1600 ms +/- 25%
+  ///  4. 3200 ms +/- 25%
+  ///  5. 6400 ms +/- 25%
+  ///  6. 12800 ms +/- 25%
+  ///  7. 25600 ms +/- 25%
+  ///  8. 30000 ms +/- 25%
+  ///
+  /// Anything beyond the 8th try will have 30 second delay.
   Future<String> update(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
+    int retryCount = 0,
   }) async {
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putFile(
@@ -84,6 +133,7 @@ class StorageFileApi {
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
+      retryCount: retryCount,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -99,6 +149,21 @@ class StorageFileApi {
   /// [data] is the binary file data to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// If [retryCount] is specified, failed upload operation
+  /// due to `SocketException` or `TimeoutException` will be retried.
+  ///
+  /// Time between each retries are set as the following:
+  ///  1. 400 ms +/- 25%
+  ///  2. 800 ms +/- 25%
+  ///  3. 1600 ms +/- 25%
+  ///  4. 3200 ms +/- 25%
+  ///  5. 6400 ms +/- 25%
+  ///  6. 12800 ms +/- 25%
+  ///  7. 25600 ms +/- 25%
+  ///  8. 30000 ms +/- 25%
+  ///
+  /// Anything beyond the 8th try will have 30 second delay.
   Future<String> updateBinary(
     String path,
     Uint8List data, {

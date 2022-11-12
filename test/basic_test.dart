@@ -298,7 +298,54 @@ void main() {
     });
   });
 
-  group("Client with custom http client", () {
+  group('Retry', () {
+    setUp(() {
+      // init SupabaseClient with test url & test key
+      client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
+        'Authorization': 'Bearer $supabaseKey',
+      });
+      storageFetch = Fetch(CustomHttpClient());
+    });
+    test('should list buckets', () async {
+      try {
+        await client.listBuckets();
+      } catch (e) {
+        expect((e as dynamic).statusCode, "420");
+      }
+    });
+  });
+
+  group('Retry', () {
+    setUp(() {
+      // init SupabaseClient with test url & test key
+      client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
+        'Authorization': 'Bearer $supabaseKey',
+      });
+
+      storageFetch = Fetch(RetryHttpClient());
+    });
+
+    test('Upload fails without retry', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final uploadTask =
+          client.from('public').upload('a.txt', file, retryCount: 0);
+      expect(uploadTask, throwsException);
+    });
+
+    test('should upload file after few failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response =
+          await client.from('public').upload('a.txt', file, retryCount: 3);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+  });
+
+  group('Client with custom http client', () {
     setUp(() {
       // init SupabaseClient with test url & test key
       client = SupabaseStorageClient('$supabaseUrl/storage/v1', {

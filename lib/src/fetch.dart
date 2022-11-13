@@ -77,7 +77,7 @@ class Fetch {
     File file,
     FileOptions fileOptions,
     FetchOptions? options,
-    int retryCount,
+    int maxAttempts,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -96,7 +96,7 @@ class Fetch {
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
     final http.StreamedResponse streamedResponse;
-    final r = RetryOptions(maxAttempts: retryCount);
+    final r = RetryOptions(maxAttempts: maxAttempts);
     streamedResponse = await r.retry<http.StreamedResponse>(
       () async {
         if (httpClient != null) {
@@ -117,6 +117,7 @@ class Fetch {
     Uint8List data,
     FileOptions fileOptions,
     FetchOptions? options,
+    int maxAttempts,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -136,11 +137,18 @@ class Fetch {
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
     final http.StreamedResponse streamedResponse;
-    if (httpClient != null) {
-      streamedResponse = await httpClient!.send(request);
-    } else {
-      streamedResponse = await request.send();
-    }
+    final r = RetryOptions(maxAttempts: maxAttempts);
+    streamedResponse = await r.retry<http.StreamedResponse>(
+      () async {
+        if (httpClient != null) {
+          return httpClient!.send(request);
+        } else {
+          return request.send();
+        }
+      },
+      retryIf: (error) => error is SocketException || error is TimeoutException,
+    );
+
     return _handleResponse(streamedResponse, options);
   }
 
@@ -194,7 +202,7 @@ class Fetch {
     File file,
     FileOptions fileOptions, {
     FetchOptions? options,
-    required int retryCount,
+    required int maxAttempts,
   }) async {
     return _handleMultipartRequest(
       'POST',
@@ -202,7 +210,7 @@ class Fetch {
       file,
       fileOptions,
       options,
-      retryCount,
+      maxAttempts,
     );
   }
 
@@ -211,7 +219,7 @@ class Fetch {
     File file,
     FileOptions fileOptions, {
     FetchOptions? options,
-    required int retryCount,
+    required int maxAttempts,
   }) async {
     return _handleMultipartRequest(
       'PUT',
@@ -219,7 +227,7 @@ class Fetch {
       file,
       fileOptions,
       options,
-      retryCount,
+      maxAttempts,
     );
   }
 
@@ -228,8 +236,10 @@ class Fetch {
     Uint8List data,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int maxAttempts,
   }) async {
-    return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
+    return _handleBinaryFileRequest(
+        'POST', url, data, fileOptions, options, maxAttempts);
   }
 
   Future<dynamic> putBinaryFile(
@@ -237,7 +247,9 @@ class Fetch {
     Uint8List data,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int maxAttempts,
   }) async {
-    return _handleBinaryFileRequest('PUT', url, data, fileOptions, options);
+    return _handleBinaryFileRequest(
+        'PUT', url, data, fileOptions, options, maxAttempts);
   }
 }

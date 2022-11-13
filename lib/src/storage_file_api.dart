@@ -25,8 +25,8 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// If [retryCount] is specified, failed upload operation
-  /// due to `SocketException` or `TimeoutException` will be retried.
+  /// [maxAttempts] specifies how many attempts there should be to upload the
+  /// file when failed due to network interruption.
   ///
   /// Time between each retries are set as the following:
   ///  1. 400 ms +/- 25%
@@ -43,15 +43,16 @@ class StorageFileApi {
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int retryCount = 0,
+    int maxAttempts = 8,
   }) async {
+    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      retryCount: retryCount,
+      maxAttempts: maxAttempts,
     );
 
     return (response as Map)['Key'] as String;
@@ -67,8 +68,8 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// If [retryCount] is specified, failed upload operation
-  /// due to `SocketException` or `TimeoutException` will be retried.
+  /// [maxAttempts] specifies how many attempts there should be to upload the
+  /// file when failed due to network interruption.
   ///
   /// Time between each retries are set as the following:
   ///  1. 400 ms +/- 25%
@@ -85,15 +86,13 @@ class StorageFileApi {
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int? retryCount,
+    int maxAttempts = 8,
   }) async {
+    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
-      '$url/object/$finalPath',
-      data,
-      fileOptions,
-      options: FetchOptions(headers: headers),
-    );
+        '$url/object/$finalPath', data, fileOptions,
+        options: FetchOptions(headers: headers), maxAttempts: maxAttempts);
 
     return (response as Map)['Key'] as String;
   }
@@ -107,8 +106,8 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// If [retryCount] is specified, failed upload operation
-  /// due to `SocketException` or `TimeoutException` will be retried.
+  /// [maxAttempts] specifies how many attempts there should be to upload the
+  /// file when failed due to network interruption.
   ///
   /// Time between each retries are set as the following:
   ///  1. 400 ms +/- 25%
@@ -125,15 +124,16 @@ class StorageFileApi {
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int retryCount = 0,
+    int maxAttempts = 8,
   }) async {
+    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      retryCount: retryCount,
+      maxAttempts: maxAttempts,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -150,8 +150,8 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// If [retryCount] is specified, failed upload operation
-  /// due to `SocketException` or `TimeoutException` will be retried.
+  /// [maxAttempts] specifies how many attempts there should be to upload the
+  /// file when failed due to network interruption.
   ///
   /// Time between each retries are set as the following:
   ///  1. 400 ms +/- 25%
@@ -168,13 +168,16 @@ class StorageFileApi {
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
+    int maxAttempts = 8,
   }) async {
+    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
+      maxAttempts: maxAttempts,
     );
 
     return (response as Map)['Key'] as String;

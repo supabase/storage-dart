@@ -166,7 +166,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          retryCount: 0,
+          maxAttempts: 8,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -187,7 +187,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          retryCount: 0,
+          maxAttempts: 8,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -322,6 +322,7 @@ void main() {
         'Authorization': 'Bearer $supabaseKey',
       });
 
+      // `RetryHttpClient` will throw `SocketException` for the first two tries
       storageFetch = Fetch(RetryHttpClient());
     });
 
@@ -330,16 +331,45 @@ void main() {
       file.writeAsStringSync('File content');
 
       final uploadTask =
-          client.from('public').upload('a.txt', file, retryCount: 0);
+          client.from('public').upload('a.txt', file, maxAttempts: 1);
       expect(uploadTask, throwsException);
     });
 
-    test('should upload file after few failures', () async {
+    test('should upload file with few network failures', () async {
       final file = File('a.txt');
       file.writeAsStringSync('File content');
 
-      final response =
-          await client.from('public').upload('a.txt', file, retryCount: 3);
+      final response = await client.from('public').upload('a.txt', file);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+
+    test('should upload binary with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client
+          .from('public')
+          .uploadBinary('a.txt', file.readAsBytesSync());
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+
+    test('should update file with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client.from('public').update('a.txt', file);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+    test('should update binary with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client
+          .from('public')
+          .updateBinary('a.txt', file.readAsBytesSync());
       expect(response, isA<String>());
       expect(response.endsWith('/a.txt'), isTrue);
     });

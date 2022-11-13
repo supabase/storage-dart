@@ -43,7 +43,7 @@ class StorageFileApi {
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 40,
+    int maxAttempts = 25,
   }) async {
     assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
@@ -86,7 +86,7 @@ class StorageFileApi {
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 40,
+    int maxAttempts = 25,
   }) async {
     assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
@@ -124,7 +124,7 @@ class StorageFileApi {
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 40,
+    int maxAttempts = 25,
   }) async {
     assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
@@ -168,7 +168,7 @@ class StorageFileApi {
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 40,
+    int maxAttempts = 25,
   }) async {
     assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);

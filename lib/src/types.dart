@@ -193,6 +193,7 @@ class StorageException implements Exception {
 }
 
 class StorageAbortController {
+  /// Whether the retry operation is aborted
   bool get aborted => _aborted;
   bool _aborted = false;
 

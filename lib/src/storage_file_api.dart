@@ -91,8 +91,12 @@ class StorageFileApi {
     assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
-        '$url/object/$finalPath', data, fileOptions,
-        options: FetchOptions(headers: headers), maxAttempts: maxAttempts);
+      '$url/object/$finalPath',
+      data,
+      fileOptions,
+      options: FetchOptions(headers: headers),
+      maxAttempts: maxAttempts,
+    );
 
     return (response as Map)['Key'] as String;
   }

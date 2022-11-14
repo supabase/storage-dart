@@ -239,7 +239,13 @@ class Fetch {
     required int maxAttempts,
   }) async {
     return _handleBinaryFileRequest(
-        'POST', url, data, fileOptions, options, maxAttempts);
+      'POST',
+      url,
+      data,
+      fileOptions,
+      options,
+      maxAttempts,
+    );
   }
 
   Future<dynamic> putBinaryFile(
@@ -250,6 +256,12 @@ class Fetch {
     required int maxAttempts,
   }) async {
     return _handleBinaryFileRequest(
-        'PUT', url, data, fileOptions, options, maxAttempts);
+      'PUT',
+      url,
+      data,
+      fileOptions,
+      options,
+      maxAttempts,
+    );
   }
 }

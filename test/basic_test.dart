@@ -304,23 +304,6 @@ void main() {
       client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
         'Authorization': 'Bearer $supabaseKey',
       });
-      storageFetch = Fetch(CustomHttpClient());
-    });
-    test('should list buckets', () async {
-      try {
-        await client.listBuckets();
-      } catch (e) {
-        expect((e as dynamic).statusCode, "420");
-      }
-    });
-  });
-
-  group('Retry', () {
-    setUp(() {
-      // init SupabaseClient with test url & test key
-      client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
-        'Authorization': 'Bearer $supabaseKey',
-      });
 
       // `RetryHttpClient` will throw `SocketException` for the first two tries
       storageFetch = Fetch(RetryHttpClient());

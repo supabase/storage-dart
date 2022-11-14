@@ -191,3 +191,16 @@ class StorageException implements Exception {
     return 'StorageException(message: $message, statusCode: $statusCode, error: $error)';
   }
 }
+
+class StorageAbortController {
+  bool get aborted => _aborted;
+  bool _aborted = false;
+
+  /// Creates a controller to abort storage file upload retry operations.
+  StorageAbortController();
+
+  /// Aborts the next retry operation
+  void abort() {
+    _aborted = true;
+  }
+}

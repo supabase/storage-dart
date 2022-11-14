@@ -20,7 +20,7 @@ class RetryHttpClient extends BaseClient {
   int failureCount = 0;
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
-    if (failureCount < 2) {
+    if (failureCount < 3) {
       failureCount++;
       throw SocketException('Offline');
     }

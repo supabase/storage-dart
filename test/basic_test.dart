@@ -167,6 +167,7 @@ void main() {
           mockFileOptions,
           options: mockFetchOptions,
           maxAttempts: 1,
+          abortController: null,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -188,6 +189,7 @@ void main() {
           mockFileOptions,
           options: mockFetchOptions,
           maxAttempts: 1,
+          abortController: null,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -304,7 +306,7 @@ void main() {
       client = SupabaseStorageClient(
         '$supabaseUrl/storage/v1',
         {'Authorization': 'Bearer $supabaseKey'},
-        maxAttempts: 3,
+        maxAttempts: 5,
       );
 
       // `RetryHttpClient` will throw `SocketException` for the first two tries
@@ -327,6 +329,24 @@ void main() {
       final response = await client.from('public').upload('a.txt', file);
       expect(response, isA<String>());
       expect(response.endsWith('/a.txt'), isTrue);
+    });
+
+    test('aborting upload shoudl throw', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final abortController = StorageAbortController();
+
+      final future = client.from('public').upload(
+            'a.txt',
+            file,
+            abortController: abortController,
+          );
+
+      await Future.delayed(Duration(milliseconds: 500));
+      abortController.abort();
+
+      expect(future, throwsException);
     });
 
     test('should upload binary with few network failures', () async {

@@ -37,6 +37,7 @@ class StorageFileApi {
     File file, {
     FileOptions fileOptions = const FileOptions(),
     int? maxAttempts,
+    StorageAbortController? abortController,
   }) async {
     assert(maxAttempts == null || maxAttempts >= 1,
         'maxAttempts has to be greater or equal to 1');
@@ -47,6 +48,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       maxAttempts: maxAttempts ?? _maxAttempts,
+      abortController: abortController,
     );
 
     return (response as Map)['Key'] as String;
@@ -68,6 +70,7 @@ class StorageFileApi {
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
     int? maxAttempts,
+    StorageAbortController? abortController,
   }) async {
     assert(maxAttempts == null || maxAttempts >= 1,
         'maxAttempts has to be greater or equal to 1');
@@ -78,6 +81,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       maxAttempts: maxAttempts ?? _maxAttempts,
+      abortController: abortController,
     );
 
     return (response as Map)['Key'] as String;
@@ -98,6 +102,7 @@ class StorageFileApi {
     File file, {
     FileOptions fileOptions = const FileOptions(),
     int? maxAttempts,
+    StorageAbortController? abortController,
   }) async {
     assert(maxAttempts == null || maxAttempts >= 1,
         'maxAttempts has to be greater or equal to 1');
@@ -108,6 +113,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       maxAttempts: maxAttempts ?? _maxAttempts,
+      abortController: abortController,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -130,6 +136,7 @@ class StorageFileApi {
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
     int? maxAttempts,
+    StorageAbortController? abortController,
   }) async {
     assert(maxAttempts == null || maxAttempts >= 1,
         'maxAttempts has to be greater or equal to 1');
@@ -140,6 +147,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       maxAttempts: maxAttempts ?? _maxAttempts,
+      abortController: abortController,
     );
 
     return (response as Map)['Key'] as String;

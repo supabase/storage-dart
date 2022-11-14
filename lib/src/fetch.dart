@@ -78,6 +78,7 @@ class Fetch {
     FileOptions fileOptions,
     FetchOptions? options,
     int maxAttempts,
+    StorageAbortController? abortSignal,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -105,7 +106,9 @@ class Fetch {
           return request.send();
         }
       },
-      retryIf: (error) => error is SocketException || error is TimeoutException,
+      retryIf: (error) =>
+          abortSignal?.aborted != true &&
+          (error is SocketException || error is TimeoutException),
     );
 
     return _handleResponse(streamedResponse, options);
@@ -118,6 +121,7 @@ class Fetch {
     FileOptions fileOptions,
     FetchOptions? options,
     int maxAttempts,
+    StorageAbortController? abortSignal,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -146,7 +150,9 @@ class Fetch {
           return request.send();
         }
       },
-      retryIf: (error) => error is SocketException || error is TimeoutException,
+      retryIf: (error) =>
+          abortSignal?.aborted != true &&
+          (error is SocketException || error is TimeoutException),
     );
 
     return _handleResponse(streamedResponse, options);
@@ -203,15 +209,10 @@ class Fetch {
     FileOptions fileOptions, {
     FetchOptions? options,
     required int maxAttempts,
+    required StorageAbortController? abortController,
   }) async {
     return _handleMultipartRequest(
-      'POST',
-      url,
-      file,
-      fileOptions,
-      options,
-      maxAttempts,
-    );
+        'POST', url, file, fileOptions, options, maxAttempts, abortController);
   }
 
   Future<dynamic> putFile(
@@ -220,6 +221,7 @@ class Fetch {
     FileOptions fileOptions, {
     FetchOptions? options,
     required int maxAttempts,
+    required StorageAbortController? abortController,
   }) async {
     return _handleMultipartRequest(
       'PUT',
@@ -228,6 +230,7 @@ class Fetch {
       fileOptions,
       options,
       maxAttempts,
+      abortController,
     );
   }
 
@@ -237,6 +240,7 @@ class Fetch {
     FileOptions fileOptions, {
     FetchOptions? options,
     required int maxAttempts,
+    required StorageAbortController? abortController,
   }) async {
     return _handleBinaryFileRequest(
       'POST',
@@ -245,6 +249,7 @@ class Fetch {
       fileOptions,
       options,
       maxAttempts,
+      abortController,
     );
   }
 
@@ -254,6 +259,7 @@ class Fetch {
     FileOptions fileOptions, {
     FetchOptions? options,
     required int maxAttempts,
+    required StorageAbortController? abortController,
   }) async {
     return _handleBinaryFileRequest(
       'PUT',
@@ -262,6 +268,7 @@ class Fetch {
       fileOptions,
       options,
       maxAttempts,
+      abortController,
     );
   }
 }

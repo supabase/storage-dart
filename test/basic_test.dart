@@ -331,7 +331,7 @@ void main() {
       expect(response.endsWith('/a.txt'), isTrue);
     });
 
-    test('aborting upload shoudl throw', () async {
+    test('aborting upload should throw', () async {
       final file = File('a.txt');
       file.writeAsStringSync('File content');
 

@@ -166,7 +166,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          maxAttempts: 8,
+          maxAttempts: 1,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -187,7 +187,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          maxAttempts: 8,
+          maxAttempts: 1,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -301,9 +301,11 @@ void main() {
   group('Retry', () {
     setUp(() {
       // init SupabaseClient with test url & test key
-      client = SupabaseStorageClient('$supabaseUrl/storage/v1', {
-        'Authorization': 'Bearer $supabaseKey',
-      });
+      client = SupabaseStorageClient(
+        '$supabaseUrl/storage/v1',
+        {'Authorization': 'Bearer $supabaseKey'},
+        maxAttempts: 3,
+      );
 
       // `RetryHttpClient` will throw `SocketException` for the first two tries
       storageFetch = Fetch(RetryHttpClient());

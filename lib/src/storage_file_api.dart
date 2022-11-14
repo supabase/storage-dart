@@ -8,8 +8,14 @@ class StorageFileApi {
   final String url;
   final Map<String, String> headers;
   final String? bucketId;
+  final int _maxAttempts;
 
-  const StorageFileApi(this.url, this.headers, this.bucketId);
+  const StorageFileApi(
+    this.url,
+    this.headers,
+    this.bucketId,
+    this._maxAttempts,
+  );
 
   String _getFinalPath(String path) {
     return '$bucketId/$path';
@@ -25,34 +31,22 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] specifies how many attempts there should be to upload the
-  /// file when failed due to network interruption.
-  ///
-  /// Time between each retries are set as the following:
-  ///  1. 400 ms +/- 25%
-  ///  2. 800 ms +/- 25%
-  ///  3. 1600 ms +/- 25%
-  ///  4. 3200 ms +/- 25%
-  ///  5. 6400 ms +/- 25%
-  ///  6. 12800 ms +/- 25%
-  ///  7. 25600 ms +/- 25%
-  ///  8. 30000 ms +/- 25%
-  ///
-  /// Anything beyond the 8th try will have 30 second delay.
+  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
   Future<String> upload(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 25,
+    int? maxAttempts,
   }) async {
-    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
+    assert(maxAttempts == null || maxAttempts >= 1,
+        'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts,
+      maxAttempts: maxAttempts ?? _maxAttempts,
     );
 
     return (response as Map)['Key'] as String;
@@ -68,34 +62,22 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] specifies how many attempts there should be to upload the
-  /// file when failed due to network interruption.
-  ///
-  /// Time between each retries are set as the following:
-  ///  1. 400 ms +/- 25%
-  ///  2. 800 ms +/- 25%
-  ///  3. 1600 ms +/- 25%
-  ///  4. 3200 ms +/- 25%
-  ///  5. 6400 ms +/- 25%
-  ///  6. 12800 ms +/- 25%
-  ///  7. 25600 ms +/- 25%
-  ///  8. 30000 ms +/- 25%
-  ///
-  /// Anything beyond the 8th try will have 30 second delay.
+  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
   Future<String> uploadBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 25,
+    int? maxAttempts,
   }) async {
-    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
+    assert(maxAttempts == null || maxAttempts >= 1,
+        'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts,
+      maxAttempts: maxAttempts ?? _maxAttempts,
     );
 
     return (response as Map)['Key'] as String;
@@ -110,34 +92,22 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] specifies how many attempts there should be to upload the
-  /// file when failed due to network interruption.
-  ///
-  /// Time between each retries are set as the following:
-  ///  1. 400 ms +/- 25%
-  ///  2. 800 ms +/- 25%
-  ///  3. 1600 ms +/- 25%
-  ///  4. 3200 ms +/- 25%
-  ///  5. 6400 ms +/- 25%
-  ///  6. 12800 ms +/- 25%
-  ///  7. 25600 ms +/- 25%
-  ///  8. 30000 ms +/- 25%
-  ///
-  /// Anything beyond the 8th try will have 30 second delay.
+  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
   Future<String> update(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 25,
+    int? maxAttempts,
   }) async {
-    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
+    assert(maxAttempts == null || maxAttempts >= 1,
+        'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts,
+      maxAttempts: maxAttempts ?? _maxAttempts,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -154,34 +124,22 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] specifies how many attempts there should be to upload the
-  /// file when failed due to network interruption.
-  ///
-  /// Time between each retries are set as the following:
-  ///  1. 400 ms +/- 25%
-  ///  2. 800 ms +/- 25%
-  ///  3. 1600 ms +/- 25%
-  ///  4. 3200 ms +/- 25%
-  ///  5. 6400 ms +/- 25%
-  ///  6. 12800 ms +/- 25%
-  ///  7. 25600 ms +/- 25%
-  ///  8. 30000 ms +/- 25%
-  ///
-  /// Anything beyond the 8th try will have 30 second delay.
+  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
   Future<String> updateBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int maxAttempts = 25,
+    int? maxAttempts,
   }) async {
-    assert(maxAttempts >= 1, 'maxAttempts has to be greater or equal to 1');
+    assert(maxAttempts == null || maxAttempts >= 1,
+        'maxAttempts has to be greater or equal to 1');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts,
+      maxAttempts: maxAttempts ?? _maxAttempts,
     );
 
     return (response as Map)['Key'] as String;

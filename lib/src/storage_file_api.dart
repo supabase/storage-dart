@@ -47,7 +47,7 @@ class StorageFileApi {
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: retryAttempts ?? _retryAttempts,
+      retryAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 
@@ -80,7 +80,7 @@ class StorageFileApi {
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: retryAttempts ?? _retryAttempts,
+      retryAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 
@@ -112,7 +112,7 @@ class StorageFileApi {
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: retryAttempts ?? _retryAttempts,
+      retryAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 
@@ -146,7 +146,7 @@ class StorageFileApi {
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: retryAttempts ?? _retryAttempts,
+      retryAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 

@@ -166,7 +166,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          maxAttempts: 1,
+          retryAttempts: 1,
           abortController: null,
         ),
       ).thenAnswer(
@@ -188,7 +188,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          maxAttempts: 1,
+          retryAttempts: 1,
           abortController: null,
         ),
       ).thenAnswer(
@@ -306,7 +306,7 @@ void main() {
       client = SupabaseStorageClient(
         '$supabaseUrl/storage/v1',
         {'Authorization': 'Bearer $supabaseKey'},
-        maxAttempts: 5,
+        retryAttempts: 5,
       );
 
       // `RetryHttpClient` will throw `SocketException` for the first two tries

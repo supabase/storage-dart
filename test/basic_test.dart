@@ -318,7 +318,7 @@ void main() {
       file.writeAsStringSync('File content');
 
       final uploadTask =
-          client.from('public').upload('a.txt', file, maxAttempts: 1);
+          client.from('public').upload('a.txt', file, retryAttempts: 1);
       expect(uploadTask, throwsException);
     });
 

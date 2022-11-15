@@ -8,13 +8,13 @@ class StorageFileApi {
   final String url;
   final Map<String, String> headers;
   final String? bucketId;
-  final int _maxAttempts;
+  final int _retryAttempts;
 
   const StorageFileApi(
     this.url,
     this.headers,
     this.bucketId,
-    this._maxAttempts,
+    this._retryAttempts,
   );
 
   String _getFinalPath(String path) {
@@ -31,23 +31,23 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
   Future<String> upload(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int? maxAttempts,
+    int? retryAttempts,
     StorageAbortController? abortController,
   }) async {
-    assert(maxAttempts == null || maxAttempts >= 1,
-        'maxAttempts has to be greater or equal to 1');
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts ?? _maxAttempts,
+      maxAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 
@@ -64,23 +64,23 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
   Future<String> uploadBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int? maxAttempts,
+    int? retryAttempts,
     StorageAbortController? abortController,
   }) async {
-    assert(maxAttempts == null || maxAttempts >= 1,
-        'maxAttempts has to be greater or equal to 1');
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts ?? _maxAttempts,
+      maxAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 
@@ -96,23 +96,23 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
   Future<String> update(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
-    int? maxAttempts,
+    int? retryAttempts,
     StorageAbortController? abortController,
   }) async {
-    assert(maxAttempts == null || maxAttempts >= 1,
-        'maxAttempts has to be greater or equal to 1');
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts ?? _maxAttempts,
+      maxAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 
@@ -130,23 +130,23 @@ class StorageFileApi {
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
-  /// [maxAttempts] overrides the maxAttempts parameter set across the storage client.
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
   Future<String> updateBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
-    int? maxAttempts,
+    int? retryAttempts,
     StorageAbortController? abortController,
   }) async {
-    assert(maxAttempts == null || maxAttempts >= 1,
-        'maxAttempts has to be greater or equal to 1');
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
-      maxAttempts: maxAttempts ?? _maxAttempts,
+      maxAttempts: retryAttempts ?? _retryAttempts,
       abortController: abortController,
     );
 

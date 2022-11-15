@@ -166,7 +166,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          retryAttempts: 1,
+          retryAttempts: 0,
           abortController: null,
         ),
       ).thenAnswer(
@@ -188,7 +188,7 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
-          retryAttempts: 1,
+          retryAttempts: 0,
           abortController: null,
         ),
       ).thenAnswer(

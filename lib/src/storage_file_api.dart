@@ -32,12 +32,14 @@ class StorageFileApi {
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
   /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> upload(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
-    StorageAbortController? abortController,
+    StorageRetryController? retryController,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -48,7 +50,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
-      abortController: abortController,
+      retryController: retryController,
     );
 
     return (response as Map)['Key'] as String;
@@ -65,12 +67,14 @@ class StorageFileApi {
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
   /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> uploadBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
-    StorageAbortController? abortController,
+    StorageRetryController? retryController,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -81,7 +85,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
-      abortController: abortController,
+      retryController: retryController,
     );
 
     return (response as Map)['Key'] as String;
@@ -97,12 +101,14 @@ class StorageFileApi {
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
   /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> update(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
-    StorageAbortController? abortController,
+    StorageRetryController? retryController,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -113,7 +119,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
-      abortController: abortController,
+      retryController: retryController,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -131,12 +137,14 @@ class StorageFileApi {
   /// [fileOptions] HTTP headers. For example `cacheControl`
   ///
   /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> updateBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
-    StorageAbortController? abortController,
+    StorageRetryController? retryController,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -147,7 +155,7 @@ class StorageFileApi {
       fileOptions,
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
-      abortController: abortController,
+      retryController: retryController,
     );
 
     return (response as Map)['Key'] as String;

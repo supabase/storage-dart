@@ -167,7 +167,7 @@ void main() {
           mockFileOptions,
           options: mockFetchOptions,
           retryAttempts: 0,
-          abortController: null,
+          retryController: null,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -189,7 +189,7 @@ void main() {
           mockFileOptions,
           options: mockFetchOptions,
           retryAttempts: 0,
-          abortController: null,
+          retryController: null,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -335,16 +335,16 @@ void main() {
       final file = File('a.txt');
       file.writeAsStringSync('File content');
 
-      final abortController = StorageAbortController();
+      final retryController = StorageRetryController();
 
       final future = client.from('public').upload(
             'a.txt',
             file,
-            abortController: abortController,
+            retryController: retryController,
           );
 
       await Future.delayed(Duration(milliseconds: 500));
-      abortController.abort();
+      retryController.cancel();
 
       expect(future, throwsException);
     });

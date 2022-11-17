@@ -8,8 +8,14 @@ class StorageFileApi {
   final String url;
   final Map<String, String> headers;
   final String? bucketId;
+  final int _retryAttempts;
 
-  const StorageFileApi(this.url, this.headers, this.bucketId);
+  const StorageFileApi(
+    this.url,
+    this.headers,
+    this.bucketId,
+    this._retryAttempts,
+  );
 
   String _getFinalPath(String path) {
     return '$bucketId/$path';
@@ -24,17 +30,27 @@ class StorageFileApi {
   /// [file] is the File object to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> upload(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
+    int? retryAttempts,
+    StorageRetryController? retryController,
   }) async {
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
+      retryAttempts: retryAttempts ?? _retryAttempts,
+      retryController: retryController,
     );
 
     return (response as Map)['Key'] as String;
@@ -49,17 +65,27 @@ class StorageFileApi {
   /// [data] is the binary file data to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> uploadBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
+    int? retryAttempts,
+    StorageRetryController? retryController,
   }) async {
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.postBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
+      retryAttempts: retryAttempts ?? _retryAttempts,
+      retryController: retryController,
     );
 
     return (response as Map)['Key'] as String;
@@ -73,17 +99,27 @@ class StorageFileApi {
   /// [file] is the file object to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> update(
     String path,
     File file, {
     FileOptions fileOptions = const FileOptions(),
+    int? retryAttempts,
+    StorageRetryController? retryController,
   }) async {
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putFile(
       '$url/object/$finalPath',
       file,
       fileOptions,
       options: FetchOptions(headers: headers),
+      retryAttempts: retryAttempts ?? _retryAttempts,
+      retryController: retryController,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -99,17 +135,27 @@ class StorageFileApi {
   /// [data] is the binary file data to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
+  ///
+  /// [retryAttempts] overrides the retryAttempts parameter set across the storage client.
+  ///
+  /// You can pass a [retryController] and call `cancel()` to cancel the retry attempts.
   Future<String> updateBinary(
     String path,
     Uint8List data, {
     FileOptions fileOptions = const FileOptions(),
+    int? retryAttempts,
+    StorageRetryController? retryController,
   }) async {
+    assert(retryAttempts == null || retryAttempts >= 0,
+        'retryAttempts has to be greater or equal to 0');
     final finalPath = _getFinalPath(path);
     final response = await storageFetch.putBinaryFile(
       '$url/object/$finalPath',
       data,
       fileOptions,
       options: FetchOptions(headers: headers),
+      retryAttempts: retryAttempts ?? _retryAttempts,
+      retryController: retryController,
     );
 
     return (response as Map)['Key'] as String;

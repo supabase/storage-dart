@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -5,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:mime/mime.dart';
+import 'package:retry/retry.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:universal_io/io.dart';
 
@@ -75,6 +77,8 @@ class Fetch {
     File file,
     FileOptions fileOptions,
     FetchOptions? options,
+    int retryAttempts,
+    StorageRetryController? retryController,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -93,11 +97,20 @@ class Fetch {
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
     final http.StreamedResponse streamedResponse;
-    if (httpClient != null) {
-      streamedResponse = await httpClient!.send(request);
-    } else {
-      streamedResponse = await request.send();
-    }
+    final r = RetryOptions(maxAttempts: (retryAttempts + 1));
+    streamedResponse = await r.retry<http.StreamedResponse>(
+      () async {
+        if (httpClient != null) {
+          return httpClient!.send(request);
+        } else {
+          return request.send();
+        }
+      },
+      retryIf: (error) =>
+          retryController?.cancelled != true &&
+          (error is SocketException || error is TimeoutException),
+    );
+
     return _handleResponse(streamedResponse, options);
   }
 
@@ -107,6 +120,8 @@ class Fetch {
     Uint8List data,
     FileOptions fileOptions,
     FetchOptions? options,
+    int retryAttempts,
+    StorageRetryController? retryController,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -126,11 +141,20 @@ class Fetch {
       ..headers['x-upsert'] = fileOptions.upsert.toString();
 
     final http.StreamedResponse streamedResponse;
-    if (httpClient != null) {
-      streamedResponse = await httpClient!.send(request);
-    } else {
-      streamedResponse = await request.send();
-    }
+    final r = RetryOptions(maxAttempts: (retryAttempts + 1));
+    streamedResponse = await r.retry<http.StreamedResponse>(
+      () async {
+        if (httpClient != null) {
+          return httpClient!.send(request);
+        } else {
+          return request.send();
+        }
+      },
+      retryIf: (error) =>
+          retryController?.cancelled != true &&
+          (error is SocketException || error is TimeoutException),
+    );
+
     return _handleResponse(streamedResponse, options);
   }
 
@@ -184,8 +208,11 @@ class Fetch {
     File file,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int retryAttempts,
+    required StorageRetryController? retryController,
   }) async {
-    return _handleMultipartRequest('POST', url, file, fileOptions, options);
+    return _handleMultipartRequest('POST', url, file, fileOptions, options,
+        retryAttempts, retryController);
   }
 
   Future<dynamic> putFile(
@@ -193,8 +220,18 @@ class Fetch {
     File file,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int retryAttempts,
+    required StorageRetryController? retryController,
   }) async {
-    return _handleMultipartRequest('PUT', url, file, fileOptions, options);
+    return _handleMultipartRequest(
+      'PUT',
+      url,
+      file,
+      fileOptions,
+      options,
+      retryAttempts,
+      retryController,
+    );
   }
 
   Future<dynamic> postBinaryFile(
@@ -202,8 +239,18 @@ class Fetch {
     Uint8List data,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int retryAttempts,
+    required StorageRetryController? retryController,
   }) async {
-    return _handleBinaryFileRequest('POST', url, data, fileOptions, options);
+    return _handleBinaryFileRequest(
+      'POST',
+      url,
+      data,
+      fileOptions,
+      options,
+      retryAttempts,
+      retryController,
+    );
   }
 
   Future<dynamic> putBinaryFile(
@@ -211,7 +258,17 @@ class Fetch {
     Uint8List data,
     FileOptions fileOptions, {
     FetchOptions? options,
+    required int retryAttempts,
+    required StorageRetryController? retryController,
   }) async {
-    return _handleBinaryFileRequest('PUT', url, data, fileOptions, options);
+    return _handleBinaryFileRequest(
+      'PUT',
+      url,
+      data,
+      fileOptions,
+      options,
+      retryAttempts,
+      retryController,
+    );
   }
 }

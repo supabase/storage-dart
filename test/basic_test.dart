@@ -166,6 +166,8 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
+          retryAttempts: 0,
+          retryController: null,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -186,6 +188,8 @@ void main() {
           file,
           mockFileOptions,
           options: mockFetchOptions,
+          retryAttempts: 0,
+          retryController: null,
         ),
       ).thenAnswer(
         (_) => Future.value({'Key': 'public/a.txt'}),
@@ -296,7 +300,87 @@ void main() {
     });
   });
 
-  group("Client with custom http client", () {
+  group('Retry', () {
+    setUp(() {
+      // init SupabaseClient with test url & test key
+      client = SupabaseStorageClient(
+        '$supabaseUrl/storage/v1',
+        {'Authorization': 'Bearer $supabaseKey'},
+        retryAttempts: 5,
+      );
+
+      // `RetryHttpClient` will throw `SocketException` for the first two tries
+      storageFetch = Fetch(RetryHttpClient());
+    });
+
+    test('Upload fails without retry', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final uploadTask =
+          client.from('public').upload('a.txt', file, retryAttempts: 1);
+      expect(uploadTask, throwsException);
+    });
+
+    test('should upload file with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client.from('public').upload('a.txt', file);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+
+    test('aborting upload should throw', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final retryController = StorageRetryController();
+
+      final future = client.from('public').upload(
+            'a.txt',
+            file,
+            retryController: retryController,
+          );
+
+      await Future.delayed(Duration(milliseconds: 500));
+      retryController.cancel();
+
+      expect(future, throwsException);
+    });
+
+    test('should upload binary with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client
+          .from('public')
+          .uploadBinary('a.txt', file.readAsBytesSync());
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+
+    test('should update file with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client.from('public').update('a.txt', file);
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+    test('should update binary with few network failures', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      final response = await client
+          .from('public')
+          .updateBinary('a.txt', file.readAsBytesSync());
+      expect(response, isA<String>());
+      expect(response.endsWith('/a.txt'), isTrue);
+    });
+  });
+
+  group('Client with custom http client', () {
     setUp(() {
       // init SupabaseClient with test url & test key
       client = SupabaseStorageClient('$supabaseUrl/storage/v1', {

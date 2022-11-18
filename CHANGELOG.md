@@ -1,7 +1,15 @@
+## [1.1.0]
+
+- feat: add retry on file upload failure when offline ([#44](https://github.com/supabase/storage-dart/pull/44))
+  ```dart
+  // The following code will instantiate storage client that will retry upload operations up to 10 times.
+  final storage = SupabaseStorageClient(url, headers, retryAttempts: 10);
+  ```
+
 ## [1.0.0]
 
 - chore: v1.0.0 release 🚀
-- BREAKING: set minimum Dart SDK to 2.14.0 ([42](https://github.com/supabase-community/storage-dart/pull/42))
+- BREAKING: set minimum Dart SDK to 2.14.0 ([#42](https://github.com/supabase-community/storage-dart/pull/42))
 
 ## [1.0.0-dev.4]
 

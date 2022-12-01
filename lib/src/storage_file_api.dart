@@ -214,8 +214,9 @@ class StorageFileApi {
   /// The signed url is returned.
   Future<String> createSignedUrl(
     String path,
-    int expiresIn,
-  ) async {
+    int expiresIn, {
+    TransformOptions? transform,
+  }) async {
     final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers);
     final response = await storageFetch.post(

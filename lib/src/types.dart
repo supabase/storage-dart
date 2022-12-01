@@ -205,3 +205,13 @@ class StorageRetryController {
     _cancelled = true;
   }
 }
+
+enum TransformCrop { fill, fit, fillDown, force, auto }
+
+class TransformOptions {
+  final int? width;
+  final int? height;
+  final TransformCrop? resize;
+
+  TransformOptions({this.width, this.height, this.resize});
+}

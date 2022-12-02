@@ -261,10 +261,23 @@ class StorageFileApi {
     return urls;
   }
 
+  /// Download a file in a public bucket
+  Future<Uint8List> publicDownload(String path,
+      {TransformOptions? transform}) async {
+    throw UnimplementedError('downloadPublic');
+  }
+
+  // Download a file in a private bucket
+  Future<Uint8List> authenticatedDownload(String path,
+      {TransformOptions? transform}) async {
+    throw UnimplementedError('authenticatedDownload');
+  }
+
   /// Downloads a file.
   ///
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
+  @Deprecated('Use publicDownload and authenticatedDownload instead.')
   Future<Uint8List> download(String path) async {
     final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers, noResolveJson: true);
@@ -277,7 +290,10 @@ class StorageFileApi {
   ///
   /// [path] is the file path to be downloaded, including the current file name.
   /// For example `getPublicUrl('folder/image.png')`.
-  String getPublicUrl(String path) {
+  String getPublicUrl(
+    String path, {
+    TransformOptions? transform,
+  }) {
     final finalPath = _getFinalPath(path);
     final publicUrl = '$url/object/public/$finalPath';
     return publicUrl;

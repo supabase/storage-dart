@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:mime/mime.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:storage_client/storage_client.dart';
@@ -18,6 +19,15 @@ void main() {
   late SupabaseStorageClient storage;
 
   late File file;
+
+  Future<String> findOrCreateBucket(String name, [bool isPublic = true]) async {
+    try {
+      await storage.getBucket(name);
+    } catch (error) {
+      await storage.createBucket(name, BucketOptions(public: isPublic));
+    }
+    return name;
+  }
 
   setUp(() async {
     // init SupabaseClient with test url & test key
@@ -93,7 +103,7 @@ void main() {
     expect(response, 'Successfully deleted');
   });
 
-  group('transform options', () {
+  group('Transformations', () {
     test('sign url with transform options', () async {
       await storage.from(newBucketName).upload(uploadPath, file);
       final url =
@@ -107,6 +117,49 @@ void main() {
           url.contains(
               '$storageUrl/render/image/sign/$newBucketName/$uploadPath'),
           isTrue);
+    });
+
+    test('gets public url with transformation options', () async {
+      final url = storage.from(newBucketName).getPublicUrl(uploadPath,
+          transform: TransformOptions(width: 200, height: 300));
+
+      expect(url,
+          '$storageUrl/render/image/public/$newBucketName/$uploadPath?width=200&height=300');
+    });
+
+    test('will download a public transformed file', () async {
+      // await storage.from(bucketName).upload(uploadPath, file);
+      final bytesArray =
+          await storage.from(newBucketName).publicDownload(uploadPath,
+              transform: TransformOptions(
+                width: 200,
+                height: 200,
+              ));
+
+      final downloadedFile = File.fromRawPath(bytesArray);
+      final size = downloadedFile.length();
+      final type = lookupMimeType(downloadedFile.path);
+      expect(size, isPositive);
+      expect(type, 'image/jpeg');
+    });
+
+    test('will download an authenticated transformed file', () async {
+      const privateBucketName = 'my-private-bucket';
+      await findOrCreateBucket(privateBucketName);
+
+      await storage.from(privateBucketName).upload(uploadPath, file);
+
+      final bytesArray = await storage
+          .from(privateBucketName)
+          .authenticatedDownload(uploadPath,
+              transform: TransformOptions(width: 200, height: 200));
+
+      final downloadedFile = File.fromRawPath(bytesArray);
+      final size = downloadedFile.length();
+      final type = lookupMimeType(downloadedFile.path);
+
+      expect(size, isPositive);
+      expect(type, 'image/jpeg');
     });
   });
 }

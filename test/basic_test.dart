@@ -253,7 +253,7 @@ void main() {
       expect(response.length, 2);
     });
 
-    test('should download file', () async {
+    test('should download public file', () async {
       final file = File('a.txt');
       file.writeAsStringSync('Updated content');
 

@@ -211,7 +211,7 @@ class StorageFileApi {
   /// [expiresIn] is the number of seconds until the signed URL expire. For
   /// example, `60` for a URL which are valid for one minute.
   ///
-  /// The signed url is returned.
+  /// [transform] adds image transformations parameters to the generated url.
   Future<String> createSignedUrl(
     String path,
     int expiresIn, {
@@ -262,12 +262,20 @@ class StorageFileApi {
   }
 
   /// Download a file in a public bucket
+  ///
+  /// [path] is the file path to be downloaded, including the path and file
+  /// name. For example `download('folder/image.png')`.
+  ///
+  /// [transform] download a transformed variant of the image with the provided filters
   Future<Uint8List> publicDownload(String path,
       {TransformOptions? transform}) async {
     throw UnimplementedError('downloadPublic');
   }
 
   // Download a file in a private bucket
+  ///
+  /// [path] is the file path to be downloaded, including the path and file
+  /// name. For example `download('folder/image.png')`.
   Future<Uint8List> authenticatedDownload(String path,
       {TransformOptions? transform}) async {
     throw UnimplementedError('authenticatedDownload');
@@ -290,6 +298,8 @@ class StorageFileApi {
   ///
   /// [path] is the file path to be downloaded, including the current file name.
   /// For example `getPublicUrl('folder/image.png')`.
+  ///
+  /// [transform] adds image transformations parameters to the generated url.
   String getPublicUrl(
     String path, {
     TransformOptions? transform,

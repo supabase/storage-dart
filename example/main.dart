@@ -39,7 +39,8 @@ Future<void> main() async {
 
   // Download text file
   try {
-    final fileResponse = await client.from('public').download('example.txt');
+    final fileResponse =
+        await client.from('public').authenticatedDownload('example.txt');
     print('downloaded file : ${String.fromCharCodes(fileResponse)}');
   } catch (error) {
     print('Error while downloading file : $error');

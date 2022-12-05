@@ -320,8 +320,20 @@ class StorageFileApi {
     TransformOptions? transform,
   }) {
     final finalPath = _getFinalPath(path);
-    final publicUrl = '$url/object/public/$finalPath';
-    return publicUrl;
+    final queryParams = <String, String>{};
+
+    final wantsTransformation = transform != null;
+    final renderPath = wantsTransformation ? 'render/image' : 'object';
+    final transformationQuery = _transformOptsToQueryString(transform);
+
+    if (transformationQuery.isNotEmpty) {
+      queryParams.addAll(transformationQuery);
+    }
+
+    final publicUrl = Uri.parse('$url/$renderPath/public/$finalPath');
+    publicUrl.replace(queryParameters: queryParams);
+
+    return publicUrl.toString();
   }
 
   /// Deletes files within the same bucket

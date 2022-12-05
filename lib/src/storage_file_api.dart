@@ -221,7 +221,10 @@ class StorageFileApi {
     final options = FetchOptions(headers: headers);
     final response = await storageFetch.post(
       '$url/object/sign/$finalPath',
-      {'expiresIn': expiresIn},
+      {
+        'expiresIn': expiresIn,
+        if (transform != null) ...{'transform': transform.toMap()},
+      },
       options: options,
     );
     final signedUrlPath = (response as Map<String, dynamic>)['signedURL'];
@@ -269,23 +272,35 @@ class StorageFileApi {
   /// [transform] download a transformed variant of the image with the provided filters
   Future<Uint8List> publicDownload(String path,
       {TransformOptions? transform}) async {
-    throw UnimplementedError('downloadPublic');
+    final wantsTransformations = transform != null;
+    final renderPath = wantsTransformations ? 'render/image' : 'object';
+    final queryParams = _transformOptsToQueryString(transform);
+
+    return _download(path,
+        prefix: '$renderPath/public', queryParams: queryParams);
   }
 
   // Download a file in a private bucket
   ///
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
+  ///
+  /// [transform] download a transformed variant of the image with the provided filters
   Future<Uint8List> authenticatedDownload(String path,
       {TransformOptions? transform}) async {
-    throw UnimplementedError('authenticatedDownload');
+    final wantsTransformations = transform != null;
+    final renderPath = wantsTransformations ? 'render/image' : 'object';
+    final queryParams = _transformOptsToQueryString(transform);
+
+    return _download(path,
+        prefix: '$renderPath/authenticated', queryParams: queryParams);
   }
 
   /// Downloads a file.
   ///
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
-  @Deprecated('Use publicDownload and authenticatedDownload instead.')
+  @Deprecated('Use publicDownload or authenticatedDownload instead.')
   Future<Uint8List> download(String path) async {
     final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers, noResolveJson: true);
@@ -353,5 +368,36 @@ class StorageFileApi {
       ),
     );
     return fileObjects;
+  }
+
+  Future<Uint8List> _download(String path,
+      {String? prefix, Map<String, String>? queryParams}) async {
+    final finalPath = _getFinalPath(path);
+    final renderPath = prefix ?? 'object';
+    final options = FetchOptions(headers: headers, noResolveJson: true);
+
+    var fetchUrl = Uri.parse('$url/$renderPath/$finalPath');
+    fetchUrl = fetchUrl.replace(queryParameters: queryParams);
+
+    final response =
+        await storageFetch.get(fetchUrl.toString(), options: options);
+    return response as Uint8List;
+  }
+
+  Map<String, String> _transformOptsToQueryString(TransformOptions? transform) {
+    final params = <String, String>{};
+    if (transform?.width != null) {
+      params['width'] = '${transform!.width}';
+    }
+
+    if (transform?.height != null) {
+      params['height'] = '${transform!.height}';
+    }
+
+    if (transform?.resize != null) {
+      params['resize'] = '${transform!.resize}';
+    }
+
+    return params;
   }
 }

@@ -48,7 +48,7 @@ class Fetch {
   Future<dynamic> _handleRequest(
     String method,
     String url,
-    dynamic body,
+    Map<String, dynamic>? body,
     FetchOptions? options,
   ) async {
     final headers = options?.headers ?? {};
@@ -181,7 +181,7 @@ class Fetch {
 
   Future<dynamic> post(
     String url,
-    dynamic body, {
+    Map<String, dynamic>? body, {
     FetchOptions? options,
   }) async {
     return _handleRequest('POST', url, body, options);
@@ -189,7 +189,7 @@ class Fetch {
 
   Future<dynamic> put(
     String url,
-    dynamic body, {
+    Map<String, dynamic>? body, {
     FetchOptions? options,
   }) async {
     return _handleRequest('PUT', url, body, options);
@@ -197,7 +197,7 @@ class Fetch {
 
   Future<dynamic> delete(
     String url,
-    dynamic body, {
+    Map<String, dynamic>? body, {
     FetchOptions? options,
   }) async {
     return _handleRequest('DELETE', url, body, options);

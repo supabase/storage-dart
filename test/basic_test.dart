@@ -259,7 +259,7 @@ void main() {
 
       when(
         () => storageFetch.get(
-          '$objectUrl/public/b.txt',
+          '$objectUrl/public/public_bucket/b.txt',
           options: mockFetchOptions,
         ),
       ).thenAnswer(
@@ -268,7 +268,8 @@ void main() {
         ),
       );
 
-      final response = await client.from('public').publicDownload('b.txt');
+      final response =
+          await client.from('public_bucket').publicDownload('b.txt');
       expect(response, isA<Uint8List>());
       expect(String.fromCharCodes(response), 'Updated content');
     });

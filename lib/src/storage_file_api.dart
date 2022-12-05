@@ -326,7 +326,7 @@ class StorageFileApi {
     final renderPath = wantsTransformation ? 'render/image' : 'object';
     final transformationQuery = _transformOptsToQueryString(transform);
 
-    if (transformationQuery.isNotEmpty) {
+    if (transformationQuery != null) {
       queryParams.addAll(transformationQuery);
     }
 
@@ -396,7 +396,8 @@ class StorageFileApi {
     return response as Uint8List;
   }
 
-  Map<String, String> _transformOptsToQueryString(TransformOptions? transform) {
+  Map<String, String>? _transformOptsToQueryString(
+      TransformOptions? transform) {
     final params = <String, String>{};
     if (transform?.width != null) {
       params['width'] = '${transform!.width}';
@@ -410,6 +411,6 @@ class StorageFileApi {
       params['resize'] = '${transform!.resize}';
     }
 
-    return params;
+    return params.isEmpty ? null : params;
   }
 }

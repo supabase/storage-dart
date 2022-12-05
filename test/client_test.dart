@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:storage_client/src/types.dart';
 import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
-import "package:path/path.dart" show dirname;
+import "package:path/path.dart" show dirname, normalize;
 
 const storageUrl = 'http://localhost:8000/storage/v1';
 const storageKey =
@@ -40,7 +40,7 @@ void main() {
     registerFallbackValue(const FileOptions());
     registerFallbackValue(const FetchOptions());
     file = File(
-        '${dirname(Platform.script.path)}/test/fixtures/upload/sadcat.jpg');
+        '${dirname(normalize(Platform.script.toFilePath()))}/fixtures/upload/sadcat.jpg');
   });
 
   test('List files', () async {

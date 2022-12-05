@@ -39,7 +39,8 @@ void main() {
     // Register default mock values (used by mocktail)
     registerFallbackValue(const FileOptions());
     registerFallbackValue(const FetchOptions());
-    file = File('${dirname(Platform.script.path)}/fixtures/upload/sadcat.jpg');
+    file = File(
+        '${dirname(Platform.script.path)}/test/fixtures/upload/sadcat.jpg');
   });
 
   test('List files', () async {

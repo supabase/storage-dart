@@ -39,7 +39,7 @@ void main() {
     registerFallbackValue(const FileOptions());
     registerFallbackValue(const FetchOptions());
 
-    file = File('(${Directory.current}/fixtures/upload/sadcat.jpg');
+    file = File('(${Directory.current}/test/fixtures/upload/sadcat.jpg');
   });
 
   test('List files', () async {

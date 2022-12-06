@@ -133,7 +133,6 @@ void main() {
     });
 
     test('will download a public transformed file', () async {
-      // await storage.from(bucketName).upload(uploadPath, file);
       final bytesArray =
           await storage.from(newBucketName).publicDownload(uploadPath,
               transform: TransformOptions(
@@ -141,7 +140,9 @@ void main() {
                 height: 200,
               ));
 
-      final downloadedFile = File.fromRawPath(bytesArray);
+      final downloadedFile =
+          await File('${Directory.current.path}/public-image.jpg').create();
+      await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
       final type = lookupMimeType(downloadedFile.path);
       expect(size, isPositive);
@@ -159,7 +160,9 @@ void main() {
           .authenticatedDownload(uploadPath,
               transform: TransformOptions(width: 200, height: 200));
 
-      final downloadedFile = File.fromRawPath(bytesArray);
+      final downloadedFile =
+          await File('${Directory.current.path}/private-image.jpg').create();
+      await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
       final type = lookupMimeType(downloadedFile.path);
 

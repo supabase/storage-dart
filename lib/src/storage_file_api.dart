@@ -331,7 +331,9 @@ class StorageFileApi {
     }
 
     var publicUrl = Uri.parse('$url/$renderPath/public/$finalPath');
-    publicUrl = publicUrl.replace(queryParameters: queryParams);
+    if (queryParams.isNotEmpty) {
+      publicUrl = publicUrl.replace(queryParameters: queryParams);
+    }
 
     return publicUrl.toString();
   }

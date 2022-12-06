@@ -320,20 +320,14 @@ class StorageFileApi {
     TransformOptions? transform,
   }) {
     final finalPath = _getFinalPath(path);
-    final queryParams = <String, String>{};
 
     final wantsTransformation = transform != null;
     final renderPath = wantsTransformation ? 'render/image' : 'object';
     final transformationQuery = transform?.toQueryParams;
 
-    if (transformationQuery != null) {
-      queryParams.addAll(transformationQuery);
-    }
-
     var publicUrl = Uri.parse('$url/$renderPath/public/$finalPath');
-    if (queryParams.isNotEmpty) {
-      publicUrl = publicUrl.replace(queryParameters: queryParams);
-    }
+
+    publicUrl = publicUrl.replace(queryParameters: transformationQuery);
 
     return publicUrl.toString();
   }

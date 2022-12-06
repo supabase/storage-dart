@@ -218,11 +218,13 @@ class TransformOptions {
     this.height,
     this.resize,
   });
+}
 
-  Map<String, dynamic> toMap() {
+extension ToQueryParams on TransformOptions {
+  Map<String, String> get toQueryParams {
     return {
-      if (width != null) 'width': width,
-      if (height != null) 'height': height,
+      if (width != null) 'width': '$width',
+      if (height != null) 'height': '$height',
       if (resize != null) 'resize': resize!.snakeCase,
     };
   }

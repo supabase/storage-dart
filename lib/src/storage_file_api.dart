@@ -223,7 +223,7 @@ class StorageFileApi {
       '$url/object/sign/$finalPath',
       {
         'expiresIn': expiresIn,
-        if (transform != null) ...{'transform': transform.toMap()},
+        if (transform != null) ...{'transform': transform.toQueryParams},
       },
       options: options,
     );
@@ -274,7 +274,7 @@ class StorageFileApi {
       {TransformOptions? transform}) async {
     final wantsTransformations = transform != null;
     final renderPath = wantsTransformations ? 'render/image' : 'object';
-    final queryParams = _transformOptsToQueryString(transform);
+    final queryParams = transform?.toQueryParams;
 
     return _download(path,
         prefix: '$renderPath/public', queryParams: queryParams);
@@ -290,7 +290,7 @@ class StorageFileApi {
       {TransformOptions? transform}) async {
     final wantsTransformations = transform != null;
     final renderPath = wantsTransformations ? 'render/image' : 'object';
-    final queryParams = _transformOptsToQueryString(transform);
+    final queryParams = transform?.toQueryParams;
 
     return _download(path,
         prefix: '$renderPath/authenticated', queryParams: queryParams);
@@ -324,7 +324,7 @@ class StorageFileApi {
 
     final wantsTransformation = transform != null;
     final renderPath = wantsTransformation ? 'render/image' : 'object';
-    final transformationQuery = _transformOptsToQueryString(transform);
+    final transformationQuery = transform?.toQueryParams;
 
     if (transformationQuery != null) {
       queryParams.addAll(transformationQuery);
@@ -396,23 +396,5 @@ class StorageFileApi {
     final response =
         await storageFetch.get(fetchUrl.toString(), options: options);
     return response as Uint8List;
-  }
-
-  Map<String, String>? _transformOptsToQueryString(
-      TransformOptions? transform) {
-    final params = <String, String>{};
-    if (transform?.width != null) {
-      params['width'] = '${transform!.width}';
-    }
-
-    if (transform?.height != null) {
-      params['height'] = '${transform!.height}';
-    }
-
-    if (transform?.resize != null) {
-      params['resize'] = '${transform!.resize}';
-    }
-
-    return params.isEmpty ? null : params;
   }
 }

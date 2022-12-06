@@ -105,8 +105,12 @@ void main() {
   });
 
   group('Transformations', () {
-    test('sign url with transform options', () async {
+    setUpAll(() async {
+      await findOrCreateBucket(newBucketName);
       await storage.from(newBucketName).upload(uploadPath, file);
+    });
+
+    test('sign url with transform options', () async {
       final url =
           await storage.from(newBucketName).createSignedUrl(uploadPath, 2000,
               transform: TransformOptions(

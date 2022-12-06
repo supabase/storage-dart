@@ -330,8 +330,8 @@ class StorageFileApi {
       queryParams.addAll(transformationQuery);
     }
 
-    final publicUrl = Uri.parse('$url/$renderPath/public/$finalPath');
-    publicUrl.replace(queryParameters: queryParams);
+    var publicUrl = Uri.parse('$url/$renderPath/public/$finalPath');
+    publicUrl = publicUrl.replace(queryParameters: queryParams);
 
     return publicUrl.toString();
   }

@@ -142,7 +142,7 @@ void main() {
               ));
 
       final downloadedFile = File.fromRawPath(bytesArray);
-      final size = downloadedFile.length();
+      final size = await downloadedFile.length();
       final type = lookupMimeType(downloadedFile.path);
       expect(size, isPositive);
       expect(type, 'image/jpeg');
@@ -160,7 +160,7 @@ void main() {
               transform: TransformOptions(width: 200, height: 200));
 
       final downloadedFile = File.fromRawPath(bytesArray);
-      final size = downloadedFile.length();
+      final size = await downloadedFile.length();
       final type = lookupMimeType(downloadedFile.path);
 
       expect(size, isPositive);

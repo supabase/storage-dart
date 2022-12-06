@@ -269,7 +269,7 @@ class StorageFileApi {
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
   ///
-  /// [transform] download a transformed variant of the image with the provided filters
+  /// [transform] download a transformed variant of the image with the provided options
   Future<Uint8List> publicDownload(String path,
       {TransformOptions? transform}) async {
     final wantsTransformations = transform != null;
@@ -285,7 +285,7 @@ class StorageFileApi {
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
   ///
-  /// [transform] download a transformed variant of the image with the provided filters
+  /// [transform] download a transformed variant of the image with the provided options
   Future<Uint8List> authenticatedDownload(String path,
       {TransformOptions? transform}) async {
     final wantsTransformations = transform != null;

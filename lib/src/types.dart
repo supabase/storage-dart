@@ -206,13 +206,36 @@ class StorageRetryController {
   }
 }
 
-enum TransformCrop { fill, fit, fillDown, force, auto }
+/// {@template resize_mode}
+/// Specifies how image cropping should be handled when performing image transformations.
+/// {@endtemplate}
+enum ResizeMode {
+  /// Resizes the image while keeping the aspect ratio to fill a given size and crops projecting parts.
+  cover,
 
+  /// Resizes the image while keeping the aspect ratio to fit a given size.
+  contain,
+
+  /// Resizes the image without keeping the aspect ratio to fill a given size.
+  fill,
+}
+
+/// {@template transform_options}
+/// Specifies the dimensions and the resize mode of the requesting image.
+/// {@endtemplate}
 class TransformOptions {
+  /// Width of the requesting image to be.
   final int? width;
-  final int? height;
-  final TransformCrop? resize;
 
+  /// Height of requesting image to be.
+  final int? height;
+
+  /// {@macro resize_mode}
+  ///
+  /// [ResizeMode.cover] will be used if no value is specified.
+  final ResizeMode? resize;
+
+  /// {@macro transform_options}
   TransformOptions({
     this.width,
     this.height,

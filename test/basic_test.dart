@@ -259,7 +259,7 @@ void main() {
 
       when(
         () => storageFetch.get(
-          '$objectUrl/public/public_bucket/b.txt',
+          '$objectUrl/object/public_bucket/b.txt',
           options: mockFetchOptions,
         ),
       ).thenAnswer(

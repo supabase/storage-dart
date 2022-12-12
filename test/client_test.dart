@@ -133,12 +133,11 @@ void main() {
     });
 
     test('will download a public transformed file', () async {
-      final bytesArray =
-          await storage.from(newBucketName).publicDownload(uploadPath,
-              transform: TransformOptions(
-                width: 200,
-                height: 200,
-              ));
+      final bytesArray = await storage.from(newBucketName).download(uploadPath,
+          transform: TransformOptions(
+            width: 200,
+            height: 200,
+          ));
 
       final downloadedFile =
           await File('${Directory.current.path}/public-image.jpg').create();
@@ -155,10 +154,9 @@ void main() {
 
       await storage.from(privateBucketName).upload(uploadPath, file);
 
-      final bytesArray = await storage
-          .from(privateBucketName)
-          .authenticatedDownload(uploadPath,
-              transform: TransformOptions(width: 200, height: 200));
+      final bytesArray = await storage.from(privateBucketName).download(
+          uploadPath,
+          transform: TransformOptions(width: 200, height: 200));
 
       final downloadedFile =
           await File('${Directory.current.path}/private-image.jpg').create();

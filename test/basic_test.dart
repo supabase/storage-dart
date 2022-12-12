@@ -268,8 +268,7 @@ void main() {
         ),
       );
 
-      final response =
-          await client.from('public_bucket').publicDownload('b.txt');
+      final response = await client.from('public_bucket').download('b.txt');
       expect(response, isA<Uint8List>());
       expect(String.fromCharCodes(response), 'Updated content');
     });

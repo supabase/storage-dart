@@ -300,8 +300,7 @@ class StorageFileApi {
   ///
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
-  @Deprecated('Use publicDownload or authenticatedDownload instead.')
-  Future<Uint8List> download(String path) async {
+  Future<Uint8List> download(String path, {TransformOptions? transform}) async {
     final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers, noResolveJson: true);
     final response =

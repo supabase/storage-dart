@@ -264,47 +264,25 @@ class StorageFileApi {
     return urls;
   }
 
-  /// Download a file in a public bucket
-  ///
-  /// [path] is the file path to be downloaded, including the path and file
-  /// name. For example `download('folder/image.png')`.
-  ///
-  /// [transform] download a transformed variant of the image with the provided options
-  Future<Uint8List> publicDownload(String path,
-      {TransformOptions? transform}) async {
-    final wantsTransformations = transform != null;
-    final renderPath = wantsTransformations ? 'render/image' : 'object';
-    final queryParams = transform?.toQueryParams;
-
-    return _download(path,
-        prefix: '$renderPath/public', queryParams: queryParams);
-  }
-
-  // Download a file in a private bucket
-  ///
-  /// [path] is the file path to be downloaded, including the path and file
-  /// name. For example `download('folder/image.png')`.
-  ///
-  /// [transform] download a transformed variant of the image with the provided options
-  Future<Uint8List> authenticatedDownload(String path,
-      {TransformOptions? transform}) async {
-    final wantsTransformations = transform != null;
-    final renderPath = wantsTransformations ? 'render/image' : 'object';
-    final queryParams = transform?.toQueryParams;
-
-    return _download(path,
-        prefix: '$renderPath/authenticated', queryParams: queryParams);
-  }
-
   /// Downloads a file.
   ///
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
+  ///
+  /// [transform] download a transformed variant of the image with the provided options
   Future<Uint8List> download(String path, {TransformOptions? transform}) async {
+    final wantsTransformations = transform != null;
     final finalPath = _getFinalPath(path);
+    final renderPath =
+        wantsTransformations ? 'render/image/authenticated' : 'object';
+    final queryParams = transform?.toQueryParams;
     final options = FetchOptions(headers: headers, noResolveJson: true);
+
+    var fetchUrl = Uri.parse('$url/$renderPath/$finalPath');
+    fetchUrl = fetchUrl.replace(queryParameters: queryParams);
+
     final response =
-        await storageFetch.get('$url/object/$finalPath', options: options);
+        await storageFetch.get(fetchUrl.toString(), options: options);
     return response as Uint8List;
   }
 
@@ -375,19 +353,5 @@ class StorageFileApi {
       ),
     );
     return fileObjects;
-  }
-
-  Future<Uint8List> _download(String path,
-      {String? prefix, Map<String, String>? queryParams}) async {
-    final finalPath = _getFinalPath(path);
-    final renderPath = prefix ?? 'object';
-    final options = FetchOptions(headers: headers, noResolveJson: true);
-
-    var fetchUrl = Uri.parse('$url/$renderPath/$finalPath');
-    fetchUrl = fetchUrl.replace(queryParameters: queryParams);
-
-    final response =
-        await storageFetch.get(fetchUrl.toString(), options: options);
-    return response as Uint8List;
   }
 }

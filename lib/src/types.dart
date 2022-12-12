@@ -236,7 +236,7 @@ class TransformOptions {
   final ResizeMode? resize;
 
   /// {@macro transform_options}
-  TransformOptions({
+  const TransformOptions({
     this.width,
     this.height,
     this.resize,

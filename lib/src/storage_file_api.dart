@@ -223,7 +223,7 @@ class StorageFileApi {
       '$url/object/sign/$finalPath',
       {
         'expiresIn': expiresIn,
-        if (transform != null) ...{'transform': transform.toQueryParams},
+        if (transform != null) 'transform': transform.toQueryParams,
       },
       options: options,
     );

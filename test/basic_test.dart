@@ -253,13 +253,13 @@ void main() {
       expect(response.length, 2);
     });
 
-    test('should download file', () async {
+    test('should download public file', () async {
       final file = File('a.txt');
       file.writeAsStringSync('Updated content');
 
       when(
         () => storageFetch.get(
-          '$objectUrl/public/b.txt',
+          '$objectUrl/public_bucket/b.txt',
           options: mockFetchOptions,
         ),
       ).thenAnswer(
@@ -268,7 +268,7 @@ void main() {
         ),
       );
 
-      final response = await client.from('public').download('b.txt');
+      final response = await client.from('public_bucket').download('b.txt');
       expect(response, isA<Uint8List>());
       expect(String.fromCharCodes(response), 'Updated content');
     });

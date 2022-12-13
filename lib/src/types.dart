@@ -205,3 +205,69 @@ class StorageRetryController {
     _cancelled = true;
   }
 }
+
+/// {@template resize_mode}
+/// Specifies how image cropping should be handled when performing image transformations.
+/// {@endtemplate}
+enum ResizeMode {
+  /// Resizes the image while keeping the aspect ratio to fill a given size and crops projecting parts.
+  cover,
+
+  /// Resizes the image while keeping the aspect ratio to fit a given size.
+  contain,
+
+  /// Resizes the image without keeping the aspect ratio to fill a given size.
+  fill,
+}
+
+/// {@template transform_options}
+/// Specifies the dimensions and the resize mode of the requesting image.
+/// {@endtemplate}
+class TransformOptions {
+  /// Width of the requesting image to be.
+  final int? width;
+
+  /// Height of requesting image to be.
+  final int? height;
+
+  /// {@macro resize_mode}
+  ///
+  /// [ResizeMode.cover] will be used if no value is specified.
+  final ResizeMode? resize;
+
+  /// {@macro transform_options}
+  const TransformOptions({
+    this.width,
+    this.height,
+    this.resize,
+  });
+}
+
+extension ToQueryParams on TransformOptions {
+  Map<String, String> get toQueryParams {
+    return {
+      if (width != null) 'width': '$width',
+      if (height != null) 'height': '$height',
+      if (resize != null) 'resize': resize!.snakeCase,
+    };
+  }
+}
+
+extension ToSnakeCase on Enum {
+  String get snakeCase {
+    final a = 'a'.codeUnitAt(0), z = 'z'.codeUnitAt(0);
+    final A = 'A'.codeUnitAt(0), Z = 'Z'.codeUnitAt(0);
+    final result = StringBuffer()..write(name[0].toLowerCase());
+    for (var i = 1; i < name.length; i++) {
+      final char = name.codeUnitAt(i);
+      if (A <= char && char <= Z) {
+        final pChar = name.codeUnitAt(i - 1);
+        if (a <= pChar && pChar <= z) {
+          result.write('_');
+        }
+      }
+      result.write(name[i].toLowerCase());
+    }
+    return result.toString();
+  }
+}

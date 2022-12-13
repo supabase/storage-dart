@@ -1,3 +1,23 @@
+## [1.2.0]
+
+- feat: add transform option to `createSignedUrl()`, `getPublicUrl()`, and `.download()` to transform images on the fly [#46](https://github.com/supabase/storage-dart/pull/46)
+  ```dart
+  final signedUrl = await storage.from(newBucketName).createSignedUrl(uploadPath, 2000,
+              transform: TransformOptions(
+                width: 100,
+                height: 100,
+              ));
+
+  final publicUrl = storage.from(bucket).getPublicUrl(path,
+          transform: TransformOptions(width: 200, height: 300));
+
+  final file = await storage.from(newBucketName).download(uploadPath,
+          transform: TransformOptions(
+            width: 200,
+            height: 200,
+          ));
+  ```
+
 ## [1.1.0]
 
 - feat: add retry on file upload failure when offline ([#44](https://github.com/supabase/storage-dart/pull/44))

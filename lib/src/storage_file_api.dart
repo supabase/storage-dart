@@ -211,16 +211,20 @@ class StorageFileApi {
   /// [expiresIn] is the number of seconds until the signed URL expire. For
   /// example, `60` for a URL which are valid for one minute.
   ///
-  /// The signed url is returned.
+  /// [transform] adds image transformations parameters to the generated url.
   Future<String> createSignedUrl(
     String path,
-    int expiresIn,
-  ) async {
+    int expiresIn, {
+    TransformOptions? transform,
+  }) async {
     final finalPath = _getFinalPath(path);
     final options = FetchOptions(headers: headers);
     final response = await storageFetch.post(
       '$url/object/sign/$finalPath',
-      {'expiresIn': expiresIn},
+      {
+        'expiresIn': expiresIn,
+        if (transform != null) 'transform': transform.toQueryParams,
+      },
       options: options,
     );
     final signedUrlPath = (response as Map<String, dynamic>)['signedURL'];
@@ -264,11 +268,21 @@ class StorageFileApi {
   ///
   /// [path] is the file path to be downloaded, including the path and file
   /// name. For example `download('folder/image.png')`.
-  Future<Uint8List> download(String path) async {
+  ///
+  /// [transform] download a transformed variant of the image with the provided options
+  Future<Uint8List> download(String path, {TransformOptions? transform}) async {
+    final wantsTransformations = transform != null;
     final finalPath = _getFinalPath(path);
+    final renderPath =
+        wantsTransformations ? 'render/image/authenticated' : 'object';
+    final queryParams = transform?.toQueryParams;
     final options = FetchOptions(headers: headers, noResolveJson: true);
+
+    var fetchUrl = Uri.parse('$url/$renderPath/$finalPath');
+    fetchUrl = fetchUrl.replace(queryParameters: queryParams);
+
     final response =
-        await storageFetch.get('$url/object/$finalPath', options: options);
+        await storageFetch.get(fetchUrl.toString(), options: options);
     return response as Uint8List;
   }
 
@@ -276,10 +290,23 @@ class StorageFileApi {
   ///
   /// [path] is the file path to be downloaded, including the current file name.
   /// For example `getPublicUrl('folder/image.png')`.
-  String getPublicUrl(String path) {
+  ///
+  /// [transform] adds image transformations parameters to the generated url.
+  String getPublicUrl(
+    String path, {
+    TransformOptions? transform,
+  }) {
     final finalPath = _getFinalPath(path);
-    final publicUrl = '$url/object/public/$finalPath';
-    return publicUrl;
+
+    final wantsTransformation = transform != null;
+    final renderPath = wantsTransformation ? 'render/image' : 'object';
+    final transformationQuery = transform?.toQueryParams;
+
+    var publicUrl = Uri.parse('$url/$renderPath/public/$finalPath');
+
+    publicUrl = publicUrl.replace(queryParameters: transformationQuery);
+
+    return publicUrl.toString();
   }
 
   /// Deletes files within the same bucket

@@ -378,6 +378,22 @@ void main() {
       expect(response, isA<String>());
       expect(response.endsWith('/a.txt'), isTrue);
     });
+
+    test('Progress listener', () async {
+      final file = File('a.txt');
+      file.writeAsStringSync('File content');
+
+      double lastProgress = 0.0;
+
+      await client.from('public').updateBinary(
+        'a.txt',
+        file.readAsBytesSync(),
+        progressListener: (progress) {
+          lastProgress = progress;
+        },
+      );
+      expect(lastProgress, 1.0);
+    });
   });
 
   group('Client with custom http client', () {

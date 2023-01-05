@@ -50,6 +50,7 @@ class Fetch {
     String url,
     Map<String, dynamic>? body,
     FetchOptions? options,
+    ProgressListener? progressListener,
   ) async {
     final headers = options?.headers ?? {};
     if (method != 'GET') {
@@ -68,7 +69,7 @@ class Fetch {
     } else {
       streamedResponse = await request.send();
     }
-    return _handleResponse(streamedResponse, options);
+    return _handleResponse(streamedResponse, options, progressListener);
   }
 
   Future<dynamic> _handleMultipartRequest(
@@ -79,6 +80,7 @@ class Fetch {
     FetchOptions? options,
     int retryAttempts,
     StorageRetryController? retryController,
+    ProgressListener? progressListener,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -111,7 +113,7 @@ class Fetch {
           (error is SocketException || error is TimeoutException),
     );
 
-    return _handleResponse(streamedResponse, options);
+    return _handleResponse(streamedResponse, options, progressListener);
   }
 
   Future<dynamic> _handleBinaryFileRequest(
@@ -122,6 +124,7 @@ class Fetch {
     FetchOptions? options,
     int retryAttempts,
     StorageRetryController? retryController,
+    ProgressListener? progressListener,
   ) async {
     final headers = options?.headers ?? {};
     final contentType = fileOptions.contentType != null
@@ -155,13 +158,35 @@ class Fetch {
           (error is SocketException || error is TimeoutException),
     );
 
-    return _handleResponse(streamedResponse, options);
+    return _handleResponse(streamedResponse, options, progressListener);
   }
 
   Future<dynamic> _handleResponse(
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
+    ProgressListener? progressListener,
   ) async {
+    if (progressListener != null) {
+      final length = streamedResponse.contentLength;
+      if (length != null) {
+        int received = 0;
+
+        late StreamSubscription<List<int>> subscription;
+        subscription = streamedResponse.stream.listen(
+          (bytes) {
+            received += bytes.length;
+
+            final progress = (received / length);
+            progressListener(progress);
+
+            if (progress == 1.0) subscription.cancel();
+          },
+          cancelOnError: true,
+          onDone: () => subscription.cancel(),
+        );
+      }
+    }
+
     final response = await http.Response.fromStream(streamedResponse);
     if (_isSuccessStatusCode(response.statusCode)) {
       if (options?.noResolveJson == true) {
@@ -175,32 +200,39 @@ class Fetch {
     }
   }
 
-  Future<dynamic> get(String url, {FetchOptions? options}) async {
-    return _handleRequest('GET', url, null, options);
+  Future<dynamic> get(
+    String url, {
+    FetchOptions? options,
+    ProgressListener? progressListener,
+  }) async {
+    return _handleRequest('GET', url, null, options, progressListener);
   }
 
   Future<dynamic> post(
     String url,
     Map<String, dynamic>? body, {
     FetchOptions? options,
+    ProgressListener? progressListener,
   }) async {
-    return _handleRequest('POST', url, body, options);
+    return _handleRequest('POST', url, body, options, progressListener);
   }
 
   Future<dynamic> put(
     String url,
     Map<String, dynamic>? body, {
     FetchOptions? options,
+    ProgressListener? progressListener,
   }) async {
-    return _handleRequest('PUT', url, body, options);
+    return _handleRequest('PUT', url, body, options, progressListener);
   }
 
   Future<dynamic> delete(
     String url,
     Map<String, dynamic>? body, {
     FetchOptions? options,
+    ProgressListener? progressListener,
   }) async {
-    return _handleRequest('DELETE', url, body, options);
+    return _handleRequest('DELETE', url, body, options, progressListener);
   }
 
   Future<dynamic> postFile(
@@ -210,9 +242,18 @@ class Fetch {
     FetchOptions? options,
     required int retryAttempts,
     required StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
-    return _handleMultipartRequest('POST', url, file, fileOptions, options,
-        retryAttempts, retryController);
+    return _handleMultipartRequest(
+      'POST',
+      url,
+      file,
+      fileOptions,
+      options,
+      retryAttempts,
+      retryController,
+      progressListener,
+    );
   }
 
   Future<dynamic> putFile(
@@ -222,6 +263,7 @@ class Fetch {
     FetchOptions? options,
     required int retryAttempts,
     required StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     return _handleMultipartRequest(
       'PUT',
@@ -231,6 +273,7 @@ class Fetch {
       options,
       retryAttempts,
       retryController,
+      progressListener,
     );
   }
 
@@ -241,6 +284,7 @@ class Fetch {
     FetchOptions? options,
     required int retryAttempts,
     required StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     return _handleBinaryFileRequest(
       'POST',
@@ -250,6 +294,7 @@ class Fetch {
       options,
       retryAttempts,
       retryController,
+      progressListener,
     );
   }
 
@@ -260,6 +305,7 @@ class Fetch {
     FetchOptions? options,
     required int retryAttempts,
     required StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     return _handleBinaryFileRequest(
       'PUT',
@@ -269,6 +315,7 @@ class Fetch {
       options,
       retryAttempts,
       retryController,
+      progressListener,
     );
   }
 }

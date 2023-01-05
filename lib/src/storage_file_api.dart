@@ -40,6 +40,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -51,6 +52,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
+      progressListener: progressListener,
     );
 
     return (response as Map)['Key'] as String;
@@ -75,6 +77,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -86,6 +89,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
+      progressListener: progressListener,
     );
 
     return (response as Map)['Key'] as String;
@@ -109,6 +113,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -120,6 +125,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
+      progressListener: progressListener,
     );
 
     return (response as Map<String, dynamic>)['Key'] as String;
@@ -145,6 +151,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressListener? progressListener,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -156,6 +163,7 @@ class StorageFileApi {
       options: FetchOptions(headers: headers),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
+      progressListener: progressListener,
     );
 
     return (response as Map)['Key'] as String;
@@ -270,7 +278,11 @@ class StorageFileApi {
   /// name. For example `download('folder/image.png')`.
   ///
   /// [transform] download a transformed variant of the image with the provided options
-  Future<Uint8List> download(String path, {TransformOptions? transform}) async {
+  Future<Uint8List> download(
+    String path, {
+    TransformOptions? transform,
+    ProgressListener? progressListener,
+  }) async {
     final wantsTransformations = transform != null;
     final finalPath = _getFinalPath(path);
     final renderPath =
@@ -281,8 +293,11 @@ class StorageFileApi {
     var fetchUrl = Uri.parse('$url/$renderPath/$finalPath');
     fetchUrl = fetchUrl.replace(queryParameters: queryParams);
 
-    final response =
-        await storageFetch.get(fetchUrl.toString(), options: options);
+    final response = await storageFetch.get(
+      fetchUrl.toString(),
+      options: options,
+      progressListener: progressListener,
+    );
     return response as Uint8List;
   }
 

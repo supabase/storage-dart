@@ -1,3 +1,7 @@
+## [1.2.1]
+
+- fix: correct path parameter documentation [#48](https://github.com/supabase/storage-dart/pull/48)
+
 ## [1.2.0]
 
 - feat: add transform option to `createSignedUrl()`, `getPublicUrl()`, and `.download()` to transform images on the fly [#46](https://github.com/supabase/storage-dart/pull/46)

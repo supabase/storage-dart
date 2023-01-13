@@ -23,8 +23,8 @@ class StorageFileApi {
 
   /// Uploads a file to an existing bucket.
   ///
-  /// [path] is the relative file path including the bucket ID. Should be of the
-  /// format `bucket/folder/subfolder/filename.png`. The bucket must already
+  /// [path] is the relative file path without the bucket ID. Should be of the
+  /// format `folder/subfolder/filename.png`. The bucket must already
   /// exist before attempting to upload.
   ///
   /// [file] is the File object to be stored in the bucket.
@@ -58,8 +58,8 @@ class StorageFileApi {
 
   /// Uploads a binary file to an existing bucket. Can be used on the web.
   ///
-  /// [path] is the relative file path including the bucket ID. Should be of the
-  /// format `bucket/folder/subfolder/filename.png`. The bucket must already
+  /// [path] is the relative file path without the bucket ID. Should be of the
+  /// format `folder/subfolder/filename.png`. The bucket must already
   /// exist before attempting to upload.
   ///
   /// [data] is the binary file data to be stored in the bucket.
@@ -93,9 +93,9 @@ class StorageFileApi {
 
   /// Replaces an existing file at the specified path with a new one.
   ///
-  /// [path] is the relative file path including the bucket ID. Should be of the
-  /// format `bucket/folder/subfolder`. The bucket already exist before
-  /// attempting to upload.
+  /// [path] is the relative file path without the bucket ID. Should be of the
+  /// format `folder/subfolder/filename.png`. The bucket must already
+  /// exist before attempting to upload.
   /// [file] is the file object to be stored in the bucket.
   ///
   /// [fileOptions] HTTP headers. For example `cacheControl`
@@ -128,9 +128,9 @@ class StorageFileApi {
   /// Replaces an existing file at the specified path with a new one. Can be
   /// used on the web.
   ///
-  /// [path] is the relative file path including the bucket ID. Should be of the
-  /// format `bucket/folder/subfolder`. The bucket already exist before
-  /// attempting to upload.
+  /// [path] is the relative file path without the bucket ID. Should be of the
+  /// format `folder/subfolder/filename.png`. The bucket must already
+  /// exist before attempting to upload.
   ///
   /// [data] is the binary file data to be stored in the bucket.
   ///

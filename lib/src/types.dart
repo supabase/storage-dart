@@ -86,7 +86,7 @@ class FileOptions {
   const FileOptions({
     this.cacheControl = '3600',
     this.upsert = false,
-    this.contentType = 'text/plain;charset=UTF-8',
+    this.contentType,
   });
 }
 

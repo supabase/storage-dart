@@ -1,3 +1,7 @@
+## [1.2.2]
+
+- fix: properly parse content type [#50](https://github.com/supabase/storage-dart/pull/50)
+
 ## [1.2.1]
 
 - fix: correct path parameter documentation [#48](https://github.com/supabase/storage-dart/pull/48)

@@ -1,3 +1,5 @@
+typedef ProgressListener = void Function(double progress);
+
 class FetchOptions {
   final Map<String, String>? headers;
   final bool? noResolveJson;

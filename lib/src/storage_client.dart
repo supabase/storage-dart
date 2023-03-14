@@ -50,4 +50,8 @@ class SupabaseStorageClient extends StorageBucketApi {
   StorageFileApi from(String id) {
     return StorageFileApi(url, headers, id, _defaultRetryAttempts);
   }
+
+  void setAuth(String jwt) {
+    headers['Authorization'] = 'Bearer $jwt';
+  }
 }

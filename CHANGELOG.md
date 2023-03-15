@@ -1,3 +1,7 @@
+## [1.2.3]
+
+- feat: add setAuth method [#52](https://github.com/supabase/storage-dart/pull/52)
+
 ## [1.2.2]
 
 - fix: properly parse content type [#50](https://github.com/supabase/storage-dart/pull/50)

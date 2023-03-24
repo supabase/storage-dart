@@ -1,3 +1,7 @@
+## [1.2.4]
+
+- fix: return correct URLs for `createSignedUrls` [#53](https://github.com/supabase/storage-dart/pull/53)
+
 ## [1.2.3]
 
 - feat: add setAuth method [#52](https://github.com/supabase/storage-dart/pull/52)

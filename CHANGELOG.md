@@ -1,3 +1,7 @@
+## [1.2.5]
+
+- chore: Add more description on pubspec.yaml [#55](https://github.com/supabase/storage-dart/pull/55)
+
 ## [1.2.4]
 
 - fix: return correct URLs for `createSignedUrls` [#53](https://github.com/supabase/storage-dart/pull/53)

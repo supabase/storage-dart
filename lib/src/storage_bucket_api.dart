@@ -2,11 +2,25 @@ import 'package:http/http.dart';
 import 'package:storage_client/src/fetch.dart';
 import 'package:storage_client/src/types.dart';
 
+import 'constants.dart';
+
 class StorageBucketApi {
   final String url;
-  final Map<String, String> headers;
+  final Map<String, String> _headers;
 
-  StorageBucketApi(this.url, this.headers, {Client? httpClient}) {
+  /// Getter for the headers
+  Map<String, String> get headers {
+    return _headers;
+  }
+
+  StorageBucketApi(
+    this.url,
+    Map<String, String>? headers, {
+    Client? httpClient,
+  }) : _headers = {
+          ...Constants.defaultHeaders,
+          if (headers != null) ...headers,
+        } {
     storageFetch = Fetch(httpClient);
   }
 
@@ -103,5 +117,9 @@ class StorageBucketApi {
       options: options,
     );
     return (response as Map<String, dynamic>)['message'] as String;
+  }
+
+  void setAuth(String jwt) {
+    headers['Authorization'] = 'Bearer $jwt';
   }
 }

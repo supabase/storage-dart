@@ -55,7 +55,15 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await storageFetch.post(
       '$url/bucket',
-      {'id': id, 'name': id, 'public': bucketOptions.public},
+      {
+        'id': id,
+        'name': id,
+        'public': bucketOptions.public,
+        if (bucketOptions.fileSizeLimit != null)
+          'file_size_limit': bucketOptions.fileSizeLimit,
+        if (bucketOptions.allowedMimeTypes != null)
+          'allowed_mime_types': bucketOptions.allowedMimeTypes,
+      },
       options: options,
     );
     final bucketId = (response as Map<String, dynamic>)['name'] as String;
@@ -74,7 +82,15 @@ class StorageBucketApi {
     final FetchOptions options = FetchOptions(headers: headers);
     final response = await storageFetch.put(
       '$url/bucket/$id',
-      {'id': id, 'name': id, 'public': bucketOptions.public},
+      {
+        'id': id,
+        'name': id,
+        'public': bucketOptions.public,
+        if (bucketOptions.fileSizeLimit != null)
+          'file_size_limit': bucketOptions.fileSizeLimit,
+        if (bucketOptions.allowedMimeTypes != null)
+          'allowed_mime_types': bucketOptions.allowedMimeTypes,
+      },
       options: options,
     );
     final message = (response as Map<String, dynamic>)['message'] as String;

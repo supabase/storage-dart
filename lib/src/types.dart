@@ -12,6 +12,8 @@ class Bucket {
   final String createdAt;
   final String updatedAt;
   final bool public;
+  final int? fileSizeLimit;
+  final List<String>? allowedMimeTypes;
 
   const Bucket({
     required this.id,
@@ -20,6 +22,8 @@ class Bucket {
     required this.createdAt,
     required this.updatedAt,
     required this.public,
+    this.fileSizeLimit,
+    this.allowedMimeTypes,
   });
 
   Bucket.fromJson(Map<String, dynamic> json)
@@ -28,7 +32,11 @@ class Bucket {
         owner = json['owner'] as String,
         createdAt = json['created_at'] as String,
         updatedAt = json['updated_at'] as String,
-        public = json['public'] as bool;
+        public = json['public'] as bool,
+        fileSizeLimit = json['file_size_limit'] as int?,
+        allowedMimeTypes = json['allowed_mime_types'] == null
+            ? null
+            : List<String>.from(json['allowed_mime_types'] as List);
 }
 
 class FileObject {
@@ -67,10 +75,23 @@ class FileObject {
             json['buckets'] != null ? Bucket.fromJson(json['buckets']) : null;
 }
 
+/// [public] The visibility of the bucket. Public buckets don't require an
+/// authorization token to download objects, but still require a valid token for
+/// all other operations. By default, buckets are private.
+///
+/// [fileSizeLimit] specifies the file size limit that this bucket can accept during upload
+///
+/// [allowedMimeTypes] specifies the allowed mime types that this bucket can accept during upload
 class BucketOptions {
   final bool public;
+  final int? fileSizeLimit;
+  final List<String>? allowedMimeTypes;
 
-  const BucketOptions({required this.public});
+  const BucketOptions({
+    required this.public,
+    this.fileSizeLimit,
+    this.allowedMimeTypes,
+  });
 }
 
 class FileOptions {

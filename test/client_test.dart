@@ -91,7 +91,7 @@ void main() {
       newBucketName,
       const BucketOptions(
         public: true,
-        fileSizeLimit: 20000000, // 20 mb
+        fileSizeLimit: '20mb', // 20 mb
         allowedMimeTypes: ['image/jpeg'],
       ),
     );
@@ -110,7 +110,7 @@ void main() {
       newBucketName,
       const BucketOptions(
         public: true,
-        fileSizeLimit: 20000000, // 20 mb
+        fileSizeLimit: '20mb', // 20 mb
         allowedMimeTypes: ['image/jpeg'],
       ),
     );
@@ -206,7 +206,7 @@ void main() {
           bucketName,
           const BucketOptions(
             public: true,
-            fileSizeLimit: 1000000, // 1mb
+            fileSizeLimit: '1mb', // 1mb
           ));
 
       final res = await storage.from(bucketName).upload(uploadPath, file);
@@ -219,7 +219,7 @@ void main() {
           bucketName,
           const BucketOptions(
             public: true,
-            fileSizeLimit: 1000000, // 1mb
+            fileSizeLimit: '1mb',
           ));
 
       final uploadFuture = storage.from(bucketName).upload(uploadPath, file);

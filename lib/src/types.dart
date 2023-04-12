@@ -79,12 +79,13 @@ class FileObject {
 /// authorization token to download objects, but still require a valid token for
 /// all other operations. By default, buckets are private.
 ///
-/// [fileSizeLimit] specifies the file size limit that this bucket can accept during upload
+/// [fileSizeLimit] specifies the file size limit that this bucket can accept during upload.
+/// It should be in a format such as `20GB`, `20MB`, `30KB`, or `3B`
 ///
 /// [allowedMimeTypes] specifies the allowed mime types that this bucket can accept during upload
 class BucketOptions {
   final bool public;
-  final int? fileSizeLimit;
+  final String? fileSizeLimit;
   final List<String>? allowedMimeTypes;
 
   const BucketOptions({

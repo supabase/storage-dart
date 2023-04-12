@@ -156,10 +156,10 @@ void main() {
 
     test('gets public url with transformation options', () async {
       final url = storage.from(newBucketName).getPublicUrl(uploadPath,
-          transform: TransformOptions(width: 200, height: 300));
+          transform: TransformOptions(width: 200, height: 300, quality: 60));
 
       expect(url,
-          '$storageUrl/render/image/public/$newBucketName/$uploadPath?width=200&height=300');
+          '$storageUrl/render/image/public/$newBucketName/$uploadPath?width=200&height=300&quality=60');
     });
 
     test('will download a public transformed file', () async {

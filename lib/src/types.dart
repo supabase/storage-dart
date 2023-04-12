@@ -257,11 +257,15 @@ class TransformOptions {
   /// [ResizeMode.cover] will be used if no value is specified.
   final ResizeMode? resize;
 
+  /// Set the quality of the returned image, this is percentage based, default 80
+  final int? quality;
+
   /// {@macro transform_options}
   const TransformOptions({
     this.width,
     this.height,
     this.resize,
+    this.quality,
   });
 }
 
@@ -271,6 +275,7 @@ extension ToQueryParams on TransformOptions {
       if (width != null) 'width': '$width',
       if (height != null) 'height': '$height',
       if (resize != null) 'resize': resize!.snakeCase,
+      if (quality != null) 'quality': '$quality',
     };
   }
 }

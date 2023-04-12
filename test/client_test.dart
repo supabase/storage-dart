@@ -219,7 +219,7 @@ void main() {
           bucketName,
           const BucketOptions(
             public: true,
-            fileSizeLimit: '1mb',
+            fileSizeLimit: '1kb',
           ));
 
       final uploadFuture = storage.from(bucketName).upload(uploadPath, file);

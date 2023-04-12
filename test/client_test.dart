@@ -84,14 +84,44 @@ void main() {
   });
 
   test('update bucket', () async {
+    final newBucketName = 'my-new-bucket-${DateTime.now()}';
+    await storage.createBucket(newBucketName);
+
     final updateRes = await storage.updateBucket(
       newBucketName,
-      const BucketOptions(public: true),
+      const BucketOptions(
+        public: true,
+        fileSizeLimit: 20000000, // 20 mb
+        allowedMimeTypes: ['image/jpeg'],
+      ),
     );
     expect(updateRes, 'Successfully updated');
 
     final getRes = await storage.getBucket(newBucketName);
-    expect(getRes.public, true);
+    expect(getRes.public, isTrue);
+    expect(getRes.fileSizeLimit, 20000000);
+    expect(getRes.allowedMimeTypes!.length, 1);
+    expect(getRes.allowedMimeTypes!.first, 'image/jpeg');
+  });
+
+  test('partially update bucket', () async {
+    final newBucketName = 'my-new-bucket-${DateTime.now()}';
+    await storage.createBucket(
+      newBucketName,
+      const BucketOptions(
+        public: true,
+        fileSizeLimit: 20000000, // 20 mb
+        allowedMimeTypes: ['image/jpeg'],
+      ),
+    );
+    final updateRes = await storage.updateBucket(
+        newBucketName, const BucketOptions(public: false));
+    expect(updateRes, 'Successfully updated');
+    final getRes = await storage.getBucket(newBucketName);
+    expect(getRes.public, isFalse);
+    expect(getRes.fileSizeLimit, 20000000);
+    expect(getRes.allowedMimeTypes!.length, 1);
+    expect(getRes.allowedMimeTypes!.first, 'image/jpeg');
   });
 
   test('Empty bucket', () async {
@@ -166,6 +196,66 @@ void main() {
 
       expect(size, isPositive);
       expect(type, 'image/jpeg');
+    });
+  });
+
+  group('bucket limits', () {
+    test('can upload a file within the file size limit', () async {
+      final bucketName = 'with-limit-${DateTime.now()}';
+      await storage.createBucket(
+          bucketName,
+          const BucketOptions(
+            public: true,
+            fileSizeLimit: 1000000, // 1mb
+          ));
+
+      final res = await storage.from(bucketName).upload(uploadPath, file);
+      expect(res, isA<String>());
+    });
+
+    test('cannot upload a file that exceed the file size limit', () async {
+      final bucketName = 'with-limit-${DateTime.now()}';
+      await storage.createBucket(
+          bucketName,
+          const BucketOptions(
+            public: true,
+            fileSizeLimit: 1000000, // 1mb
+          ));
+
+      final uploadFuture = storage.from(bucketName).upload(uploadPath, file);
+      expectLater(uploadFuture, throwsException);
+    });
+
+    test('can upload a file with a valid mime type', () async {
+      final bucketName = 'with-limit-${DateTime.now()}';
+      await storage.createBucket(
+          bucketName,
+          BucketOptions(
+            public: true,
+            allowedMimeTypes: ['image/png'],
+          ));
+
+      final res = await storage.from(bucketName).upload(uploadPath, file,
+          fileOptions: FileOptions(
+            contentType: 'image/png',
+          ));
+      expect(res, isA<String>());
+    });
+
+    test('cannot upload a file an invalid mime type', () async {
+      final bucketName = 'with-limit-${DateTime.now()}';
+      await storage.createBucket(
+          bucketName,
+          const BucketOptions(
+            public: true,
+            allowedMimeTypes: ['image/png'],
+          ));
+
+      final uploadFuture = storage.from(bucketName).upload(uploadPath, file,
+          fileOptions: FileOptions(
+            contentType: 'image/jpeg',
+          ));
+      expectLater(uploadFuture, throwsException);
     });
   });
 }

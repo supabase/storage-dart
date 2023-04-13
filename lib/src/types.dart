@@ -242,6 +242,10 @@ enum ResizeMode {
   fill,
 }
 
+enum RequestImageFormat {
+  origin,
+}
+
 /// {@template transform_options}
 /// Specifies the dimensions and the resize mode of the requesting image.
 /// {@endtemplate}
@@ -260,12 +264,19 @@ class TransformOptions {
   /// Set the quality of the returned image, this is percentage based, default 80
   final int? quality;
 
+  ///  Specify the format of the image requested.
+  ///
+  ///  When using 'origin' we force the format to be the same as the original image,
+  ///  bypassing automatic browser optimisation such as webp conversion
+  final RequestImageFormat? format;
+
   /// {@macro transform_options}
   const TransformOptions({
     this.width,
     this.height,
     this.resize,
     this.quality,
+    this.format,
   });
 }
 
@@ -276,6 +287,7 @@ extension ToQueryParams on TransformOptions {
       if (height != null) 'height': '$height',
       if (resize != null) 'resize': resize!.snakeCase,
       if (quality != null) 'quality': '$quality',
+      if (format != null) 'format': format!.snakeCase,
     };
   }
 }

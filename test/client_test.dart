@@ -197,6 +197,58 @@ void main() {
       expect(size, isPositive);
       expect(type, 'image/jpeg');
     });
+
+    test('will return the image as webp when the browser support it', () async {
+      final storage = SupabaseStorageClient(storageUrl,
+          {'Authorization': 'Bearer $storageKey', 'Accept': 'image/webp'});
+      final privateBucketName = 'my-private-bucket';
+      await findOrCreateBucket(privateBucketName);
+
+      await storage.from(privateBucketName).upload(uploadPath, file);
+
+      final bytesArray = await storage.from(privateBucketName).download(
+            uploadPath,
+            transform: TransformOptions(
+              width: 200,
+              height: 200,
+            ),
+          );
+      final downloadedFile =
+          await File('${Directory.current.path}/private-image.jpg').create();
+      await downloadedFile.writeAsBytes(bytesArray);
+      final size = await downloadedFile.length();
+      final type = lookupMimeType(downloadedFile.path);
+
+      expect(size, isPositive);
+      expect(type, 'image/webp');
+    });
+
+    test('will return the original image format when format is origin',
+        () async {
+      final storage = SupabaseStorageClient(storageUrl,
+          {'Authorization': 'Bearer $storageKey', 'Accept': 'image/webp'});
+      final privateBucketName = 'my-private-bucket';
+      await findOrCreateBucket(privateBucketName);
+
+      await storage.from(privateBucketName).upload(uploadPath, file);
+
+      final bytesArray = await storage.from(privateBucketName).download(
+            uploadPath,
+            transform: TransformOptions(
+              width: 200,
+              height: 200,
+              format: RequestImageFormat.origin,
+            ),
+          );
+      final downloadedFile =
+          await File('${Directory.current.path}/private-image.jpg').create();
+      await downloadedFile.writeAsBytes(bytesArray);
+      final size = await downloadedFile.length();
+      final type = lookupMimeType(downloadedFile.path);
+
+      expect(size, isPositive);
+      expect(type, 'image/jpeg');
+    });
   });
 
   group('bucket limits', () {

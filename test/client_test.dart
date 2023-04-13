@@ -210,7 +210,7 @@ void main() {
             ),
           );
       final downloadedFile =
-          await File('${Directory.current.path}/private-image.jpg').create();
+          await File('${Directory.current.path}/webpimage').create();
       await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
       final type = lookupMimeType(downloadedFile.path);
@@ -233,7 +233,7 @@ void main() {
             ),
           );
       final downloadedFile =
-          await File('${Directory.current.path}/private-image.jpg').create();
+          await File('${Directory.current.path}/jpegimage').create();
       await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
       final type = lookupMimeType(downloadedFile.path);

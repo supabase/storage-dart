@@ -201,12 +201,8 @@ void main() {
     test('will return the image as webp when the browser support it', () async {
       final storage = SupabaseStorageClient(storageUrl,
           {'Authorization': 'Bearer $storageKey', 'Accept': 'image/webp'});
-      final privateBucketName = 'my-private-bucket';
-      await findOrCreateBucket(privateBucketName);
 
-      await storage.from(privateBucketName).upload(uploadPath, file);
-
-      final bytesArray = await storage.from(privateBucketName).download(
+      final bytesArray = await storage.from(newBucketName).download(
             uploadPath,
             transform: TransformOptions(
               width: 200,
@@ -227,12 +223,8 @@ void main() {
         () async {
       final storage = SupabaseStorageClient(storageUrl,
           {'Authorization': 'Bearer $storageKey', 'Accept': 'image/webp'});
-      final privateBucketName = 'my-private-bucket';
-      await findOrCreateBucket(privateBucketName);
 
-      await storage.from(privateBucketName).upload(uploadPath, file);
-
-      final bytesArray = await storage.from(privateBucketName).download(
+      final bytesArray = await storage.from(newBucketName).download(
             uploadPath,
             transform: TransformOptions(
               width: 200,

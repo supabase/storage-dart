@@ -281,8 +281,6 @@ class StorageFileApi {
     var fetchUrl = Uri.parse('$url/$renderPath/$finalPath');
     fetchUrl = fetchUrl.replace(queryParameters: queryParams);
 
-    print('headers in download: ${options.headers}');
-
     final response =
         await storageFetch.get(fetchUrl.toString(), options: options);
     return response as Uint8List;

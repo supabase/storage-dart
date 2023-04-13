@@ -192,7 +192,10 @@ void main() {
           await File('${Directory.current.path}/private-image.jpg').create();
       await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
-      final type = lookupMimeType(downloadedFile.path);
+      final type = lookupMimeType(
+        downloadedFile.path,
+        headerBytes: downloadedFile.readAsBytesSync(),
+      );
 
       expect(size, isPositive);
       expect(type, 'image/jpeg');
@@ -213,7 +216,10 @@ void main() {
           await File('${Directory.current.path}/webpimage').create();
       await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
-      final type = lookupMimeType(downloadedFile.path);
+      final type = lookupMimeType(
+        downloadedFile.path,
+        headerBytes: downloadedFile.readAsBytesSync(),
+      );
 
       expect(size, isPositive);
       expect(type, 'image/webp');
@@ -236,7 +242,10 @@ void main() {
           await File('${Directory.current.path}/jpegimage').create();
       await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
-      final type = lookupMimeType(downloadedFile.path);
+      final type = lookupMimeType(
+        downloadedFile.path,
+        headerBytes: downloadedFile.readAsBytesSync(),
+      );
 
       expect(size, isPositive);
       expect(type, 'image/jpeg');

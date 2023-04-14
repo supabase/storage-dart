@@ -192,7 +192,60 @@ void main() {
           await File('${Directory.current.path}/private-image.jpg').create();
       await downloadedFile.writeAsBytes(bytesArray);
       final size = await downloadedFile.length();
-      final type = lookupMimeType(downloadedFile.path);
+      final type = lookupMimeType(
+        downloadedFile.path,
+        headerBytes: downloadedFile.readAsBytesSync(),
+      );
+
+      expect(size, isPositive);
+      expect(type, 'image/jpeg');
+    });
+
+    test('will return the image as webp when the browser support it', () async {
+      final storage = SupabaseStorageClient(storageUrl,
+          {'Authorization': 'Bearer $storageKey', 'Accept': 'image/webp'});
+
+      final bytesArray = await storage.from(newBucketName).download(
+            uploadPath,
+            transform: TransformOptions(
+              width: 200,
+              height: 200,
+            ),
+          );
+      final downloadedFile =
+          await File('${Directory.current.path}/webpimage').create();
+      await downloadedFile.writeAsBytes(bytesArray);
+      final size = await downloadedFile.length();
+      final type = lookupMimeType(
+        downloadedFile.path,
+        headerBytes: downloadedFile.readAsBytesSync(),
+      );
+
+      expect(size, isPositive);
+      expect(type, 'image/webp');
+    });
+
+    test('will return the original image format when format is origin',
+        () async {
+      final storage = SupabaseStorageClient(storageUrl,
+          {'Authorization': 'Bearer $storageKey', 'Accept': 'image/webp'});
+
+      final bytesArray = await storage.from(newBucketName).download(
+            uploadPath,
+            transform: TransformOptions(
+              width: 200,
+              height: 200,
+              format: RequestImageFormat.origin,
+            ),
+          );
+      final downloadedFile =
+          await File('${Directory.current.path}/jpegimage').create();
+      await downloadedFile.writeAsBytes(bytesArray);
+      final size = await downloadedFile.length();
+      final type = lookupMimeType(
+        downloadedFile.path,
+        headerBytes: downloadedFile.readAsBytesSync(),
+      );
 
       expect(size, isPositive);
       expect(type, 'image/jpeg');

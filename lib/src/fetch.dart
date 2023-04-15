@@ -162,7 +162,16 @@ class Fetch {
     http.StreamedResponse streamedResponse,
     FetchOptions? options,
   ) async {
-    final response = await http.Response.fromStream(streamedResponse);
+    final onResponseProgress = options?.onResponseProgress;
+
+    final Response response;
+    if (onResponseProgress == null) {
+      response = await http.Response.fromStream(streamedResponse);
+    } else {
+      response =
+          await streamedResponse._getResponseWithProgress(onResponseProgress);
+    }
+
     if (_isSuccessStatusCode(response.statusCode)) {
       if (options?.noResolveJson == true) {
         return response.bodyBytes;
@@ -269,6 +278,40 @@ class Fetch {
       options,
       retryAttempts,
       retryController,
+    );
+  }
+}
+
+extension on http.StreamedResponse {
+  Future<Response> _getResponseWithProgress(
+    ProgressCallback onProgress,
+  ) async {
+    int count = 0;
+    int total = contentLength ?? -1;
+
+    final progressStream = stream.transform<List<int>>(
+      StreamTransformer.fromHandlers(
+        handleData: (data, sink) {
+          sink.add(data);
+          count += data.length;
+
+          onProgress(count, total);
+        },
+        handleDone: (sink) {
+          sink.close();
+        },
+      ),
+    );
+
+    final body = await ByteStream(progressStream).toBytes();
+    return Response.bytes(
+      body,
+      statusCode,
+      request: request,
+      headers: headers,
+      isRedirect: isRedirect,
+      persistentConnection: persistentConnection,
+      reasonPhrase: reasonPhrase,
     );
   }
 }

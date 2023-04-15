@@ -1,8 +1,17 @@
+typedef ProgressCallback = void Function(int count, int total);
+
 class FetchOptions {
   final Map<String, String>? headers;
   final bool? noResolveJson;
+  final ProgressCallback? onRequestProgress;
+  final ProgressCallback? onResponseProgress;
 
-  const FetchOptions({this.headers, this.noResolveJson});
+  const FetchOptions({
+    this.headers,
+    this.noResolveJson,
+    this.onRequestProgress,
+    this.onResponseProgress,
+  });
 }
 
 class Bucket {

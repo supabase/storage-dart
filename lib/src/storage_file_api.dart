@@ -199,7 +199,7 @@ class StorageFileApi {
       },
       options: options,
     );
-    return (response as Map<String, dynamic>)['message'] as String;
+    return (response as Map<String, dynamic>)['Key'] as String;
   }
 
   /// Create signed URL to download file without requiring permissions. This URL

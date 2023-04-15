@@ -270,6 +270,8 @@ class StorageFileApi {
   /// name. For example `download('folder/image.png')`.
   ///
   /// [transform] download a transformed variant of the image with the provided options
+  /// [onReceiveProgress] if not null, the download progress will be transmitted
+  /// via this callback.
   Future<Uint8List> download(
     String path, {
     TransformOptions? transform,

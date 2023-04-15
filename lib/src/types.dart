@@ -1,3 +1,6 @@
+// For tracking upload and dowmload progress. count and total are in bytes
+// (count is what is received so far, total is the total bytes expected, or -1
+// if contentLength of the response is null)
 typedef ProgressCallback = void Function(int count, int total);
 
 class FetchOptions {

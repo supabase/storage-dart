@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:mime/mime.dart';
 import 'package:mocktail/mocktail.dart';
+import "package:path/path.dart" show join;
 import 'package:storage_client/src/types.dart';
 import 'package:storage_client/storage_client.dart';
 import 'package:test/test.dart';
-import "package:path/path.dart" show join;
 
 const storageUrl = 'http://localhost:8000/storage/v1';
 const storageKey =
@@ -309,6 +309,15 @@ void main() {
             contentType: 'image/jpeg',
           ));
       expectLater(uploadFuture, throwsException);
+    });
+  });
+
+  group('file operations', () {
+    test('copy', () async {
+      final storage = SupabaseStorageClient(
+          storageUrl, {'Authorization': 'Bearer $storageKey'});
+
+      await storage.from(newBucketName).copy(uploadPath, "$uploadPath 2");
     });
   });
 }

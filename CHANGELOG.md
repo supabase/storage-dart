@@ -1,3 +1,10 @@
+## [1.3.0]
+
+- feat: add custom file size limit and mime types restrictions at bucket level [#58](https://github.com/supabase/storage-dart/pull/58)
+- feat: add a quality option for image transformation [#59](https://github.com/supabase/storage-dart/pull/59)
+- feat: add format option for webp support [#60](https://github.com/supabase/storage-dart/pull/60)
+- fix: `copy()` method on storage files [#61](https://github.com/supabase/storage-dart/pull/61)
+
 ## [1.2.5]
 
 - chore: Add more description on pubspec.yaml [#55](https://github.com/supabase/storage-dart/pull/55)

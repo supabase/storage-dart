@@ -40,6 +40,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressCallback? onSendProgress,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -48,7 +49,10 @@ class StorageFileApi {
       '$url/object/$finalPath',
       file,
       fileOptions,
-      options: FetchOptions(headers: headers),
+      options: FetchOptions(
+        headers: headers,
+        onRequestProgress: onSendProgress,
+      ),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
     );
@@ -75,6 +79,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressCallback? onSendProgress,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -83,7 +88,10 @@ class StorageFileApi {
       '$url/object/$finalPath',
       data,
       fileOptions,
-      options: FetchOptions(headers: headers),
+      options: FetchOptions(
+        headers: headers,
+        onRequestProgress: onSendProgress,
+      ),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
     );
@@ -109,6 +117,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressCallback? onSendProgress,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -117,7 +126,10 @@ class StorageFileApi {
       '$url/object/$finalPath',
       file,
       fileOptions,
-      options: FetchOptions(headers: headers),
+      options: FetchOptions(
+        headers: headers,
+        onRequestProgress: onSendProgress,
+      ),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
     );
@@ -145,6 +157,7 @@ class StorageFileApi {
     FileOptions fileOptions = const FileOptions(),
     int? retryAttempts,
     StorageRetryController? retryController,
+    ProgressCallback? onSendProgress,
   }) async {
     assert(retryAttempts == null || retryAttempts >= 0,
         'retryAttempts has to be greater or equal to 0');
@@ -153,7 +166,10 @@ class StorageFileApi {
       '$url/object/$finalPath',
       data,
       fileOptions,
-      options: FetchOptions(headers: headers),
+      options: FetchOptions(
+        headers: headers,
+        onRequestProgress: onSendProgress,
+      ),
       retryAttempts: retryAttempts ?? _retryAttempts,
       retryController: retryController,
     );

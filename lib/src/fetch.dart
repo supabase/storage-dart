@@ -90,7 +90,11 @@ class Fetch {
       filename: file.path,
       contentType: contentType,
     );
-    final request = http.MultipartRequest(method, Uri.parse(url))
+    final request = _ChunkedMultipartRequest(
+      method,
+      Uri.parse(url),
+      onProgress: options?.onRequestProgress,
+    )
       ..headers.addAll(headers)
       ..files.add(multipartFile)
       ..fields['cacheControl'] = fileOptions.cacheControl
@@ -134,7 +138,11 @@ class Fetch {
       filename: '',
       contentType: contentType,
     );
-    final request = http.MultipartRequest(method, Uri.parse(url))
+    final request = _ChunkedMultipartRequest(
+      method,
+      Uri.parse(url),
+      onProgress: options?.onRequestProgress,
+    )
       ..headers.addAll(headers)
       ..files.add(multipartFile)
       ..fields['cacheControl'] = fileOptions.cacheControl
@@ -283,27 +291,28 @@ class Fetch {
 }
 
 extension on http.StreamedResponse {
+  // This utility function is modeled on Response.fromStream, but instead of
+  // getting the body bytes directly, we insert the progressStream which calls
+  // the progress update with each set of byte data emitted.
   Future<Response> _getResponseWithProgress(
     ProgressCallback onProgress,
   ) async {
-    int count = 0;
-    int total = contentLength ?? -1;
+    var count = 0;
+    var total = contentLength ?? -1;
 
     final progressStream = stream.transform<List<int>>(
       StreamTransformer.fromHandlers(
         handleData: (data, sink) {
           sink.add(data);
           count += data.length;
-
           onProgress(count, total);
         },
-        handleDone: (sink) {
-          sink.close();
-        },
+        handleDone: (sink) => sink.close(),
       ),
     );
 
     final body = await ByteStream(progressStream).toBytes();
+
     return Response.bytes(
       body,
       statusCode,
@@ -313,5 +322,59 @@ extension on http.StreamedResponse {
       persistentConnection: persistentConnection,
       reasonPhrase: reasonPhrase,
     );
+  }
+}
+
+// In order to support upload progress callbacks, we use a custom
+// MultipartRequest. The standard MultipartRequest doesn't work to report upload
+// progress, because the added files are added to the byte stream in large (file
+// size) chunks, which defeats the purpose of regular callbacks reporting upload
+// progress. So this class adds two important transform features to the
+// finalized byte stream: first, it breaks up the stream into data chunk sizes
+// (as defined by chunkSize); second, for every chunk in the stream, the
+// optional progress callback is invoked. If no progress callback is provided,
+// then no byte stream transforms are added and this class functions effectively
+// the same as the standard MultipartRequest.
+class _ChunkedMultipartRequest extends http.MultipartRequest {
+  static const chunkSize = 4096;
+
+  final ProgressCallback? onProgress;
+
+  _ChunkedMultipartRequest(
+    String method,
+    Uri url, {
+    this.onProgress,
+  }) : super(method, url);
+
+  @override
+  http.ByteStream finalize() {
+    final byteStream = super.finalize();
+
+    if (onProgress == null) {
+      return byteStream;
+    }
+
+    int count = 0;
+
+    final chunkedProgressStream = byteStream.transform<List<int>>(
+      StreamTransformer.fromHandlers(
+        handleData: (data, sink) {
+          var skip = 0;
+          while (skip < data.length) {
+            final chunk = data.skip(skip).take(chunkSize).toList();
+            sink.add(chunk);
+
+            skip += chunk.length;
+            count += chunk.length;
+            onProgress!(count, contentLength);
+
+            if (chunk.length < chunkSize) return;
+          }
+        },
+        handleDone: (sink) => sink.close(),
+      ),
+    );
+
+    return ByteStream(chunkedProgressStream);
   }
 }
